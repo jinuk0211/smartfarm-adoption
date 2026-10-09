@@ -1,0 +1,16 @@
+# Separate Windows/CUDA environment; not needed by the default calculator.
+# Official inference code pinned at 516bf396333feb3198cf7aff8a6c10421f218e24.
+# First install torch from https://download.pytorch.org/whl/cu126.
+torch==2.9.1+cu126
+numpy==2.3.5
+pandas==3.0.1
+scikit-learn==1.9.1
+scipy==1.16.2
+einops==0.8.2
+kditransform==1.2.0
+nvtx==0.2.16
+packaging==26.3
+typing_extensions==4.16.0
+tqdm==4.70.1
+joblib==1.6.0
+-e ./vendor/limix

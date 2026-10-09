@@ -1,0 +1,4 @@
+# Preserve exact bytes: the supplied dictionary and fixtures are SHA-verified.
+* -text
+*.png binary
+*.zip binary

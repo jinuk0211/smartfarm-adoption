@@ -1,0 +1,775 @@
+{
+  "schema_version": 1,
+  "dictionary_path": "data/raw/dsz/epis_columns_user_supplied.txt",
+  "dictionary_sha256": "fcbf6d647b64686775e847d575ed4e8bc9bb3b79b958f54c95dfe7289e09faff",
+  "target_assumption": "single_record_per_cycle",
+  "target_period_confirmed": false,
+  "tables": {
+    "DZ_001": {
+      "label": "스마트팜 우수농가 정보(환경)",
+      "filename": "M_DZ_SFARMENVIRONMENT",
+      "required": false,
+      "columns": [
+        {
+          "name": "FRMTM_YR",
+          "label": "작기연도",
+          "key": "PK1",
+          "type": "VARCHAR2(4)",
+          "unit": "년",
+          "description": "작물의 작기시작일자의 연도",
+          "note": "—"
+        },
+        {
+          "name": "FCLT_ID",
+          "label": "시설ID",
+          "key": "PK2",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "농가의 시설에 부여되는 아이디",
+          "note": "—"
+        },
+        {
+          "name": "MSRM_DT",
+          "label": "측정일시",
+          "key": "PK3",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "환경정보의 수집시 측정된 년월일시분초 개념의 일시",
+          "note": "—"
+        },
+        {
+          "name": "INR_CO2_QTY_MRCNT",
+          "label": "내부CO2량측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "ppm",
+          "description": "온실내부 이산화탄소 측정값",
+          "note": "—"
+        },
+        {
+          "name": "DWPNT_TMPRT_MRCNT",
+          "label": "이슬점온도측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "도",
+          "description": "이슬 (결로)이 형성되는 온도",
+          "note": "—"
+        },
+        {
+          "name": "INR_HMDT_MRCNT",
+          "label": "내부습도측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "％",
+          "description": "온실내부 공기 중에 포함된 수증기의 양 또는 비율",
+          "note": "—"
+        },
+        {
+          "name": "ERTH_HMDT_MRCNT",
+          "label": "대지습도측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "％",
+          "description": "대지의 공기 중에 포함된 수증기의 양 또는 비율",
+          "note": "—"
+        },
+        {
+          "name": "RNFAL_MRCNT",
+          "label": "강우량측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "mm",
+          "description": "강우량 측정값",
+          "note": "—"
+        },
+        {
+          "name": "SLRDQTY_MRCNT",
+          "label": "일사량측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "W/m-2·s",
+          "description": "태양으로부터 오는 태양 복사 에너지(일사(日射))가 지표에 닿는 양",
+          "note": "—"
+        },
+        {
+          "name": "EXTRNL_TMPRT_MRCNT",
+          "label": "외부온도측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "도",
+          "description": "온실외부 측정된 온도 값",
+          "note": "—"
+        },
+        {
+          "name": "INR_TMPRT_MRCNT",
+          "label": "내부온도측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "도",
+          "description": "온실내부 측정된 온도 값",
+          "note": "—"
+        },
+        {
+          "name": "ERTH_TMPRT_MRCNT",
+          "label": "대지온도측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "도",
+          "description": "대지의 측정된 온도 값",
+          "note": "—"
+        },
+        {
+          "name": "EXTRNL_WNDDRT_MRCNT",
+          "label": "외부풍향측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "도",
+          "description": "온실외부의 풍향 측정 값",
+          "note": "—"
+        },
+        {
+          "name": "EXTRNL_WNDSPD_MRCNT",
+          "label": "외부풍속측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "m/s",
+          "description": "온실외부의 풍속 측정 값",
+          "note": "—"
+        },
+        {
+          "name": "STR_DT",
+          "label": "적재일시",
+          "key": "—",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "데이터 적재일시",
+          "note": "—"
+        },
+        {
+          "name": "STR_USERID",
+          "label": "적재사용자ID",
+          "key": "—",
+          "type": "VARCHAR(20)",
+          "unit": "N/A",
+          "description": "데이터 적재사용자 ID",
+          "note": "—"
+        }
+      ]
+    },
+    "DZ_002": {
+      "label": "스마트팜 우수농가 정보(시설)",
+      "filename": "M_DZ_SFARMFACILITY",
+      "required": true,
+      "columns": [
+        {
+          "name": "FRMTM_SNO",
+          "label": "작기일련번호",
+          "key": "PK1",
+          "type": "NUMBER(13)",
+          "unit": "N/A",
+          "description": "작기정보 등록시 부여되는 고유일련번호",
+          "note": "—"
+        },
+        {
+          "name": "FRMTM_YR",
+          "label": "작기연도",
+          "key": "—",
+          "type": "VARCHAR2(4)",
+          "unit": "년",
+          "description": "작물의 작기시작일자의 연도",
+          "note": "—"
+        },
+        {
+          "name": "FCLT_ID",
+          "label": "시설ID",
+          "key": "—",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "농가의 시설에 부여되는 아이디",
+          "note": "—"
+        },
+        {
+          "name": "ITEM_NM",
+          "label": "품목명",
+          "key": "—",
+          "type": "VARCHAR2(200)",
+          "unit": "N/A",
+          "description": "재배하는 품목의 명칭",
+          "note": "—"
+        },
+        {
+          "name": "AREA_NM",
+          "label": "지역명",
+          "key": "—",
+          "type": "VARCHAR2(200)",
+          "unit": "N/A",
+          "description": "시설이 위치하고 있는 지역의 명칭",
+          "note": "—"
+        },
+        {
+          "name": "SACT_INTLCK_SPR_NM",
+          "label": "단동연동구분명",
+          "key": "—",
+          "type": "VARCHAR2(200)",
+          "unit": "N/A",
+          "description": "재배시설의 온실의 유형명",
+          "note": "—"
+        },
+        {
+          "name": "HTHS_SCL_CN",
+          "label": "온실규모내용",
+          "key": "—",
+          "type": "VARCHAR2(4000)",
+          "unit": "N/A",
+          "description": "온실의 규모에 대한 상세내용",
+          "note": "—"
+        },
+        {
+          "name": "FRMTM_BGNG_YMD",
+          "label": "작기시작일자",
+          "key": "—",
+          "type": "VARCHAR2(8)",
+          "unit": "일",
+          "description": "작물의 작기시작일자",
+          "note": "—"
+        },
+        {
+          "name": "FRMTM_END_YMD",
+          "label": "작기종료일자",
+          "key": "—",
+          "type": "VARCHAR2(8)",
+          "unit": "일",
+          "description": "작물의 작기종료일자",
+          "note": "—"
+        },
+        {
+          "name": "HTHS_SFC",
+          "label": "온실면적",
+          "key": "—",
+          "type": "NUMBER(17,3)",
+          "unit": "㎡",
+          "description": "작물을 재배하는 온실의 면적",
+          "note": "—"
+        },
+        {
+          "name": "STR_DT",
+          "label": "적재일시",
+          "key": "—",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "데이터 적재일시",
+          "note": "—"
+        },
+        {
+          "name": "STR_USERID",
+          "label": "적재사용자ID",
+          "key": "—",
+          "type": "VARCHAR(20)",
+          "unit": "N/A",
+          "description": "데이터 적재사용자 ID",
+          "note": "—"
+        }
+      ]
+    },
+    "DZ_003": {
+      "label": "스마트팜 우수농가 정보(생육)",
+      "filename": "M_DZ_SFARMGROWTH",
+      "required": false,
+      "columns": [
+        {
+          "name": "FRMTM_YR",
+          "label": "작기연도",
+          "key": "PK1",
+          "type": "VARCHAR2(4)",
+          "unit": "년",
+          "description": "작물의 작기시작일자의 연도",
+          "note": "—"
+        },
+        {
+          "name": "FCLT_ID",
+          "label": "시설ID",
+          "key": "PK2",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "농가의 시설에 부여되는 아이디",
+          "note": "—"
+        },
+        {
+          "name": "EXMN_YMD",
+          "label": "조사일자",
+          "key": "PK3",
+          "type": "DATE(8)",
+          "unit": "일",
+          "description": "생육정보를 조사한 일자",
+          "note": "—"
+        },
+        {
+          "name": "SMPL_SNO",
+          "label": "표본일련번호",
+          "key": "PK4",
+          "type": "NUMBER(13)",
+          "unit": "N/A",
+          "description": "표본에 대해 부여된 번호",
+          "note": "—"
+        },
+        {
+          "name": "GRDV_NOFWK",
+          "label": "생육주수",
+          "key": "PK5",
+          "type": "NUMBER(10)",
+          "unit": "주",
+          "description": "작기일에 자동으로 계산되는 해당 생육주차",
+          "note": "—"
+        },
+        {
+          "name": "FLVS_MMUNT_MRCNT",
+          "label": "초장밀리미터단위측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "mm",
+          "description": "지표면에서 생장점까지 (곡선)길이",
+          "note": "—"
+        },
+        {
+          "name": "LFLN_CMUNT_MRCNT",
+          "label": "엽장센티미터단위측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "cm",
+          "description": "맨 위에 개화 화방에서 3번째 해당하는 잎 길이(착과된 바로 위의 엽)",
+          "note": "—"
+        },
+        {
+          "name": "LFWD_CMUNT_MRCNT",
+          "label": "엽폭센티미터단위측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "cm",
+          "description": "맨 위에 개화 화방에서 3번째 해당하는 잎의 너비",
+          "note": "—"
+        },
+        {
+          "name": "ILFLN_CMUNT_MRCNT",
+          "label": "엽병장센티미터단위측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "cm",
+          "description": "관부에서 초장을 측정하는 잎의 하단까지의 길이(초장-엽장)",
+          "note": "—"
+        },
+        {
+          "name": "LF_MRCNT",
+          "label": "엽측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "개",
+          "description": "한 개체의 잎의 수(완전히 전개된 잎만 측정)",
+          "note": "—"
+        },
+        {
+          "name": "DMTR_MMUNT_MRCNT",
+          "label": "관부직경밀리미터단위측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "mm",
+          "description": "원줄기 관부에서 가장 굵은 부분의 길이",
+          "note": "—"
+        },
+        {
+          "name": "SFLWR_MRCNT",
+          "label": "소화측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "개",
+          "description": "화방에 달린 꽃의 수",
+          "note": "—"
+        },
+        {
+          "name": "FSTNG_MRCNT",
+          "label": "착과측정결과수",
+          "key": "—",
+          "type": "NUMBER(10,2)",
+          "unit": "개",
+          "description": "화방에 달린 열매의 수(꽃잎이 떨어진 개수)",
+          "note": "—"
+        },
+        {
+          "name": "LAST_FGRP_SNO",
+          "label": "최종화방일련번호",
+          "key": "—",
+          "type": "NUMBER(13)",
+          "unit": "번",
+          "description": "현재 개화 되어 있는 화방의 차수 기입",
+          "note": "—"
+        },
+        {
+          "name": "STR_DT",
+          "label": "적재일시",
+          "key": "—",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "데이터 적재일시",
+          "note": "—"
+        },
+        {
+          "name": "STR_USERID",
+          "label": "적재사용자ID",
+          "key": "—",
+          "type": "VARCHAR(20)",
+          "unit": "N/A",
+          "description": "데이터 적재사용자 ID",
+          "note": "—"
+        }
+      ]
+    },
+    "DZ_004": {
+      "label": "스마트팜 우수농가 정보(경영조사)",
+      "filename": "M_DZ_SFARMMANAGEMENT",
+      "required": true,
+      "columns": [
+        {
+          "name": "EXMN_SNO",
+          "label": "조사일련번호",
+          "key": "PK1",
+          "type": "NUMBER(13)",
+          "unit": "N/A",
+          "description": "경영정보 등록시 부여되는 고유일련번호",
+          "note": "—"
+        },
+        {
+          "name": "EXMN_YMD",
+          "label": "조사일자",
+          "key": "—",
+          "type": "VARCHAR2(8)",
+          "unit": "일",
+          "description": "조사한 일자",
+          "note": "—"
+        },
+        {
+          "name": "FCLT_ID",
+          "label": "시설ID",
+          "key": "—",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "농가의 시설에 부여되는 아이디",
+          "note": "—"
+        },
+        {
+          "name": "ALL_SHPMNT_KGUNT_QTY",
+          "label": "총출하킬로그램단위량",
+          "key": "—",
+          "type": "NUMBER(20)",
+          "unit": "kg",
+          "description": "재배한 품목의 출하된 무게",
+          "note": "—"
+        },
+        {
+          "name": "ALL_INCM_AMT",
+          "label": "총수입금액",
+          "key": "—",
+          "type": "NUMBER(17,2)",
+          "unit": "원",
+          "description": "출하량에 대한 수입금액",
+          "note": "—"
+        },
+        {
+          "name": "STR_DT",
+          "label": "적재일시",
+          "key": "—",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "데이터 적재일시",
+          "note": "—"
+        },
+        {
+          "name": "STR_USERID",
+          "label": "적재사용자ID",
+          "key": "—",
+          "type": "VARCHAR(20)",
+          "unit": "N/A",
+          "description": "데이터 적재사용자 ID",
+          "note": "—"
+        }
+      ]
+    },
+    "DZ_005": {
+      "label": "스마트팜 우수농가 정보(기상)",
+      "filename": "M_DZ_WEATHER",
+      "required": false,
+      "columns": [
+        {
+          "name": "FCLT_ID",
+          "label": "시설ID",
+          "key": "PK1",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "시설 ID를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "OBSV_PNT_CDCN",
+          "label": "관측지점코드내용",
+          "key": "PK2",
+          "type": "VARCHAR2(100)",
+          "unit": "N/A",
+          "description": "관측지점 코드를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "OBSV_YMD",
+          "label": "관측일자",
+          "key": "PK3",
+          "type": "VARCHAR2(8)",
+          "unit": "일",
+          "description": "관측일자를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "OBSV_PNT_NM",
+          "label": "관측지점명",
+          "key": "—",
+          "type": "VARCHAR2(200)",
+          "unit": "명칭",
+          "description": "관측지점 명칭을 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "TOP_TMPRT_MSRVL",
+          "label": "최고온도측정값",
+          "key": "—",
+          "type": "NUMBER(12)",
+          "unit": "도",
+          "description": "최고온도 측정 값",
+          "note": "—"
+        },
+        {
+          "name": "LOWST_TMPRT_MSRVL",
+          "label": "최저온도측정값",
+          "key": "—",
+          "type": "NUMBER(12)",
+          "unit": "도",
+          "description": "최저온도 측정 값",
+          "note": "—"
+        },
+        {
+          "name": "MAX_WNDSPD_MSRVL",
+          "label": "최대풍속측정값",
+          "key": "—",
+          "type": "NUMBER(12)",
+          "unit": "m/s",
+          "description": "최대풍속 측정 값",
+          "note": "—"
+        },
+        {
+          "name": "DD_AVG_DWPTMP_MSRVL",
+          "label": "일평균이슬점온도측정값",
+          "key": "—",
+          "type": "NUMBER(12)",
+          "unit": "도",
+          "description": "일평균이슬점온도 측정 값",
+          "note": "—"
+        },
+        {
+          "name": "STR_DT",
+          "label": "적재일시",
+          "key": "—",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "데이터 적재일시",
+          "note": "—"
+        },
+        {
+          "name": "STR_USERID",
+          "label": "적재사용자ID",
+          "key": "—",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "데이터 적재사용자 ID",
+          "note": "—"
+        }
+      ]
+    },
+    "DZ_006": {
+      "label": "스마트팜 우수농가 정보(기상특보)",
+      "filename": "M_DZ_WEATHERNEWSBREAK",
+      "required": false,
+      "columns": [
+        {
+          "name": "FCLT_ID",
+          "label": "시설ID",
+          "key": "PK1",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "시설 ID를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "OBSV_PNT_CDCN",
+          "label": "관측지점코드내용",
+          "key": "PK2",
+          "type": "VARCHAR2(100)",
+          "unit": "N/A",
+          "description": "관측지점 코드를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "PRSTN_DT",
+          "label": "발표일시",
+          "key": "PK3",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "발표일시를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "OBSV_PNT_NM",
+          "label": "관측지점명",
+          "key": "—",
+          "type": "VARCHAR2(200)",
+          "unit": "N/A",
+          "description": "관측지점 명칭을 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "PRSTN_CN",
+          "label": "발표내용",
+          "key": "—",
+          "type": "VARCHAR2(4000)",
+          "unit": "N/A",
+          "description": "기상특보 발표내용",
+          "note": "—"
+        },
+        {
+          "name": "NOTE_CN",
+          "label": "비고내용",
+          "key": "—",
+          "type": "VARCHAR2(4000)",
+          "unit": "N/A",
+          "description": "기상특보 비고내용",
+          "note": "—"
+        },
+        {
+          "name": "STR_DT",
+          "label": "적재일시",
+          "key": "—",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "데이터 적재일시",
+          "note": "—"
+        },
+        {
+          "name": "STR_USERID",
+          "label": "적재사용자ID",
+          "key": "—",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "데이터 적재사용자 ID",
+          "note": "—"
+        }
+      ]
+    },
+    "DZ_007": {
+      "label": "스마트팜 우수농가 정보(태풍)",
+      "filename": "M_DZ_TYPHOON",
+      "required": false,
+      "columns": [
+        {
+          "name": "FCLT_ID",
+          "label": "시설ID",
+          "key": "PK1",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "시설 ID를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "OBSV_PNT_CDCN",
+          "label": "관측지점코드내용",
+          "key": "PK2",
+          "type": "VARCHAR2(100)",
+          "unit": "N/A",
+          "description": "관측지점 코드를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "TPHN_ENG_NM",
+          "label": "태풍영문명",
+          "key": "PK3",
+          "type": "VARCHAR2(200)",
+          "unit": "N/A",
+          "description": "태풍 영문명을 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "OBSV_DT",
+          "label": "관측일시",
+          "key": "PK4",
+          "type": "DATE",
+          "unit": "일",
+          "description": "관측일시를 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "OBSV_PNT_NM",
+          "label": "관측지점명",
+          "key": "—",
+          "type": "VARCHAR2(200)",
+          "unit": "N/A",
+          "description": "관측지점 명칭을 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "TPHN_NM",
+          "label": "태풍명",
+          "key": "—",
+          "type": "VARCHAR2(200)",
+          "unit": "N/A",
+          "description": "태풍 명칭을 구분하는 값",
+          "note": "—"
+        },
+        {
+          "name": "TPHN_EXPCT_CN",
+          "label": "태풍예상내용",
+          "key": "—",
+          "type": "VARCHAR2(4000)",
+          "unit": "N/A",
+          "description": "태풍 예상내용을 나타내는 값",
+          "note": "—"
+        },
+        {
+          "name": "MAX_WNDSPD_MSRVL",
+          "label": "최대풍속측정값",
+          "key": "—",
+          "type": "NUMBER(12)",
+          "unit": "m/s",
+          "description": "최대풍속 측정값",
+          "note": "—"
+        },
+        {
+          "name": "STR_DT",
+          "label": "적재일시",
+          "key": "—",
+          "type": "DATE",
+          "unit": "일시",
+          "description": "데이터 적재일시",
+          "note": "—"
+        },
+        {
+          "name": "STR_USERID",
+          "label": "적재사용자ID",
+          "key": "—",
+          "type": "VARCHAR2(20)",
+          "unit": "N/A",
+          "description": "데이터 적재사용자 ID",
+          "note": "—"
+        }
+      ]
+    }
+  },
+  "excluded_datasets": {
+    "DZ_008": "No facility ID or observation date defined; no direct farm join.",
+    "DZ_009": "No facility ID defined; nursery orders are separate.",
+    "DZ_010": "Livestock auction transactions are outside the crop adoption service.",
+    "DZ_011": "Livestock auction transactions are outside the crop adoption service."
+  }
+}

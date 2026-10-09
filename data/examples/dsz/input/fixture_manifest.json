@@ -1,0 +1,8 @@
+{
+  "data_kind": "synthetic_schema_fixture",
+  "seed": 142,
+  "facility_count": 40,
+  "cycle_count": 80,
+  "purpose": "Execution and schema-contract demonstration only. No real farm measurements or predictive accuracy.",
+  "generator": "data/examples/dsz/generate_fixture.py"
+}

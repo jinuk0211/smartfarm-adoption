@@ -1,0 +1,24 @@
+Mode: built-in image_gen tool
+Intent: generate
+Asset use: GitHub project overview
+
+Use case: infographic-diagram
+Asset type: Finished 16:9 landscape editorial illustration for a Korean smart-farm data-science project's GitHub README. Make a beautiful large readable raster image with a generous ivory background, dark forest-green Korean typography, soft sage panels, restrained terracotta crop accents, and fine textured editorial illustrations. All Korean text must be perfectly legible and spelled exactly. No English text except model names explicitly listed below.
+Primary request: Explain what the project has actually built: public agricultural datasets collected and real model comparisons completed; a pre-adoption economic scenario calculator; an onsite-only private-data pipeline ready to accept real files. Actual private DSZ records have not been obtained locally.
+Composition: A confident prominent Korean headline and small subtitle at the top. Across the center, three visually connected illustrated stages with clean arrows. Stage 1 shows a charming glass greenhouse with strawberry, tomato, cucumber and paprika plants plus a tidy stack of data sheets. Stage 2 shows orderly model-comparison charts without tick values or metric numbers. Stage 3 shows a tasteful desktop decision-support dashboard with crop/greenhouse selections, simple generic chart shapes and a calculator. Every stage should have a prominent title and just one or two supporting short lines, with plenty of whitespace. In the bottom strip, a small illustrated secure research-room workstation communicates that restricted files stay onsite. Avoid dense raw technical flowcharts.
+Text verbatim:
+Headline: "스마트팜, 도입 전에 숫자로 판단하기"
+Subtitle: "공개자료 모델 비교 · 안심구역 현장 실행 준비"
+Stage 1 title: "자료 모으기"
+Stage 1 caption: "농가·생육·출하·가격"
+Stage 1 status: "공개자료 수집 완료"
+Stage 2 title: "모델 비교하기"
+Stage 2 caption: "기준모델 · CatBoost · XGBoost · LimiX"
+Stage 2 status: "실제 공개자료로 성능 비교"
+Stage 3 title: "출하량·매출 예측"
+Stage 3 caption: "도입 조건을 바꿔 시나리오 비교"
+Stage 3 status: "경제성 계산 도우미"
+Bottom strip main: "안심구역 데이터는 현장에서 실행"
+Bottom strip process: "실제 파일 입력 → 전처리 → 학습·평가 → 예측"
+Bottom note: "합성 예제는 실행 검증용 · 실제 정확도는 현장 평가"
+Constraints: Correct Korean typography, editorial clarity, attractive visual hierarchy, polished actual finished image, flat orthographic illustrations with subtle depth. No real personal data, provider logos, watermark, fictional accuracy percentages, invented financial figures, annual-profit guarantees, or claims of having acquired restricted raw data. No tiny text. Do not add other wording. Opaque ivory background, not transparent.
