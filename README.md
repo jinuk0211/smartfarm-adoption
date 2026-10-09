@@ -2,11 +2,13 @@
 
 **작물·지역·온실·면적·재배 시작 시점을 입력해 출하량과 매출을 추정하고, 설치비·운영비 가정에 따른 경제성을 비교하는 연구용 프로젝트입니다.**
 
-![대회 데이터 연결과 모델 입력·출력](assets/diagrams/dsz-data-flow.png)
+![스마트팜 도입 판단의 데이터와 예측 과정을 쉽게 설명한 그림](assets/diagrams/easy-service-flow.png)
 
-![실제로 사용한 데이터와 분석 흐름](assets/diagrams/actual-data-flow.png)
+![실제 사용한 데이터의 규모와 역할을 쉽게 설명한 그림](assets/diagrams/easy-data-sources.png)
 
 **[사용 데이터·컬럼·연결 키·모델 입력·출력을 상세 다이어그램으로 보기 → DATA_FLOW.md](DATA_FLOW.md)**
+
+원래의 기술 도식도 유지합니다: [시설·경영조사 연결과 모델](assets/diagrams/dsz-data-flow.png) · [실제 데이터 분석 전체 흐름](assets/diagrams/actual-data-flow.png). 쉬운 설명 그림은 이미지 생성 도구로 제작했으며, [생성 문안](assets/diagrams/easy-explanation.prompts.json)과 [문구 수정 내역](assets/diagrams/easy-explanation.edits.json)을 함께 보관합니다.
 
 작기별 예측은 연간 경제성 계산에 자동 연결하지 않습니다. 실제 미개방 원자료는 로컬에 없으며, 현장 실행 코드는 합성 40시설·80작기로 검증했습니다.
 
