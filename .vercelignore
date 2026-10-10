@@ -1,0 +1,11 @@
+.venv*
+vendor
+wheelhouse
+artifacts
+runs
+data/raw
+data/examples
+tests
+.env*
+.streamlit/secrets.toml
+dist

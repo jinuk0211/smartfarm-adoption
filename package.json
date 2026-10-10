@@ -1,0 +1,11 @@
+{
+  "name": "smartfarm-adoption-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build_web.mjs",
+    "test:web": "node --test web/economics.test.mjs"
+  },
+  "engines": { "node": "24.x" }
+}

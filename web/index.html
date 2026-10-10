@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#204e3d">
+  <meta name="description" content="딸기 스마트팜의 수확량, 비용, 설비 투자 조건을 바꾸며 도입 전 계획을 비교해보세요. 공개 조사자료를 바탕으로 한 스마트팜 도입 플래너입니다.">
+  <title>스마트팜 도입 플래너 — 우리 농장, 시작해도 괜찮을까?</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#planner">계산기로 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="스마트팜 도입 플래너 처음으로"><span class="brand-mark" aria-hidden="true">잎</span><span>스마트팜 <strong>도입 플래너</strong></span></a>
+    <nav aria-label="주요 메뉴"><a href="#planner">도입 전 계산</a><a href="#research">가격·생육 연구</a><a href="#sources">사용 데이터</a></nav>
+    <a class="header-download" href="/presentation/smartfarm_proposal.pptx" download>기획서 받기 <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span aria-hidden="true">●</span> 내 농장을 위한 첫 계산</p>
+        <h1 id="hero-title">우리 농장,<br>시작해도 괜찮을까?</h1>
+        <p class="hero-description">얼마나 수확하고, 얼마가 남을까요?<br>설비부터 한 해 소득까지, 조건을 바꾸며 비교해보세요.</p>
+        <a class="button primary" href="#planner">딸기 농장 계획해보기 <span aria-hidden="true">→</span></a>
+        <p class="hero-footnote">공개 조사자료를 바탕으로 한 계획 시뮬레이터</p>
+      </div>
+    </section>
+    <div class="journey-strip" aria-label="계산 순서"><span><b>01</b> 농장 조건 입력</span><span aria-hidden="true">→</span><span><b>02</b> 설비·비용 확인</span><span aria-hidden="true">→</span><span><b>03</b> 소득과 회수기간 비교</span></div>
+
+    <section class="section planner-section" id="planner" aria-labelledby="planner-title">
+      <div class="section-heading"><div><p class="eyebrow">도입 전 계산</p><h2 id="planner-title">내 농장의 숫자를 넣어보세요.</h2><p>딸기 수경재배 · 전국 조사자료 예시에서 시작합니다.</p></div><button type="button" class="button quiet" id="reset-example" disabled>딸기 예시로 되돌리기 <span aria-hidden="true">↻</span></button></div>
+      <div id="load-status" class="notice" role="status">공개 참고자료를 불러오고 있어요.</div>
+      <noscript><p class="notice">계산기를 사용하려면 브라우저에서 JavaScript를 켜주세요. <a href="/presentation/smartfarm_proposal.pptx">기획서는 바로 내려받을 수 있어요.</a></p></noscript>
+      <div class="planner-layout">
+        <form id="planning-form" class="planning-form">
+          <fieldset id="planning-inputs" disabled>
+            <legend class="sr-only">농장 계획 입력</legend>
+            <div class="input-section">
+              <div class="block-heading"><span class="step-number">1</span><h3>농장과 수확 조건</h3></div>
+              <div class="field-grid">
+                <label>온실 면적 <span class="input-wrap"><input id="area" name="area" type="number" min="1" max="10000000" step="1" value="1000" required><span>㎡</span></span></label>
+                <label>연간 작기 수 <span class="input-wrap"><input id="cycles" name="cycles" type="number" min="1" max="4" step="1" value="1" required><span>회</span></span></label>
+                <label>1작기 수확량 <span class="input-wrap"><input id="yield" name="yield" type="number" min="0" max="1000000" step="any" value="3344.5" required><span>kg</span></span><small>1,000㎡당 기준</small></label>
+                <label>농가 판매단가 <span class="input-wrap"><input id="price" name="price" type="number" min="0" max="10000000" step="any" value="10868" required><span>원/kg</span></span></label>
+              </div>
+              <p class="field-note">수확량은 2023–2024년 전국 딸기 수경 조사 2개 행의 중간값입니다. 개별 농장 예측값은 아닙니다.</p>
+            </div>
+
+            <details class="form-details" open>
+              <summary><span class="step-number">2</span><span>한 작기 운영비</span><span class="summary-hint">1,000㎡ 기준</span></summary>
+              <div class="details-body">
+                <div class="field-grid">
+                  <label class="span-two">운영비 합계 <span class="input-wrap"><input id="operating" name="operating" type="number" min="0" max="100000000000" step="any" value="20782965" required><span>원</span></span><small>감가상각비 포함 · 가족노동비 제외</small></label>
+                  <label>그중 감가상각비 <span class="input-wrap"><input id="depreciation" name="depreciation" type="number" min="0" max="100000000000" step="any" value="4789801" required><span>원</span></span></label>
+                  <label>가족노동비 <span class="input-wrap"><input id="labor" name="labor" type="number" min="0" max="100000000000" step="any" value="12098260" required><span>원</span></span></label>
+                </div>
+                <p class="field-note">가족이 일한 시간도 비용으로 보는 값입니다. 원자료는 연 1작기 기준입니다. 작기 수를 늘리면 수확량과 모든 비용도 같은 비율로 늘어난다고 가정합니다.</p>
+              </div>
+            </details>
+
+            <details class="form-details equipment-details">
+              <summary><span class="step-number">3</span><span>설비와 초기 투자비</span><span class="summary-hint" id="capex-summary">1억 1,253만원</span></summary>
+              <div class="details-body">
+                <div class="equipment-intro"><div><h4>필요한 설비만 담아보세요.</h4><p>등록된 묶음 가격과 옵션으로 계산합니다.</p></div><img src="/assets/illustrated/04-equipment.png" alt="스마트팜 센서와 제어기 설명용 일러스트" loading="lazy" width="160" height="120"></div>
+                <div id="equipment-list"></div>
+                <div class="field-grid capital-fields">
+                  <label>설치비 가정 <span class="input-wrap"><input id="installation" name="installation" type="number" min="0" max="1000000000000" step="any" value="5000000" required><span>원</span></span></label>
+                  <label>추가 부가세 가정 <span class="input-wrap"><input id="vat" name="vat" type="number" min="0" max="1000000000000" step="any" value="2957300" required><span>원</span></span></label>
+                  <label class="span-two">온실·토목 등 기타 초기비용 <span class="input-wrap"><input id="other-capex" name="other-capex" type="number" min="0" max="1000000000000" step="any" value="80000000" required><span>원</span></span></label>
+                </div>
+                <p class="field-note">업체 등록 표준가격(2026.10.10 확인)으로 실제 견적이 아닙니다. 부가세·설치비 포함 여부, 면적별 수량과 호환성은 확인이 필요합니다. 장비 선택으로 수확량이 자동 증가하지 않습니다.</p>
+              </div>
+            </details>
+
+            <details class="form-details">
+              <summary><span class="step-number">4</span><span>계산 기간과 할인율</span></summary>
+              <div class="details-body field-grid">
+                <label>계산 기간 <span class="input-wrap"><input id="horizon" name="horizon" type="number" min="1" max="50" step="1" value="10" required><span>년</span></span></label>
+                <label>연 할인율 <span class="input-wrap"><input id="discount" name="discount" type="number" min="0" max="100" step="any" value="4" required><span>%</span></span><small>미래 현금의 현재가치 계산</small></label>
+              </div>
+            </details>
+            <div class="form-action"><p id="input-status" role="status">공개 자료의 예시 조건이 적용됩니다.</p><button class="button primary calculate-button" type="submit">내 조건으로 계산하기 <span aria-hidden="true">→</span></button></div>
+          </fieldset>
+        </form>
+
+        <div class="results-panel" id="results" aria-labelledby="result-title" tabindex="-1">
+          <div class="result-topline"><span class="pill">기준 시나리오</span><span id="result-basis">딸기 · 1,000㎡ · 연 1작기</span></div>
+          <h3 id="result-title">한 해를 보내고,<br>얼마가 남을까요?</h3>
+          <div class="income-spotlight"><span>가족노동비까지 뺀 연간 소득</span><strong id="result-income">—</strong><p>매출 − 운영비 − 가족노동비</p></div>
+          <div class="result-metrics"><div><span>초기 투자비</span><strong id="result-capex">—</strong></div><div><span>투자금 회수</span><strong id="result-payback">—</strong><small>연말 현금흐름 기준</small></div></div>
+          <dl class="income-breakdown"><div><dt>예상 연간 수확량</dt><dd id="result-yield">—</dd></div><div><dt>매출</dt><dd id="result-revenue">—</dd></div><div><dt>운영비 <small>감가상각 포함</small></dt><dd id="result-operating">—</dd></div><div><dt>가족노동비</dt><dd id="result-labor">—</dd></div></dl>
+          <div class="cash-note"><strong>소득과 회수기간은 계산 기준이 달라요.</strong><p>투자금 회수에는 감가상각을 제외하고, 가족노동비를 차감하기 전 연간 현금 <b id="result-cash">—</b>을 사용합니다.</p></div>
+          <button id="download-result" class="button download-button" type="button" disabled>이 계획을 파일로 저장 <span aria-hidden="true">↓</span></button>
+          <p class="fine-print">세금·대출·보조금·설비 교체·잔존가치는 반영하지 않은 계획 예시입니다. 실제 농가 성과나 투자수익을 보장하지 않습니다.</p>
+        </div>
+      </div>
+
+      <section class="comparison-section" aria-labelledby="comparison-title">
+        <div class="section-heading compact"><div><p class="eyebrow">조건이 달라진다면</p><h3 id="comparison-title">좋은 해와 어려운 해를 함께 봅니다.</h3><p>수확량·가격·현금 운영비를 바꾼 세 가지 가정입니다.</p></div></div>
+        <div class="chart-heading"><h4>투자 이후 누적 현금흐름</h4><div class="legend"><span class="adverse">불리</span><span class="base">기준</span><span class="favorable">유리</span></div></div>
+        <div id="cashflow-chart" class="cashflow-chart" aria-live="polite"></div>
+        <p class="chart-note">0년에는 초기 투자비가 나가고, 이후 매년 같은 조건이 이어진다고 가정합니다. 선이 0원을 넘는 연말이 회수 시점입니다.</p>
+        <div class="table-scroll"><table class="scenario-table"><caption class="sr-only">세 가지 시나리오의 연간 소득, 현금, 현재가치 및 회수기간</caption><thead><tr><th scope="col">시나리오와 가정</th><th scope="col">연간 소득<small>가족노동비 차감 후</small></th><th scope="col">연간 현금<small>가족노동비 차감 전</small></th><th scope="col">순현재가치<small>NPV</small></th><th scope="col">투자금 회수</th></tr></thead><tbody id="scenario-rows"></tbody></table></div>
+        <div id="adverse-note" class="scenario-note"></div>
+        <details class="sensitivity-details"><summary>가정이 흔들리면 결과 범위는 얼마나 달라질까요? <span>민감도 살펴보기 +</span></summary><div class="sensitivity-body"><p>수확량 ±10%, 판매단가 ±20%, 현금 운영비 ±10%를 독립적인 삼각분포로 가정해 2,000번 계산합니다. 뽑힌 조건은 계산 기간 내내 유지됩니다.</p><button id="run-sensitivity" type="button" class="button quiet" disabled>가정 범위 계산하기</button><div id="sensitivity-result" role="status"></div><p class="fine-print">가정으로 만든 분포의 5·50·95백분위입니다. 통계적 신뢰구간이나 성공 확률이 아닙니다.</p></div></details>
+      </section>
+    </section>
+
+    <section class="research-section" id="research" aria-labelledby="research-title">
+      <div class="section"><div class="section-heading"><div><p class="eyebrow">숫자 뒤의 연구</p><h2 id="research-title">가격과 생육, 어디까지 확인했나요?</h2><p>완료된 실험의 결과를 그대로 보여드립니다.</p></div></div>
+      <div class="research-grid">
+        <article class="research-card"><div class="research-intro"><div><span class="pill peach">가격 연구</span><h3>가격은 크게 흔들려요.<br>기준값부터 비교했어요.</h3></div><img src="/assets/illustrated/06-weather-risk.png" alt="비와 햇살에서 딸기를 돌보는 농부 일러스트" width="180" height="150" loading="lazy"></div><p>KAMIS 월별 중도매인 가격을 2025년 자료로 검증했습니다. 이 실험에서는 단순 기준모델의 오차가 더 작았습니다.</p><div id="price-metrics" class="research-bars"></div><p class="chart-note">평균 절대오차(MAE) · 낮을수록 좋음 · 원/kg</p><details><summary>가격 실험의 데이터와 범위 보기</summary><div class="research-detail"><p id="price-study-scope"></p><p>2021–2023년 학습 → 2024년 모델 선택 → 2025년 검증. 중도매인 가격은 농가 판매단가와 달라 계산기에 자동 적용하지 않습니다.</p><p>2026년 예측은 2025년 말 자료로 만든 과거 시점의 예측입니다. 현재 시점 예보가 아닙니다.</p><div class="table-scroll"><table class="mini-table"><caption>설향 상품 · 참고 월별 가격(원/kg)</caption><thead><tr><th>월</th><th>2025 관측</th><th>2026 과거시점 예측</th></tr></thead><tbody id="price-months"></tbody></table></div><p>표에 없는 달은 채우지 않았습니다. 월별 판매량을 같게 보는 참고 비교이며 연간 수익 예측이 아닙니다.</p></div></details></article>
+        <article class="research-card"><div class="research-intro"><div><span class="pill">생육 연구</span><h3>일주일 뒤 초장,<br>작은 실험부터 확인했어요.</h3></div><img src="/assets/illustrated/07-growth-sensor.png" alt="딸기의 키와 센서를 살펴보는 농부 일러스트" width="180" height="150" loading="lazy"></div><p>21개 시설의 40개 관측 쌍을 시설별로 나눠 검증했습니다. 생육만 쓴 모델이 가장 좋았고, 환경값 추가로 개선되지는 않았습니다.</p><div id="growth-metrics" class="research-bars"></div><p class="chart-note">평균 절대오차(MAE) · 낮을수록 좋음 · mm</p><details><summary>생육 실험의 데이터와 범위 보기</summary><div class="research-detail"><p>예측 대상은 7일 뒤 방문에서 관측한 표본들의 평균 초장입니다. 같은 개체의 성장량이나 수확량 예측과는 다릅니다.</p><p>생육 9개 + 과거 7·28일 온도·습도·CO₂ 요약 24개를 비교했습니다. 시설을 분리한 5개 묶음 교차검증이며, 별도 미래 연도 검증은 필요합니다.</p><p>관측값을 이용하는 운영 중 보조 실험입니다. 도입 전 계산에는 생육·환경 관측값을 넣지 않습니다.</p></div></details></article>
+      </div></div>
+    </section>
+
+    <section class="section sources-section" id="sources" aria-labelledby="sources-title">
+      <div class="section-heading"><div><p class="eyebrow">어떤 자료를 썼나요</p><h2 id="sources-title">자료의 역할을 나눠서 계산합니다.</h2></div><a class="button quiet" href="/presentation/smartfarm_proposal.pptx" download>전체 기획서 내려받기 <span aria-hidden="true">↓</span></a></div>
+      <div class="source-list"><article><span>01</span><div><h3>농촌진흥청 농산물소득조사</h3><p>공개된 조사 집계값으로 수확량·농가 단가·운영비·가족노동비의 참고 조건을 만듭니다. 기본 예시의 가격·비용은 2024년 전국 딸기 수경재배 자료입니다.</p></div><a href="https://www.nongsaro.go.kr" target="_blank" rel="noopener noreferrer">농사로 ↗</a></article><article><span>02</span><div><h3>스마트팜코리아 기자재</h3><p>환경제어·양액 공급 장비 3종의 업체 등록 묶음 가격과 옵션을 초기 투자비에 사용합니다. 실제 계약 견적과 생산성 효과는 별도 확인 대상입니다.</p></div><a href="https://www.smartfarmkorea.net/company/equipmentInfo.do" target="_blank" rel="noopener noreferrer">기자재 목록 ↗</a></article><article><span>03</span><div><h3>KAMIS · 스마트팜 공개 생육·환경 자료</h3><p>가격 연구와 7일 뒤 초장 연구의 검증 결과를 제공합니다. 이 화면에서 모델을 재학습하거나 실시간 가격을 조회하지 않습니다.</p></div><a href="https://www.kamis.or.kr" target="_blank" rel="noopener noreferrer">KAMIS ↗</a></article><article><span>04</span><div><h3>대회 미개방 데이터 · 현장 검증 예정</h3><p>시설·환경·생육·기상·경영조사 명세서를 바탕으로 결합 절차를 준비했습니다. 대회 미개방 원자료의 실제 성능 검증은 안심구역에서 진행해야 합니다.</p></div><a href="https://dsz.kdata.or.kr" target="_blank" rel="noopener noreferrer">데이터안심구역 ↗</a></article></div>
+      <div class="method-note"><h3>계산을 읽는 작은 약속</h3><p>수확량과 운영비·감가상각·가족노동비는 면적과 작기 수에 비례한다고 가정합니다. 연 1작기 조사값을 단순 확대하는 가정이며, 실제 시설 규모의 경제, 장비 효과, 지역 차이를 학습한 모델은 아닙니다. 입력 조건과 공개 집계자료를 활용해 비교하는 계획 도구입니다.</p><p>입력한 값은 이 브라우저에서만 계산됩니다. 별도 데이터베이스에 저장하거나 서버로 전송하지 않습니다. 새로고침 전 필요한 계획은 파일로 저장해주세요.</p></div>
+    </section>
+  </main>
+  <footer class="site-footer"><a class="brand" href="#top">스마트팜 도입 플래너</a><p>작은 가정부터, 더 단단한 농장 계획으로.</p><a href="https://github.com/jinuk0211/smartfarm-adoption" target="_blank" rel="noopener noreferrer">프로젝트와 분석 기록 ↗</a></footer>
+</body>
+</html>

@@ -1,4 +1,7 @@
 .venv/
+node_modules/
+dist/
+.vercel/
 .venv-dsz/
 .venv-limix/
 __pycache__/
