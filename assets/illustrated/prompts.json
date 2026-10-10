@@ -1,0 +1,77 @@
+{
+  "created_at": "2026-10-10",
+  "tool": "image_gen.imagegen",
+  "model_version": "The built-in tool does not expose a model version; no specific GPT Image version is claimed.",
+  "purpose": "Concept illustrations, not photographs or technical product renderings. Quantitative content is added as native editable PowerPoint objects.",
+  "assets": [
+    {
+      "file": "01-cover.png",
+      "slide": 1,
+      "transparent_background": false,
+      "prompt": "Create one high-resolution 16:9 landscape cover illustration for a beautifully designed cute Korean smart-farm proposal. New art direction: premium Korean stationery meets soft matte clay miniature, gently rounded forms, clean sculpted botanical details, warm ivory #FFF9EF, pastel mint, deep leaf green, muted coral strawberry red, soft peach shadows. Charming but elegant, not a children's worksheet and not shiny plastic. RIGHT HALF: a little transparent glass greenhouse with raised strawberry beds, red fruit and neat green leaves, tiny clean irrigation tubes, one little cute anthropomorphic strawberry mascot with a simple friendly face, cream straw hat and small work apron holding a completely blank cream notebook; rounded short arms, tasteful subtle expression. A small crate of strawberries and gardening boots nearby. Cozy early morning soft light, natural dimensional shadows. LEFT 48%: almost empty warm ivory negative space reserved for large Korean typography to be added later. Image objects do not enter far-left title space. Wide spacious composition, high quality tactile 3D editorial art. Absolutely NO TEXT, NO LETTERS, NO NUMBERS, NO LOGOS, NO CHARTS, NO UI, NO fake data. This is an imagined explanatory illustration, not a photograph of a real farm."
+    },
+    {
+      "file": "05-harvest-income.png",
+      "slide": 6,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Create a NEW transparent illustration using the attached cover ONLY as a style and character reference. Same premium cozy matte clay miniature style, warm ivory/forest green/pastel mint/muted coral colors, same friendly rounded strawberry farmer mascot in cream straw hat and work apron. Scene for explaining income after costs: the mascot at a tiny cream farm table, a beautiful wooden crate of ripe strawberries on one side, an elegant small balance scale and a completely blank cream open notebook on the other, just a FEW plain unmarked gold coin discs in a small bowl. The expression is thoughtful and friendly, not wealthy or triumphant. Clear visual separation between harvest and careful bookkeeping. A couple green strawberry leaves, soft dimensional detail and subtle shadows, coherent tactile materials. Single isolated vignette on TRUE TRANSPARENT BACKGROUND, landscape 4:3, tightly but comfortably framed with generous margin around every object, no background landscape. Absolutely NO text, no letters, no numbers, no logos, no currency symbols, no charts, no model of actual financial results. All quantitative content will be editable slide text added later. Keep character and art style of reference; do not reproduce the cover composition."
+    },
+    {
+      "file": "09-payback-time.png",
+      "slide": 7,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Create a NEW isolated transparent editorial illustration, using attached image ONLY for style and the same friendly rounded strawberry farmer mascot in straw hat and cream apron. Premium Korean stationery + soft matte clay miniature, warm ivory, forest green, mint, muted coral; precise beautiful soft light, not shiny plastic. Scene explains patiently waiting for an investment to return: the mascot beside a small tasteful ivory piggy bank, a large blank flip calendar with completely empty paper sheets, a tiny hourglass with pale sand, and a single young strawberry plant in a mint pot. Quiet hopeful, thoughtful expression, visually balanced, generous breathing room. One cohesive arrangement, landscape 4:3, TRUE TRANSPARENT BACKGROUND with soft contact shadows. NO text, letters, numbers, logos, dates, currency symbols, bar charts or invented data. Do not draw any '6 years' label; all actual values added as native editable slide text. Do not copy the reference scene, only its consistent mascot/art direction."
+    },
+    {
+      "file": "10-data-quality.png",
+      "slide": 11,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Create a NEW premium cute explanatory illustration using the attached cover ONLY as style/character reference. Same friendly plump strawberry farmer in straw hat and cream apron, tactile soft matte clay miniature, warm ivory, leaf green, mint and muted coral palette. Scene about carefully checking data quality: the mascot wearing small round spectacles is peering through a simple magnifying glass at a blank cream paper sheet, with three tidy blank file folders and a small balance scale on a wooden desk. One unusually BIG plain strawberry sits beside two small normal strawberries, gently illustrating an outlier without any numerical claim. Thoughtful curious expression, meticulous handmade textures, clean readable silhouette and soft studio light. All papers and folders completely BLANK. NO text, letters, numbers, logos, charts, equation, data tables, warning symbols, or interface. TRUE TRANSPARENT BACKGROUND, one isolated landscape 4:3 vignette, generous margin, grounded delicate contact shadows. Keep the same cover mascot and art style, but a wholly different scene. It will accompany real model-quality discussion with editable words outside the image."
+    },
+    {
+      "file": "02-farm-plan.png",
+      "slide": 2,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Use case: stylized-concept. Create a new PowerPoint illustration cutout. Reference image is STYLE AND MASCOT reference only, not edit target. Match its friendly coral strawberry mascot with small black eyes, straw sunhat, cream apron, sage green boots and premium handmade matte clay / Korean stationery aesthetic. Scene: mascot planning a miniature strawberry greenhouse plot on a warm ivory study table, holding a completely blank map sheet; a coiled measuring tape with NO marks, a small greenhouse miniature and tiny plant beside it. One coherent compact scene, 4:3 landscape framing, large centered subject, generous but modest padding. Soft warm studio light, pastel mint, forest green, coral, cream. Genuine transparent background, isolated miniature including only soft ground shadow. No words, letters, numbers, logos, labels, marks, fake data, charts, or large empty half canvas. Refined tactile detail, not glossy emoji."
+    },
+    {
+      "file": "03-data-sources.png",
+      "slide": 4,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Use case: stylized-concept. New isolated illustration for a Korean smart farm proposal slide. Input image is STYLE REFERENCE only. Match premium handmade matte clay / warm Korean stationery aesthetic, forest green, pastel sage mint, cream, tiny coral strawberry accents. One unified tidy miniature research study table holding a small greenhouse model with strawberry plants, one potted sample strawberry plant, a miniature weather station with anemometer and rain collector, a simple cream calculator with blank keys and completely blank screen, and three plain closed folders. A small friendly strawberry mascot wearing straw hat and cream apron stands beside the table examining the objects. This represents different data sources through real objects, not a diagram. Compact centered coherent scene, square or 4:3 composition, all objects legible with modest padding, soft natural studio shadows. Genuine transparent background, only a soft ground shadow. No text, letters, digits, logos, arrows, data charts, lines that pretend to be data, or writing on objects. Tactile refined matte surfaces, avoid glossy emojis."
+    },
+    {
+      "file": "04-equipment.png",
+      "slide": 5,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Use case: stylized-concept. New isolated miniature illustration for a Korean smart farm equipment slide. Use reference image ONLY for its premium handmade matte clay warm Korean stationery style, soft sage mint / cream / forest green / coral palette. Scene: generic smart greenhouse equipment displayed clearly together on a small warm ivory platform. A cream and sage controller cabinet with a large completely BLANK display, a little suspended temperature/humidity sensor with vent slots, a compact irrigation nutrient tank with short tidy pipes, and a miniature glass greenhouse strawberry bed. Friendly coral strawberry mascot in strawhat cream apron and sage boots stands beside controller holding a blank clipboard. Make the equipment the main subject, tangible and plausible generic forms, not detailed engineering schematic. Large centered compact 4:3 composition, no huge empty area. Genuine transparent background, soft studio light and only gentle ground shadow. No writing, numbers, brands, logos, labels, graphs, letters, or fake UI. Premium tactile matte detail, not shiny plastic emoji."
+    },
+    {
+      "file": "06-weather-risk.png",
+      "slide": 9,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Use case: stylized-concept. New transparent miniature illustration for a smart farm proposal's weather and price risk slide. Reference image is ONLY mascot and style reference. Same friendly coral strawberry farmer in straw hat, cream apron, sage boots, premium soft matte clay Korean stationery aesthetic. Scene: farmer gently shielding a small bed of strawberry plants with a sage umbrella. Beside and above the bed is one small rain cloud with a few stylized droplets and a small warm sun on the opposite side. A plain completely BLANK kraft paper price tag rests near a strawberry basket to hint price uncertainty. The tone is thoughtful and hopeful, not alarmist. Compact single coherent centered vignette, 4:3, generous modest padding, charming but refined tactile detail. Transparent background with soft ground shadow only, warm soft lighting, cream, forest green, sage, coral. No text, numbers, letters, currency marks, logos, charts, forecasts, warning icons, or data labels. Do not copy cover composition or include full countryside background."
+    },
+    {
+      "file": "07-growth-sensor.png",
+      "slide": 12,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Use case: stylized-concept. New cutout illustration for a Korean smart farm growth observation slide. Use reference image only for consistent tactile matte clay style and friendly coral strawberry farmer mascot, straw sunhat, cream apron, sage green boots. Scene: mascot gently observing and measuring the height of a young strawberry plant in a cream pot, a simple upright blank wooden measuring stick beside the plant, a small generic environmental sensor with vents and blank display beside it, and an open completely blank paper notebook on the little warm wooden bench. Scientifically gentle observation, focus on plant leaves and measurement tools, do not exaggerate size or represent a growth prediction. One coherent centered compact scene, 4:3, sufficient padding around all objects. Premium Korean stationery aesthetic, softly rounded matte clay detail, warm soft studio lighting, cream/mint/forest green/coral colors. Truly transparent background and subtle ground shadow only. Absolutely no text, digits, symbols, ruler tick marks, logos, labels, chart curves, or fake data. No extra landscape background."
+    },
+    {
+      "file": "08-onsite-analysis.png",
+      "slide": 14,
+      "transparent_background": true,
+      "style_reference": "01-cover.png",
+      "prompt": "Use case: stylized-concept. New transparent cutout illustration for a Korean smart farm research proposal slide about onsite secure data analysis. Reference image is STYLE AND MASCOT reference only. Premium handmade matte clay, warm Korean stationery aesthetic, forest green, pastel sage, cream, coral strawberry, soft tactile details. One compact inviting miniature research desk scene: friendly coral strawberry researcher mascot wearing a straw hat and cream apron seated at a cream desktop computer with a completely blank sage screen; another smaller strawberry research assistant mascot beside the desk holding a plain blank folder. A small closed padlock rests visibly on the table beside two plain closed folders, conveying protected analysis within a center. No institution logo or official signs. A small potted strawberry plant softens the scene. Centered square or 4:3 composition with modest padding and all objects fully visible. Genuinely transparent background, only soft ground shadow, warm gentle studio lighting, no surrounding room. Absolutely NO text, letters, numbers, computer code, logos, fake charts, network arrows, labels, or writing. Not glossy emoji."
+    }
+  ]
+}
