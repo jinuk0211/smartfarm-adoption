@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import base64
 from pathlib import Path
 
 import pandas as pd
@@ -13,20 +14,11 @@ import altair as alt
 from src.equipment_costs import estimate_equipment_cost, load_catalog
 from src.risk_simulation import simulate_plan
 from src.scenario_assumptions import relative_market_price
+from src.dashboard_ui import apply_style, section, stat, takeaway
 
 
 def apply_dashboard_style() -> None:
-    st.markdown("""<style>
-    .stApp {background:#f7f9f5; color:#172e26;}
-    .block-container {max-width:1360px; padding-top:2rem;}
-    h1,h2,h3 {color:#164c39;}
-    [data-testid="stMetric"] {background:white; border-top:3px solid #31936a;
-        padding:14px 18px; border-radius:4px;}
-    [data-testid="stMetricLabel"] {color:#53645b;}
-    button[kind="primary"] {background:#146b4b; border-color:#146b4b;}
-    [data-baseweb="tab-list"] {gap:20px; margin-bottom:18px;}
-    [data-baseweb="tab"] {font-size:16px;}
-    </style>""", unsafe_allow_html=True)
+    apply_style()
 
 
 def load_example_inputs() -> None:
@@ -42,6 +34,7 @@ def load_example_inputs() -> None:
         "yield_change": 10.0, "price_change": 20.0, "cost_change": 10.0,
         "has_replacement": False, "example_loaded": True,
         "use_market_transfer": False, "use_weather_scenario": False,
+        "main_tabs": "도입 전 계산",
     })
     for key in ["calculation_result", "calculation_payload"]:
         st.session_state.pop(key, None)
@@ -91,32 +84,42 @@ def render_equipment_selector(project: Path) -> tuple[float | None, dict | None]
 
 
 def render_overview(project: Path) -> None:
-    st.subheader("도입을 결정하기 전에 비교할 것")
-    st.write("재배 조건으로 생산 기준을 정하고, 장비 구성과 비용을 더해 투자금 회수에 필요한 조건을 확인합니다.")
-    columns = st.columns(4)
-    for column, number, title, detail in zip(columns, ["01", "02", "03", "04"],
-        ["재배 계획", "설비 선택", "조건 비교", "근거 확인"],
-        ["품목·지역·면적과 수량 기준", "패키지·옵션·공사비·기타 투자", "가격·출하량·운영비 변화", "검증 오차·원문·입력값 저장"]):
-        column.markdown(f"### {number} {title}")
-        column.write(detail)
-    st.divider()
-    left, right = st.columns([1.4, 1])
-    with left:
-        st.subheader("딸기 1,000㎡ 계획 예시")
-        st.write("환경제어기와 양액기를 선택한 신규 도입안을 불리·기준·유리 조건으로 비교합니다. 공사비·기타 투자·부가세는 시연을 위한 가정입니다.")
-        st.button("딸기 계획 예시 불러오기", on_click=load_example_inputs, type="primary", key="load_example")
-        if st.session_state.get("example_loaded"):
-            st.success("예시를 불러왔습니다. ‘도입 전 계산’에서 입력을 확인한 뒤 ‘시나리오 계산’을 누르세요.")
-    with right:
-        st.markdown("**결과를 읽는 기준**")
-        st.write("수량 기준: 실제 소득조사 집계 또는 비교 실험에서 선택한 방법")
-        st.write("가격 전망: 도매시장 가격의 별도 실험, 농가 판매단가와 구분")
-        st.write("손익·회수기간: 입력한 비용과 변동 가정에 따른 계산")
-    st.info("장비 선택만으로 수확량 증가를 가정하지 않습니다. 대회 미개방 자료는 명세 기반 실행 코드와 합성 예제를 준비했으며 실제 성능은 안심구역에서 확인합니다.")
-    deck = project / "presentation" / "smartfarm_proposal.pptx"
-    if deck.exists():
-        st.download_button("기획서 PPT 다운로드", deck.read_bytes(), file_name=deck.name,
-                           mime="application/vnd.openxmlformats-officedocument.presentationml.presentation")
+    illustration = project / "assets/design/strawberry-greenhouse-editorial.png"
+    background = ""
+    if illustration.exists():
+        encoded = base64.b64encode(illustration.read_bytes()).decode("ascii")
+        background = f' style="background-image:linear-gradient(90deg,#f7f5ee 0%,#f7f5ee 35%,transparent 80%),url(data:image/png;base64,{encoded});"'
+    st.markdown(f'<div class="home-hero"{background}><p class="eyebrow">스마트팜 도입을 고민하는 당신에게</p>'
+                '<h1 class="hero-title">얼마를 투자하고,<br><em>얼마를 남길 수 있을까?</em></h1>'
+                '<p class="hero-description">작물과 면적, 필요한 설비를 고르면<br>연간 소득과 투자금 회수 시점을 함께 비교합니다.</p></div>',
+                unsafe_allow_html=True)
+    st.button("딸기 계획 예시 불러오기", on_click=load_example_inputs, type="primary", key="load_example")
+    demo_path = project / "artifacts" / "planning_demo.json"
+    if demo_path.exists():
+        demo = json.loads(demo_path.read_text(encoding="utf-8"))
+        from src.economics import evaluate_plan
+        result = evaluate_plan(demo["inputs"])
+        base = next(item for item in result["scenarios"] if item["name"] == "기준")
+        st.markdown('<div class="example-heading"><strong>딸기 1,000㎡라면</strong>'
+                    '<span>전국 소득조사 + 공개 장비가격 + 비용 가정으로 계산한 예시</span></div>', unsafe_allow_html=True)
+        columns = st.columns([1, 1.08, .95], gap="large")
+        with columns[0]:
+            stat("처음 필요한 투자금", f"{result['initial_capex_krw'] / 100000000:.2f}억원", "장비·온실·공사비·추가 부가세 포함")
+        with columns[1]:
+            stat("자가노동까지 반영한 연 소득", f"{base['annual_income_after_family_labor_krw'] / 10000:,.0f}만원", "감가상각 및 가족노동 기회비용 반영", emphasis=True)
+        with columns[2]:
+            stat("투자금을 회수하는 시점", f"{base['payback_year']}년 말", "자가노동 기회비용 차감 전 현금흐름 기준")
+        st.caption("예시의 공사비·온실비·추가 부가세는 가정입니다. 실제 농가의 수익이나 장비 도입 효과를 보장하는 결과가 아닙니다.")
+    st.markdown('<div class="journey"><p><b>01 재배 계획</b>무엇을, 얼마나 키울지</p>'
+                '<p><b>02 투자 계획</b>어떤 설비에 얼마를 쓸지</p><p><b>03 조건 비교</b>가격이 떨어져도 괜찮을지</p></div>', unsafe_allow_html=True)
+    with st.expander("이 계산의 근거와 기획서"):
+        st.caption("첫 화면의 온실은 AI로 제작한 컨셉 일러스트입니다.")
+        st.write("수량·운영비는 농촌진흥청 소득조사, 설비비는 공개 등록가격을 참고합니다. 공사비 등은 사용자가 직접 입력합니다. 장비 선택만으로 생산량이 늘어난다고 가정하지 않습니다.")
+        st.write("대회 미개방 자료는 명세서와 합성 예제로 실행을 준비했습니다. 실제 자료를 이용한 성능 검증은 안심구역에서 진행해야 합니다.")
+        deck = project / "presentation" / "smartfarm_proposal.pptx"
+        if deck.exists():
+            st.download_button("기획서 PPT 다운로드", deck.read_bytes(), file_name=deck.name,
+                               mime="application/vnd.openxmlformats-officedocument.presentationml.presentation")
 
 
 def render_risk_distribution(payload: dict) -> None:
@@ -124,8 +127,8 @@ def render_risk_distribution(payload: dict) -> None:
               "price": abs(1 - payload["scenarios"][0]["price_multiplier"]),
               "cash_cost": abs(1 - payload["scenarios"][0]["cash_cost_multiplier"])}
     result = simulate_plan(payload, uncertainty=widths, n_samples=2000, seed=42, scenario_index=1)
-    st.subheader("가정한 범위 안에서 2,000가지 조합 비교")
-    st.caption("위에서 정한 ±변동폭의 삼각분포를 사용했습니다. 출하·가격·현금비용은 서로 독립이며 한 조합의 조건은 전체 분석기간에 유지합니다. 실제 발생확률이나 통계적 신뢰구간을 추정한 결과가 아닙니다.")
+    st.subheader("조건이 달라지면 결과는 얼마나 흔들릴까?")
+    st.caption("정한 범위 안에서 출하량·가격·비용을 바꾼 2,000가지 가정 비교입니다. 실제 발생확률이나 신뢰구간이 아닙니다.")
     quantiles = result["quantiles"]["npv_krw"]
     columns = st.columns(3)
     for column, key, label in zip(columns, ["p05", "p50", "p95"], ["하위 5% 경계", "중앙값", "상위 5% 경계"]):
@@ -136,9 +139,11 @@ def render_risk_distribution(payload: dict) -> None:
         y=alt.Y("count():Q", title="가정 조합 수"), tooltip=[alt.Tooltip("count():Q", title="조합 수")],
     ).properties(height=240)
     st.altair_chart(chart, width="stretch")
-    st.caption("초기 투자비·감가상각·기존 유지안·교체비·할인율은 고정했습니다. 가족노동 기회비용은 소득 지표에서 별도로 확인하세요.")
-    st.download_button("가정 분포 결과 JSON 다운로드", json.dumps({"inputs": payload, "sensitivity": result}, ensure_ascii=False, indent=2),
-                       file_name="smartfarm_sensitivity.json", mime="application/json", key="download_risk")
+    with st.expander("변동 비교의 가정 · 결과 내려받기"):
+        st.write("설정한 ±변동폭의 삼각분포를 사용합니다. 출하·가격·현금비용은 서로 독립이며, 각 조합의 조건은 분석기간 내내 유지합니다. 초기 투자비·감가상각·기존 유지안·교체비·할인율은 고정합니다.")
+        st.caption("NPV는 미래 현금흐름을 현재 가치로 할인한 뒤 초기 투자금을 뺀 값입니다. 자가노동 기회비용은 위 소득 지표에서 별도로 확인하세요.")
+        st.download_button("변동 비교 결과 내려받기", json.dumps({"inputs": payload, "sensitivity": result}, ensure_ascii=False, indent=2),
+                           file_name="smartfarm_sensitivity.json", mime="application/json", key="download_risk")
 
 
 def render_reference_scenarios(project: Path, crop: str, planned_year: int) -> tuple[dict, bool]:
@@ -233,8 +238,20 @@ def price_result_is_current(project: Path, result: dict) -> bool:
     return True
 
 
+def render_monthly_prices(frame: pd.DataFrame, series: list[str], colors: list[str]) -> None:
+    """Show missing months as gaps and retain isolated observed prices."""
+    long = frame[["월", *series]].melt("월", var_name="가격 구분", value_name="가격 (원/kg)")
+    chart = alt.Chart(long).mark_line(point=True, strokeWidth=2, invalid="break-paths-show-domains").encode(
+        x=alt.X("월:O", sort=[f"{month:02d}월" for month in range(1, 13)], axis=alt.Axis(labelAngle=0, title=None)),
+        y=alt.Y("가격 (원/kg):Q", title="원/kg"),
+        color=alt.Color("가격 구분:N", scale=alt.Scale(domain=series, range=colors), legend=alt.Legend(orient="bottom", title=None)),
+        tooltip=["월:O", "가격 구분:N", alt.Tooltip("가격 (원/kg):Q", format=",.0f")],
+    ).properties(height=230).configure_view(stroke=None)
+    st.altair_chart(chart, width="stretch")
+
+
 def render_price_forecast(project: Path) -> None:
-    st.subheader("월별 가격 예측과 실제 검증")
+    section("가격 변화 살펴보기", "출하하는 달에 따라 가격은 달라집니다", "실제 가격과 예측을 나란히 비교해, 계획에 쓸 가격을 신중하게 정하세요.")
     path = project / "artifacts" / "price_forecast_metrics.json"
     if not path.exists():
         st.info("가격 실험을 실행하면 이 화면에 검증 결과를 표시합니다.")
@@ -243,14 +260,8 @@ def render_price_forecast(project: Path) -> None:
     if not price_result_is_current(project, result):
         st.info("가격 자료·코드·결과가 변경되었습니다. 가격 실험을 다시 실행하세요.")
         return
-    st.write("2021~2023년으로 학습하고 2024년으로 방법을 골랐습니다. 이후 2025년 자료는 학습이나 선택에 사용하지 않고 최종 비교했습니다.")
-    columns = st.columns(3)
-    columns[0].metric("실제 kg 단위 월 가격", f"{result['observed_kg_rows']:,}개")
-    columns[1].metric("선택 방법 · 2025 MAE", f"{result['holdout_selected']['mae_krw_per_kg']:,.0f}원/kg")
-    columns[2].metric("같은 달 최근값 · 2025 MAE", f"{result['holdout_baseline']['mae_krw_per_kg']:,.0f}원/kg")
-    st.caption("MAE는 실제 가격과 예측값의 평균 절대 차이로, 작을수록 좋습니다. 전체 평균은 서로 다른 가격대의 품목을 합친 값입니다.")
     if result["holdout_selected"]["mae_krw_per_kg"] > result["holdout_baseline"]["mae_krw_per_kg"]:
-        st.info("2025년 전체 비교에서는 단순 기준값의 오차가 더 작았습니다. 선택 방법이 항상 우수하다고 볼 수 없어 두 결과를 함께 표시합니다.")
+        takeaway("이번 비교에서는 단순 기준값이 더 정확했습니다", f"2025년 전체 평균 오차는 같은 달 최근값 {result['holdout_baseline']['mae_krw_per_kg']:,.0f}원/kg, 선택 모델 {result['holdout_selected']['mae_krw_per_kg']:,.0f}원/kg입니다. 작을수록 실제 가격에 가깝습니다.")
     series = result["series"]
     selected = st.selectbox("가격 품목·품종·등급", range(len(series)),
                             format_func=lambda i: " · ".join(series[i][key] for key in ["crop", "variety", "grade"]), key="price_series")
@@ -273,23 +284,30 @@ def render_price_forecast(project: Path) -> None:
             calendar = [f"2025-{month:02d}" for month in range(1, 13)]
             plot = actual.set_index("year_month").reindex(calendar).rename_axis("연월").reset_index()
             plot = plot.rename(columns={"actual_krw_per_kg": "실제 가격", "prediction_krw_per_kg": "선택 방법", "baseline_krw_per_kg": "단순 기준값"})
-            st.line_chart(plot, x="연월", y=["실제 가격", "선택 방법", "단순 기준값"], y_label="원/kg")
+            plot["월"] = plot["연월"].str[-2:] + "월"
+            render_monthly_prices(plot, ["실제 가격", "선택 방법", "단순 기준값"], ["#245b3e", "#bd8748", "#a3b796"])
     with columns[1]:
         st.markdown("**2025년 말 기준 2026년 전망**")
-        st.caption("현재 시점의 실시간 전망이 아닙니다. 거래·계절 자료가 부족한 달은 비워 두었습니다.")
         plot = future.rename(columns={"year_month": "연월", "forecast_krw_per_kg": "선택 방법 (원/kg)", "baseline_forecast_krw_per_kg": "단순 기준값 (원/kg)"})
-        st.line_chart(plot, x="연월", y=["선택 방법 (원/kg)", "단순 기준값 (원/kg)"], y_label="원/kg")
-    st.warning("KAMIS 중도매인 판매가격입니다. 농가가 받는 가격과 차이가 있어 경제성 계산의 농가수취단가를 자동 대체하지 않습니다.")
+        plot["월"] = plot["연월"].str[-2:] + "월"
+        render_monthly_prices(plot, ["선택 방법 (원/kg)", "단순 기준값 (원/kg)"], ["#bd8748", "#a3b796"])
+    st.caption("오른쪽은 2025년 말에 만든 당시 전망이며 현재 실시간 예측이 아닙니다. 관측·계절 자료가 부족한 달은 비워 두었습니다.")
+    st.caption("KAMIS 도매시장 가격은 농가가 실제 받는 가격과 다릅니다. 경제성 계산의 판매단가를 자동으로 대체하지 않습니다.")
     with st.expander("시계열별 오차와 월별 전망 수치"):
-        st.json({"품목": item["crop"], "품종": item["variety"], "등급": item["grade"], "선택 방법": item["selected_model"],
-                 "2025 검증": item["holdout_selected"], "기준값 검증": item["holdout_baseline"]})
-        st.dataframe(future, hide_index=True)
-    st.download_button("가격 실험 지표 다운로드", path.read_bytes(), file_name=path.name, mime="application/json")
-    st.markdown("[KAMIS 가격 정보 출처](https://www.kamis.or.kr/customer/price/wholesale/period.do)")
+        st.write(f"{result['observed_kg_rows']:,}개의 실제 가격을 사용했습니다. 2021~2023년 자료로 학습하고 2024년으로 방법을 골랐으며, 2025년은 학습·선택에 사용하지 않았습니다.")
+        st.caption("전체 평균 오차는 서로 다른 가격대의 품목을 합친 값입니다. 품목별 자료가 없는 달은 0원으로 바꾸지 않았습니다.")
+        methods = {"seasonal_last": "같은 달 최근값", "seasonal_median": "같은 달 과거 중앙값", "seasonal_ridge": "계절성을 반영한 회귀 모델"}
+        st.write(f"선택한 방법: **{methods.get(item['selected_model'], item['selected_model'])}**")
+        comparison = pd.DataFrame([{"방법": label, "검증한 월": score.get("evaluated_months"), "평균 절대 오차 (원/kg)": score.get("mae_krw_per_kg"), "비율 오차 (%)": score.get("wape_percent")}
+                                  for label, score in [("선택 모델", item["holdout_selected"]), ("같은 달 최근값", item["holdout_baseline"])]])
+        st.dataframe(comparison.round(1), hide_index=True)
+        st.dataframe(plot[["월", "선택 방법 (원/kg)", "단순 기준값 (원/kg)"]].round(0), hide_index=True)
+        st.download_button("가격 검증 결과 내려받기", path.read_bytes(), file_name=path.name, mime="application/json")
+        st.markdown("[KAMIS 가격 정보 출처](https://www.kamis.or.kr/customer/price/wholesale/period.do)")
 
 
 def render_inseason_analysis(project: Path) -> None:
-    st.subheader("재배 중 관측으로 7일 뒤 초장 점검")
+    section("재배 중 점검", "일주일 뒤, 얼마나 자라 있을까?", "현재 생육과 지난 환경 기록으로 7일 뒤 시설의 평균 초장(식물 높이)을 비교한 실험입니다.")
     path = project / "artifacts/inseason_metrics.json"
     if not path.exists():
         st.info("환경·생육 자료를 연결한 실험 결과를 준비하면 표시합니다.")
@@ -307,37 +325,30 @@ def render_inseason_analysis(project: Path) -> None:
         st.info("생육 결과의 출처를 검증하는 로컬 자료가 필요합니다.")
         return
     counts = result["source_counts"]
-    st.write("현재 생육 조사값과 조사일 이전 환경을 연결해 다음 방문에서 관측할 시설 평균 초장(mm)을 예측했습니다. 도입 전 경제성 계산과는 사용 시점이 다릅니다.")
-    columns = st.columns(4)
-    for column, label, value in zip(columns,
-        ["생육 원본 기록", "환경 원본 기록", "7일 간격 방문 쌍", "시설별 분리 검증"],
-        [f"{counts['growth_raw_rows']:,}행", f"{counts['environment_raw_rows']:,}행", f"{result['cohort']['pairs']}쌍", f"{result['cohort']['facilities']}시설"]):
-        column.metric(label, value)
-    st.caption(f"생육 원행 중 초장(mm) {counts['height_raw_rows_mm']}행을 시설·방문별로 집계했습니다. 같은 시설은 학습과 검증에 섞지 않은 5분할 탐색 비교입니다.")
-    columns = st.columns(2)
-    with columns[0]:
-        st.markdown("**생육 조사 시점에 알 수 있는 정보**")
-        st.write("현재 초장·엽수·엽장·엽폭·관부직경, 정식 후 일수, 이전 조사와의 간격·초장 변화")
-    with columns[1]:
-        st.markdown("**조사일 이전 7일·28일 환경**")
-        st.write("내부 일평균 온도·습도와 분석일 기준 CO₂ 기록의 평균·최소·최대·유효 관측일수. 조사 당일과 미래 환경은 제외")
-    labels = {"current_height": "현재 초장 유지", "catboost_growth": "생육만 · CatBoost",
-              "catboost_growth_environment": "생육+환경 · CatBoost", "xgboost_growth_environment": "생육+환경 · XGBoost"}
+    takeaway("환경을 추가해도, 이번에는 오차가 더 줄지 않았습니다", "40쌍의 방문 기록에서는 생육만 사용한 방법이 가장 정확했습니다. 적은 표본의 탐색 결과이며 수확량·수익 예측과는 별개입니다.")
+    labels = {"current_height": "현재 높이 그대로", "catboost_growth": "생육 기록만 사용",
+              "catboost_growth_environment": "생육 + 환경 · 방법 1", "xgboost_growth_environment": "생육 + 환경 · 방법 2"}
     scores = pd.DataFrame([{"방법": labels[row["model"]], "MAE (mm)": row["mae_mm"], "RMSE (mm)": row["rmse_mm"]} for row in result["models"]])
-    chart = alt.Chart(scores).mark_bar(color="#3a8b68").encode(
+    chart = alt.Chart(scores).mark_bar(cornerRadiusEnd=3, height=26).encode(
         y=alt.Y("방법:N", sort=None, axis=alt.Axis(labelLimit=250, labelFontSize=13)), x=alt.X("MAE (mm):Q", title="평균 절대 오차 (mm), 작을수록 좋음"),
+        color=alt.condition(alt.datum["방법"] == "생육 기록만 사용", alt.value("#265b3d"), alt.value("#b8c5ab")),
         tooltip=["방법:N", alt.Tooltip("MAE (mm):Q", format=".2f")],
     ).properties(height=220)
     st.altair_chart(chart, width="stretch")
-    st.dataframe(scores, hide_index=True)
-    st.info("이번 40쌍 비교에서는 생육만 사용한 방법의 오차가 가장 작았습니다. 환경을 추가한 모델이 더 좋다는 근거는 얻지 못했습니다.")
+    st.caption("같은 시설은 학습과 검증에 나누어 넣지 않았습니다. 21개 시설의 40쌍 방문 기록을 5개 그룹으로 나눠 비교했습니다.")
     examples = pd.DataFrame(result["illustrative_holdout_examples"]).rename(columns={
         "group": "현재 초장 구간", "pairs": "방문 쌍", "current_height_mm_mean": "현재 평균 (mm)",
         "observed_next_height_mm_mean": "7일 뒤 실제 평균 (mm)", "predicted_next_height_mm_mean": "검증 예측 평균 (mm)"})
-    st.markdown("**실제 검증 예측 · 초장 순서로 나눈 4개 구간 평균**")
-    st.dataframe(examples, hide_index=True)
-    st.caption("좋은 사례만 고르지 않고 전체 검증 쌍을 네 구간으로 요약했습니다. 각 표본의 오차는 위 MAE로 확인합니다. 같은 개체의 연속 성장량이 아니라 방문별 관측 표본 평균입니다.")
+    with st.expander("실제값과 예측값 · 사용한 정보 · 실험 방법"):
+        st.dataframe(scores.round(1), hide_index=True)
+        st.caption("생육만 사용: CatBoost · 생육+환경 방법 1: CatBoost · 방법 2: XGBoost")
+        st.markdown("**전체 검증 기록을 초장 순서로 나눈 네 구간**")
+        st.dataframe(examples.round(1), hide_index=True)
+        st.caption("좋은 사례만 고르지 않고 전체 검증 쌍을 네 구간으로 요약했습니다. 같은 개체의 연속 성장량이 아니라 방문별 관측 표본 평균입니다.")
+        st.write("생육: 현재 초장·엽수·엽장·엽폭·관부직경, 정식 후 일수, 이전 조사 간격과 초장 변화")
+        st.write("환경: 조사일 이전 7일·28일의 온도·습도·CO₂ 기록. 조사 당일과 미래 기록은 제외했습니다.")
+        st.caption(f"생육 원본 {counts['growth_raw_rows']:,}행, 환경 원본 {counts['environment_raw_rows']:,}행 중 초장(mm) {counts['height_raw_rows_mm']}행을 시설·방문별로 집계했습니다. 온도·습도는 일평균 기록이며 CO₂는 분석일 기준 기록입니다.")
     with st.expander("분석 범위와 자료 제약"):
         for note in result["limitations"]:
             st.write(note)
-    st.download_button("생육 실험 집계 결과 다운로드", path.read_bytes(), file_name=path.name, mime="application/json", key="download_inseason")
+        st.download_button("생육 검증 결과 내려받기", path.read_bytes(), file_name=path.name, mime="application/json", key="download_inseason")

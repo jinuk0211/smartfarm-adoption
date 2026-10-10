@@ -4,6 +4,8 @@
 
 [PPT 기획서](presentation/smartfarm_proposal.pptx) · [실행 대시보드 화면](assets/dashboard/) · [계산 예시와 가정](reports/planning_demo_summary.json) · [실제 가격 검증 결과](reports/price_forecast_metrics_summary.json)
 
+화면은 투자비·자가노동 반영 소득·회수기간을 먼저 보여주도록 개편했습니다. 기획서는 본편 14장과 근거 부록 14장으로 구성하며, 데이터 정의와 전체 실험 결과를 부록에 보존했습니다. [가독성 개선 내용](reports/readability_revision.md)
+
 [전 과정 구현·자료 한계·검증 근거](reports/full_process_delivery.md)에 최신 상태를 정리했습니다. 아래 그림은 도입 전 예측의 기본 구조이며, 추가한 설비·가격·날씨 연결과 재배 중 생육 분석은 PPT와 상세 다이어그램에서 확인할 수 있습니다.
 
 ![스마트팜 도입 판단의 데이터와 예측 과정을 쉽게 설명한 그림](assets/diagrams/easy-service-flow.png)

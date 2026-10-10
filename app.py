@@ -9,8 +9,10 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import altair as alt
 
 from src.economics import evaluate_plan
+from src.dashboard_ui import section, stat, takeaway
 from src.dashboard_extensions import (
     apply_dashboard_style, render_equipment_selector, render_overview,
     render_price_forecast, render_risk_distribution,
@@ -56,21 +58,18 @@ def render_capex_reference(area: float) -> None:
 
 def render_results(result: dict, payload: dict) -> None:
     base = next(item for item in result["scenarios"] if item["name"] == "기준")
-    st.subheader("가정에 따른 계산 결과")
-    columns = st.columns(4)
-    columns[0].metric("기준 연간 매출", won(base["annual_revenue_krw"]))
-    columns[1].metric("기준 소득 · 상각 반영", won(base["annual_income_before_family_labor_krw"]))
-    columns[2].metric("기준 투자 현금흐름 / 년", won(base["annual_incremental_cash_flow_before_replacements_krw"]))
-    columns[3].metric("기준 순현재가치 (NPV)", won(base["npv_krw"]))
+    section("계산 결과", "이 계획으로 얼마를 남길 수 있을까?", "입력한 조건을 유지할 때의 기준 시나리오입니다.")
     payback = base["payback_year"]
-    st.write(f"기준 회수 시점: **{str(payback) + '년 말' if payback is not None else '분석기간 내 미회수'}** · {result['horizon_years']}년 말 잔액 {won(base['undiscounted_balance_krw'])}")
+    columns = st.columns([1, 1.2, 1], gap="large")
+    with columns[0]:
+        stat("초기 투자금", won(result["initial_capex_krw"]), "선택한 설비와 추가 비용")
+    with columns[1]:
+        stat("자가노동까지 반영한 연 소득", won(base["annual_income_after_family_labor_krw"]), "감가상각·가족노동 기회비용 반영", emphasis=True)
+    with columns[2]:
+        stat("투자금 회수 시점", f"{payback}년 말" if payback is not None else "기간 내 미회수", "자가노동 기회비용 차감 전 현금흐름")
+    st.caption("회수기간과 연 소득은 계산 기준이 다릅니다. 위 소득은 세후 순이익이 아니며, 개량 계획의 투자금 회수는 기존 유지 대비 추가 현금흐름으로 계산합니다.")
     if payback is not None and not base["recovered_by_horizon"]:
-        st.caption("중간에 투자금을 회수했지만 후속 교체 지출 등으로 분석기간 말 누적 잔액은 음수입니다.")
-    st.caption(f"자가노동 기회비용: 연 {won(base['annual_family_labor_opportunity_cost_krw'])}. 이를 추가 반영한 소득: {won(base['annual_income_after_family_labor_krw'])}. 위 소득을 세후 순이익으로 해석하지 않습니다.")
-    required = base["required_annual_yield_for_horizon_payback_kg"]
-    if required is not None:
-        st.write(f"{result['horizon_years']}년 내 투자비 회수에 필요한 연간 출하량: **{required:,.0f}kg** · 현재 가정: **{base['annual_yield_kg']:,.0f}kg**")
-        st.caption("할인 전 누적 투자금 회수 기준입니다. 가족노동 기회비용·세금·금융조달을 포함한 손익분기점과는 다릅니다.")
+        st.warning("중간에 투자금을 회수했지만 이후 교체 지출 등으로 분석기간 말 잔액은 음수입니다.")
     table = []
     cumulative = {}
     annual = {}
@@ -79,87 +78,108 @@ def render_results(result: dict, payload: dict) -> None:
             "시나리오": scenario["name"],
             "연간 수량 (kg)": round(scenario["annual_yield_kg"], 1),
             "연간 매출 (만원)": round(scenario["annual_revenue_krw"] / 10000, 1),
-            "소득·상각 반영 (만원)": round(scenario["annual_income_before_family_labor_krw"] / 10000, 1),
+            "자가노동 반영 소득 (만원)": None if scenario["annual_income_after_family_labor_krw"] is None else round(scenario["annual_income_after_family_labor_krw"] / 10000, 1),
             "NPV (만원)": round(scenario["npv_krw"] / 10000, 1),
             "회수 시점": "기간 내 미회수" if scenario["payback_year"] is None else f"{scenario['payback_year']}년 말",
             "기간 내 회수 가능한 최대 투자비": won(scenario["maximum_capex_for_horizon_payback_krw"]),
         })
         cumulative[scenario["name"]] = [value / 10000 for value in scenario["cumulative_cash_flows_krw"]]
         annual[scenario["name"]] = [value / 10000 for value in scenario["cash_flows_krw"]]
-    st.dataframe(pd.DataFrame(table), hide_index=True)
-    st.write("누적 투자 현금흐름 (만원)")
+    st.subheader("가격과 수확량이 달라지면, 회수 시점도 달라집니다")
     cumulative_frame = pd.DataFrame(cumulative).rename_axis("경과 연도")
-    st.line_chart(cumulative_frame)
-    with st.expander("연도별 현금흐름·누적액 보기"):
+    chart_data = cumulative_frame.reset_index().melt("경과 연도", var_name="조건", value_name="누적 현금흐름 (만원)")
+    chart = alt.Chart(chart_data).mark_line(strokeWidth=3).encode(
+        x=alt.X("경과 연도:Q", axis=alt.Axis(tickMinStep=1)),
+        y=alt.Y("누적 현금흐름 (만원):Q"),
+        color=alt.Color("조건:N", scale=alt.Scale(domain=["불리", "기준", "유리"], range=["#b87640", "#1f593d", "#88a77b"]), legend=alt.Legend(orient="top")),
+        tooltip=["조건:N", "경과 연도:Q", alt.Tooltip("누적 현금흐름 (만원):Q", format=",.0f")],
+    )
+    zero = alt.Chart(pd.DataFrame({"기준선": [0]})).mark_rule(color="#a8aea0", strokeDash=[4, 4]).encode(y="기준선:Q")
+    st.altair_chart((chart + zero).properties(height=260).configure_view(stroke=None), width="stretch")
+    st.caption("0선을 넘는 연말이 투자금을 회수하는 시점입니다. 불리: 출하량·가격 하락 / 현금비용 상승. 유리: 반대 방향.")
+    with st.expander("연간 손익 · 시나리오별 수치 · 계산 기준"):
+        columns = st.columns(3)
+        columns[0].metric("연 매출", won(base["annual_revenue_krw"]))
+        columns[1].metric("상각 반영 소득 · 자가노동 차감 전", won(base["annual_income_before_family_labor_krw"]))
+        columns[2].metric("연간 투자 현금흐름", won(base["annual_incremental_cash_flow_before_replacements_krw"]))
+        st.write(f"자가노동 기회비용은 연 **{won(base['annual_family_labor_opportunity_cost_krw'])}**입니다. 기준 순현재가치(NPV)는 **{won(base['npv_krw'])}**, {result['horizon_years']}년 말 누적 잔액은 **{won(base['undiscounted_balance_krw'])}**입니다.")
+        st.caption("NPV는 할인율을 적용한 미래 현금흐름에서 초기 투자금을 뺀 값입니다. 소득에는 감가상각을 반영하지만, 현금흐름에서 다시 차감하지 않습니다.")
+        required = base["required_annual_yield_for_horizon_payback_kg"]
+        if required is not None:
+            st.write(f"{result['horizon_years']}년 내 회수에 필요한 연간 출하량: **{required:,.0f}kg** · 현재 가정: **{base['annual_yield_kg']:,.0f}kg**")
+            st.caption("할인 전 투자금 회수 기준입니다. 가족노동·세금·금융조달을 포함한 손익분기점은 아닙니다.")
+        st.dataframe(pd.DataFrame(table), hide_index=True)
         annual_frame = pd.DataFrame(annual).rename_axis("경과 연도")
         st.write("연도별 현금흐름 (만원), 0년은 초기 투자")
         st.dataframe(annual_frame)
         st.write("누적 현금흐름 (만원)")
         st.dataframe(cumulative_frame)
-    st.caption("신규는 전체 사업 현금흐름, 개량은 기존 유지 대비 증분 현금흐름입니다. 현금흐름에서 감가상각을 다시 차감하지 않습니다. 세금·금융조달·보조금·운전자금 증감·기말 처분가치는 제외했습니다.")
-    st.download_button("입력·결과 JSON 다운로드", json.dumps({"inputs": payload, "results": result}, ensure_ascii=False, indent=2), file_name="smartfarm_adoption_scenarios.json", mime="application/json", key="download_result")
+        st.caption("신규는 전체 사업 현금흐름, 개량은 기존 유지 대비 추가 현금흐름입니다. 세금·금융조달·보조금·운전자금 증감·기말 처분가치는 제외했습니다.")
+        st.download_button("입력 조건과 계산 결과 내려받기", json.dumps({"inputs": payload, "results": result}, ensure_ascii=False, indent=2), file_name="smartfarm_adoption_scenarios.json", mime="application/json", key="download_result")
 
 
 def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
     latest_year = int(data["year"].max())
     latest = data.loc[data["year"] == latest_year]
-    st.caption("지역·품목 집계자료를 출발점으로 삼는 계산기입니다. 장비 설치로 생산량이 늘어나는 효과나 개별 신규 농가의 수익률을 검증한 모델은 아닙니다.")
-    columns = st.columns(3)
-    crop = columns[0].selectbox("품목", sorted(latest["crop"].unique()), key="crop")
-    crop_data = latest.loc[latest["crop"] == crop]
-    category = columns[1].selectbox("원문 재배 분류", sorted(crop_data["crop_original"].unique()), key="category")
-    category_data = crop_data.loc[crop_data["crop_original"] == category]
-    regions = sorted(category_data["region"].unique(), key=lambda item: (item != "전국", item))
-    region = columns[2].selectbox("기준 지역", regions, key="region")
-    row = category_data.loc[category_data["region"] == region].iloc[0]
-    st.caption(f"기준: {latest_year}년 · {row['crop_original']} · {region} · {row['period_basis']}. 지역 자료는 조사 사례이며 지역 전체의 대표값으로 보장되지 않습니다.")
-    columns = st.columns(3)
-    area = columns[0].number_input("계획 재배면적 (㎡)", min_value=1.0, value=1000.0, step=100.0, key="area")
-    planned_year = columns[1].number_input("예정 재배연도", min_value=latest_year + 1, value=max(date.today().year, latest_year + 1), step=1, key="planned_year")
-    cycles = 1.0
-    columns[2].metric("계산 기간 기준", "연간 1기작")
-    yield_mode = st.radio("수량 기준", ["최신 실측 집계", "실험 모델"], horizontal=True, key="yield_mode")
-    yield_value = float(row["yield_kg_per_1000m2"])
-    prediction = None
-    if yield_mode == "실험 모델":
-        from src.smartfarm_model import predict_yield
+    intro_slot = st.container()
+    result_slot = st.container()
+    with st.expander("01  재배 계획 · 품목, 면적, 수량 기준", expanded=not st.session_state.get("example_loaded", False)):
+        columns = st.columns(3)
+        crop = columns[0].selectbox("품목", sorted(latest["crop"].unique()), key="crop")
+        crop_data = latest.loc[latest["crop"] == crop]
+        category = columns[1].selectbox("원문 재배 분류", sorted(crop_data["crop_original"].unique()), key="category")
+        category_data = crop_data.loc[crop_data["crop_original"] == category]
+        regions = sorted(category_data["region"].unique(), key=lambda item: (item != "전국", item))
+        region = columns[2].selectbox("기준 지역", regions, key="region")
+        row = category_data.loc[category_data["region"] == region].iloc[0]
+        st.caption(f"기준: {latest_year}년 · {row['crop_original']} · {region} · {row['period_basis']}. 지역 자료는 조사 사례이며 지역 전체의 대표값으로 보장되지 않습니다.")
+        columns = st.columns(3)
+        area = columns[0].number_input("계획 재배면적 (㎡)", min_value=1.0, value=1000.0, step=100.0, key="area")
+        planned_year = columns[1].number_input("예정 재배연도", min_value=latest_year + 1, value=max(date.today().year, latest_year + 1), step=1, key="planned_year")
+        cycles = 1.0
+        columns[2].metric("계산 기간 기준", "연간 1기작")
+        yield_mode = st.radio("수량 기준", ["최신 실측 집계", "실험 모델"], horizontal=True, key="yield_mode")
+        yield_value = float(row["yield_kg_per_1000m2"])
+        prediction = None
+        if yield_mode == "실험 모델":
+            from src.smartfarm_model import predict_yield
 
-        scope = "national" if region == "전국" else "regional"
-        group = next((group for group in metrics["groups"] if group["geographic_scope"] == scope and group["classification_regime"] == row["schema_regime"] and group["period_basis"] == row["period_basis"]), None)
-        if group and group["artifact_files"].get("bundle"):
-            bundle_path = PROJECT / "artifacts" / Path(group["artifact_files"]["bundle"]).name
-            prediction = predict_yield(bundle_path, {"year": int(planned_year), "crop": crop, "cultivation_type": row["cultivation_type"], "region": region, "source_category": category})
-        yield_value = None if prediction is None else prediction["yield_kg_per_1000m2"]
-        if yield_value is None:
-            st.info("선택 조건을 지원하는 모델 자료가 없습니다. 최신 실측 집계를 선택해 계산할 수 있습니다.")
+            scope = "national" if region == "전국" else "regional"
+            group = next((group for group in metrics["groups"] if group["geographic_scope"] == scope and group["classification_regime"] == row["schema_regime"] and group["period_basis"] == row["period_basis"]), None)
+            if group and group["artifact_files"].get("bundle"):
+                bundle_path = PROJECT / "artifacts" / Path(group["artifact_files"]["bundle"]).name
+                prediction = predict_yield(bundle_path, {"year": int(planned_year), "crop": crop, "cultivation_type": row["cultivation_type"], "region": region, "source_category": category})
+            yield_value = None if prediction is None else prediction["yield_kg_per_1000m2"]
+            if yield_value is None:
+                st.info("선택 조건을 지원하는 모델 자료가 없습니다. 최신 실측 집계를 선택해 계산할 수 있습니다.")
+            else:
+                st.caption(f"선택된 방법: {prediction['model']} · 같은 조건 참고 행 {prediction['n_reference_rows']}개 · 최신 관측 {prediction['latest_source_year']}년. 비교 실험에서는 과거 중앙값이 CatBoost·XGBoost보다 오차가 작았습니다.")
+        if yield_value is not None:
+            st.write(f"수량 기준 **{yield_value:,.1f} kg / 1,000㎡ / 년(1기작)** · 농가수취단가 **{row['farmgate_price_krw_per_kg']:,.0f} 원/kg**")
+        st.caption("원자료가 연간 1기작 기준이므로 연간 횟수는 1로 고정합니다. 수량·비용·감가상각은 면적만 환산합니다. 예정연도에 따른 가격·비용 상승률을 자동 예측하지 않으며 선택한 연간 조건이 분석기간 동안 유지된다고 가정합니다.")
+
+    with st.expander("02  투자 계획 · 설비와 비용", expanded=not st.session_state.get("example_loaded", False)):
+        mode_label = st.radio("사업 구분", ["신규 도입", "기존 시설 개량"], horizontal=True, key="mode")
+        mode = "new" if mode_label == "신규 도입" else "retrofit"
+        cost_source = st.radio("투자비 산정 방법", ["직접 견적·가정 입력", "장비 구성으로 계산"], horizontal=True, key="capex_source")
+        equipment_provenance = None
+        if cost_source == "장비 구성으로 계산":
+            capital, equipment_provenance = render_equipment_selector(PROJECT)
+        columns = st.columns(3)
+        if cost_source == "직접 견적·가정 입력":
+            capital = columns[0].number_input("설치·개량 투자비 (원) · 필수", min_value=0, value=None, step=1000000, placeholder="견적 또는 명시적 가정 입력", key="capex")
         else:
-            st.caption(f"선택된 방법: {prediction['model']} · 같은 조건 참고 행 {prediction['n_reference_rows']}개 · 최신 관측 {prediction['latest_source_year']}년. 비교 실험에서는 과거 중앙값이 CatBoost·XGBoost보다 오차가 작았습니다.")
-    if yield_value is not None:
-        st.write(f"수량 기준 **{yield_value:,.1f} kg / 1,000㎡ / 년(1기작)** · 농가수취단가 **{row['farmgate_price_krw_per_kg']:,.0f} 원/kg**")
-    st.caption("원자료가 연간 1기작 기준이므로 연간 횟수는 1로 고정합니다. 수량·비용·감가상각은 면적만 환산합니다. 예정연도에 따른 가격·비용 상승률을 자동 예측하지 않으며 선택한 연간 조건이 분석기간 동안 유지된다고 가정합니다.")
-
-    st.subheader("투자 계획")
-    mode_label = st.radio("사업 구분", ["신규 도입", "기존 시설 개량"], horizontal=True, key="mode")
-    mode = "new" if mode_label == "신규 도입" else "retrofit"
-    cost_source = st.radio("투자비 산정 방법", ["직접 견적·가정 입력", "장비 구성으로 계산"], horizontal=True, key="capex_source")
-    equipment_provenance = None
-    if cost_source == "장비 구성으로 계산":
-        capital, equipment_provenance = render_equipment_selector(PROJECT)
-    columns = st.columns(3)
-    if cost_source == "직접 견적·가정 입력":
-        capital = columns[0].number_input("설치·개량 투자비 (원) · 필수", min_value=0, value=None, step=1000000, placeholder="견적 또는 명시적 가정 입력", key="capex")
-    else:
-        columns[0].metric("선택 구성의 초기 투자비", won(capital))
-    horizon = columns[1].number_input("분석기간 (년)", min_value=1, max_value=30, value=10, step=1, key="horizon")
-    discount = columns[2].number_input("연 할인율 (%)", min_value=0.0, max_value=30.0, value=4.0, step=0.5, key="discount")
-    st.caption("신규는 사업에 필요한 전체 투자비, 개량은 기존 시설 유지 대비 추가 투자비를 입력하세요. 견적·가정의 출처는 다운로드 결과와 함께 별도로 보관하세요.")
-    baseline_cash = None
-    if mode == "retrofit":
-        baseline_cash = st.number_input("기존 유지 시 연간 현금흐름 (원) · 필수", value=None, step=1000000, placeholder="매출 − 현금 운영비, 교체비 차감 전", key="baseline_cash")
-    render_capex_reference(area)
+            columns[0].metric("선택 구성의 초기 투자비", won(capital))
+        horizon = columns[1].number_input("분석기간 (년)", min_value=1, max_value=30, value=10, step=1, key="horizon")
+        discount = columns[2].number_input("연 할인율 (%)", min_value=0.0, max_value=30.0, value=4.0, step=0.5, key="discount")
+        st.caption("신규는 사업에 필요한 전체 투자비, 개량은 기존 시설 유지 대비 추가 투자비를 입력하세요. 견적·가정의 출처는 다운로드 결과와 함께 별도로 보관하세요.")
+        baseline_cash = None
+        if mode == "retrofit":
+            baseline_cash = st.number_input("기존 유지 시 연간 현금흐름 (원) · 필수", value=None, step=1000000, placeholder="매출 − 현금 운영비, 교체비 차감 전", key="baseline_cash")
+        render_capex_reference(area)
     reference_scenario, references_ready = render_reference_scenarios(PROJECT, crop, int(planned_year))
 
-    with st.expander("시나리오·교체비 가정", expanded=True):
+    with st.expander("03  변화에 대비하기 · 출하량, 가격, 비용, 교체"):
         columns = st.columns(3)
         yield_change = columns[0].number_input("출하량 변동 폭 (±%)", min_value=0.0, max_value=90.0, value=10.0, step=5.0, key="yield_change") / 100
         price_change = columns[1].number_input("가격 변동 폭 (±%)", min_value=0.0, max_value=90.0, value=20.0, step=5.0, key="price_change") / 100
@@ -183,7 +203,12 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
         ready = ready and replacement_cost is not None and (mode != "retrofit" or baseline_replacement_cost is not None)
     if not ready:
         st.info("설치비와 선택한 계획의 필수 금액을 입력하면 계산할 수 있습니다. 모델 검증·수집 자료 탭은 바로 확인할 수 있습니다.")
+    if ready:
+        st.write(f"**{crop} · {region} · {area:,.0f}㎡**　|　초기 투자 {won(capital)}　|　{int(horizon)}년 비교")
     clicked = st.button("시나리오 계산", type="primary", disabled=not ready, key="calculate")
+    if not ready or (not clicked and "calculation_result" not in st.session_state):
+        with intro_slot:
+            section("나의 도입 계획", "재배와 투자 조건을 정해보세요", "금액을 모르는 항목은 비워 두세요. 확인한 금액이 모두 있어야 계산할 수 있습니다.")
     if not ready:
         return
     fields = ["farmgate_price_krw_per_kg", "operating_cost_krw_per_1000m2", "depreciation_krw_per_1000m2", "family_labor_cost_krw_per_1000m2"]
@@ -210,11 +235,17 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
         st.session_state["calculation_payload"] = payload
     if "calculation_result" in st.session_state:
         if st.session_state["calculation_payload"] == payload:
-            render_results(st.session_state["calculation_result"], payload)
-            render_risk_distribution(payload)
+            with result_slot:
+                render_results(st.session_state["calculation_result"], payload)
+                with st.expander("더 다양한 조건으로 비교하기 · 2,000가지 가정"):
+                    render_risk_distribution(payload)
+                st.subheader("계획 바꾸기")
         else:
-            st.info("입력이 변경되었습니다. 시나리오 계산을 다시 누르면 새 조건의 결과를 표시합니다.")
-    st.caption("상각비와 자가노동비는 선택한 소득조사의 연간 기준값입니다. 입력한 설치 견적에서 새로 계산한 상각비가 아니며, 면적만 환산했습니다.")
+            with result_slot:
+                st.info("입력이 변경되었습니다. 시나리오 계산을 다시 누르면 새 조건의 결과를 표시합니다.")
+    with st.expander("계산에 사용하는 자료와 한계"):
+        st.write("수량·비용은 지역·품목의 조사 집계자료입니다. 장비 설치에 따른 수확량 증가나 개별 신규 농가의 수익률을 검증한 모델은 아닙니다.")
+        st.caption("상각비와 자가노동비는 선택한 소득조사의 연간 기준값입니다. 입력한 설치 견적에서 새로 계산한 상각비가 아니며, 면적만 환산했습니다.")
 
 
 def render_validation(metrics: dict) -> None:
@@ -540,11 +571,10 @@ def render_curation_sources() -> None:
 def main() -> None:
     st.set_page_config(page_title="스마트팜 도입 시뮬레이터", page_icon="🌱", layout="wide")
     apply_dashboard_style()
-    st.title("스마트팜 도입 시뮬레이터")
-    st.write("재배 계획과 설비 구성을 정하고, 가격·출하량·비용 변화에 따른 손익과 회수기간을 비교하세요.")
+    st.markdown('<div class="brand"><strong>스마트팜 도입 설계</strong><span>재배 계획에서 투자 판단까지</span></div>', unsafe_allow_html=True)
     data = read_csv(str(DATA / "rda_crop_income.csv"))
     metrics = json.loads((PROJECT / "artifacts" / "model_metrics.json").read_text(encoding="utf-8"))
-    overview, calculator, prices, inseason, validation, sources = st.tabs(["한눈에 보기", "도입 전 계산", "가격 예측", "재배 중 점검", "모델 검증", "수집 자료"])
+    overview, calculator, prices, inseason, validation, sources = st.tabs(["한눈에 보기", "도입 전 계산", "가격 예측", "재배 중 점검", "모델 검증", "수집 자료"], key="main_tabs", on_change="rerun")
     with overview:
         render_overview(PROJECT)
     with calculator:
@@ -554,9 +584,32 @@ def main() -> None:
     with inseason:
         render_inseason_analysis(PROJECT)
     with validation:
-        render_validation(metrics)
+        section("검증 결과", "복잡한 모델이 항상 더 정확하지는 않았습니다", "좋아진 결과와 좋아지지 않은 결과를 함께 확인합니다.")
+        takeaway("경제성 계산은 참고 집계와 입력 가정으로 읽어야 합니다", "이 실험은 신규 농가의 실제 수익률이나 설비 설치 효과를 입증한 결과가 아닙니다.")
+        columns = st.columns(3, gap="large")
+        with columns[0]:
+            st.markdown("### 수량 예측")
+            st.write("관측이 적은 조건에서는 과거의 단순 기준값이 유용했습니다.")
+        with columns[1]:
+            st.markdown("### 가격 예측")
+            st.write("2025년 비교에서는 같은 달 최근값의 평균 오차가 더 작았습니다.")
+        with columns[2]:
+            st.markdown("### 생육 예측")
+            st.write("환경을 추가했을 때 정확도가 더 좋아지지는 않았습니다.")
+        with st.expander("실험별 검증 방법 · 전체 결과 · 원자료 내려받기"):
+            render_validation(metrics)
     with sources:
-        render_sources(data)
+        section("사용한 데이터", "자료마다 쓰임을 분명하게 나눴습니다", "집계 소득자료와 설비 가격은 투자 계산에, 농가 관측은 별도 예측 실험에 사용합니다.")
+        st.dataframe(pd.DataFrame([
+            {"어디에 쓰나": "연간 수량·소득·운영비 기준", "사용한 자료": "농촌진흥청 농산물 소득조사", "확인 범위": "2020–2024년 · 공개 집계자료"},
+            {"어디에 쓰나": "초기 투자비", "사용한 자료": "스마트팜코리아 등록 설비 3종", "확인 범위": "공개 가격 · 공사비 등은 별도 입력"},
+            {"어디에 쓰나": "월별 가격 변화 비교", "사용한 자료": "KAMIS 중도매인 판매가격", "확인 범위": "농가수취단가와 구분"},
+            {"어디에 쓰나": "날씨 조건의 참고", "사용한 자료": "기상청 기후평년값", "확인 범위": "1991–2020년 · 실제 기상예보 아님"},
+            {"어디에 쓰나": "생육·출하 예측 실험", "사용한 자료": "스마트팜코리아·ADP 농가 관측", "확인 범위": "자료별 단위·품질 검사 후 별도 평가"},
+            {"어디에 쓰나": "안심구역 현장 검증 준비", "사용한 자료": "대회 명세서·합성 예제", "확인 범위": "실제 미개방 자료는 현장에서 검증"},
+        ]), hide_index=True, width="stretch")
+        with st.expander("자료별 상세 범위 · 출처 · 다운로드"):
+            render_sources(data)
 
 
 if __name__ == "__main__":

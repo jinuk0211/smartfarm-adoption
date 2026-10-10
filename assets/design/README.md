@@ -1,0 +1,7 @@
+# 화면과 발표자료용 일러스트
+
+`strawberry-greenhouse-editorial.png`는 2026-10-10 내장 imagegen 도구로 만든 딸기 온실 콘셉트 일러스트다. 실제 농가, 현장 설비 또는 시험 성과를 촬영한 사진이 아니다. 대시보드와 기획서에서 서비스의 재배 대상을 시각적으로 설명하는 용도로 사용한다. 수치·표·차트는 이 이미지에 포함하지 않는다.
+
+## 생성 프롬프트
+
+Create a premium editorial illustration for a Korean strawberry greenhouse planning presentation and dashboard. Single landscape composition 16:9, NO TEXT, NO LETTERING, NO LOGOS, NO UI. Warm ivory paper background (#F8F7F1). On the right half, a beautiful modern glass greenhouse with rows of raised hydroponic strawberry plants, rich forest green leaves and a restrained few ripe red strawberries in the foreground. A discreet irrigation pipe and small environmental sensor give a credible cultivated-farm feel, but no invented equipment labels. Left 45% of canvas mostly quiet ivory negative space with very subtle shadows, suitable for large editable Korean text overlaid later. Refined hand-painted editorial illustration, realistic botanical detail with soft gouache texture, clean architectural structure, softly lit, sophisticated restrained palette of dark green, ivory, warm terra cotta, natural red. No people, no dashboard graphics, no floating icons, no charts, no excessive foliage around borders. Wide composition with generous breathing room, coherent lighting, magazine-quality artwork. This is a conceptual illustration, not a photograph of a real farm. Output high resolution.
