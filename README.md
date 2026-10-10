@@ -16,6 +16,8 @@
 
 **[사용 데이터·컬럼·연결 키·모델 입력·출력을 상세 다이어그램으로 보기 → DATA_FLOW.md](DATA_FLOW.md)**
 
+**[실제 로컬 코드의 데이터 → 모델 → 예측값과 최종 결과물을 두 장의 그림으로 보기](assets/diagrams/local-model-flow.md)** — 출하량·매출·생육·가격 모델과 경제성 계산에 실제 연결된 범위를 구분했습니다.
+
 원래의 기술 도식도 유지합니다: [시설·경영조사 연결과 모델](assets/diagrams/dsz-data-flow.png) · [실제 데이터 분석 전체 흐름](assets/diagrams/actual-data-flow.png). 쉬운 설명 그림은 이미지 생성 도구로 제작했으며, [생성 문안](assets/diagrams/easy-explanation.prompts.json)과 [문구 수정 내역](assets/diagrams/easy-explanation.edits.json)을 함께 보관합니다.
 
 작기별 예측은 연간 경제성 계산에 자동 연결하지 않습니다. 실제 미개방 원자료는 로컬에 없으며, 현장 실행 코드는 합성 40시설·80작기로 검증했습니다.
