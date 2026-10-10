@@ -11,6 +11,12 @@ import pandas as pd
 import streamlit as st
 
 from src.economics import evaluate_plan
+from src.dashboard_extensions import (
+    apply_dashboard_style, render_equipment_selector, render_overview,
+    render_price_forecast, render_risk_distribution,
+    render_reference_scenarios,
+    render_inseason_analysis,
+)
 
 
 PROJECT = Path(__file__).resolve().parent
@@ -61,6 +67,10 @@ def render_results(result: dict, payload: dict) -> None:
     if payback is not None and not base["recovered_by_horizon"]:
         st.caption("중간에 투자금을 회수했지만 후속 교체 지출 등으로 분석기간 말 누적 잔액은 음수입니다.")
     st.caption(f"자가노동 기회비용: 연 {won(base['annual_family_labor_opportunity_cost_krw'])}. 이를 추가 반영한 소득: {won(base['annual_income_after_family_labor_krw'])}. 위 소득을 세후 순이익으로 해석하지 않습니다.")
+    required = base["required_annual_yield_for_horizon_payback_kg"]
+    if required is not None:
+        st.write(f"{result['horizon_years']}년 내 투자비 회수에 필요한 연간 출하량: **{required:,.0f}kg** · 현재 가정: **{base['annual_yield_kg']:,.0f}kg**")
+        st.caption("할인 전 누적 투자금 회수 기준입니다. 가족노동 기회비용·세금·금융조달을 포함한 손익분기점과는 다릅니다.")
     table = []
     cumulative = {}
     annual = {}
@@ -131,8 +141,15 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
     st.subheader("투자 계획")
     mode_label = st.radio("사업 구분", ["신규 도입", "기존 시설 개량"], horizontal=True, key="mode")
     mode = "new" if mode_label == "신규 도입" else "retrofit"
+    cost_source = st.radio("투자비 산정 방법", ["직접 견적·가정 입력", "장비 구성으로 계산"], horizontal=True, key="capex_source")
+    equipment_provenance = None
+    if cost_source == "장비 구성으로 계산":
+        capital, equipment_provenance = render_equipment_selector(PROJECT)
     columns = st.columns(3)
-    capital = columns[0].number_input("설치·개량 투자비 (원) · 필수", min_value=0, value=None, step=1000000, placeholder="견적 또는 명시적 가정 입력", key="capex")
+    if cost_source == "직접 견적·가정 입력":
+        capital = columns[0].number_input("설치·개량 투자비 (원) · 필수", min_value=0, value=None, step=1000000, placeholder="견적 또는 명시적 가정 입력", key="capex")
+    else:
+        columns[0].metric("선택 구성의 초기 투자비", won(capital))
     horizon = columns[1].number_input("분석기간 (년)", min_value=1, max_value=30, value=10, step=1, key="horizon")
     discount = columns[2].number_input("연 할인율 (%)", min_value=0.0, max_value=30.0, value=4.0, step=0.5, key="discount")
     st.caption("신규는 사업에 필요한 전체 투자비, 개량은 기존 시설 유지 대비 추가 투자비를 입력하세요. 견적·가정의 출처는 다운로드 결과와 함께 별도로 보관하세요.")
@@ -140,6 +157,7 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
     if mode == "retrofit":
         baseline_cash = st.number_input("기존 유지 시 연간 현금흐름 (원) · 필수", value=None, step=1000000, placeholder="매출 − 현금 운영비, 교체비 차감 전", key="baseline_cash")
     render_capex_reference(area)
+    reference_scenario, references_ready = render_reference_scenarios(PROJECT, crop, int(planned_year))
 
     with st.expander("시나리오·교체비 가정", expanded=True):
         columns = st.columns(3)
@@ -158,7 +176,7 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
             if mode == "retrofit":
                 baseline_replacement_cost = st.number_input("같은 연도 기존 유지안 교체비 (원) · 없으면 0 명시", min_value=0, value=None, step=1000000, key="baseline_replacement_cost")
 
-    ready = capital is not None and yield_value is not None
+    ready = capital is not None and yield_value is not None and references_ready
     if mode == "retrofit":
         ready = ready and baseline_cash is not None
     if has_replacement:
@@ -176,11 +194,14 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
         "initial_capex_krw": capital, "horizon_years": int(horizon), "discount_rate": discount / 100, "mode": mode,
         "replacements_krw": {} if not has_replacement else {str(replacement_year): replacement_cost},
         "scenarios": [
-            {"name": "불리", "yield_multiplier": 1 - yield_change, "price_multiplier": 1 - price_change, "cash_cost_multiplier": 1 + cost_change},
-            {"name": "기준", "yield_multiplier": 1.0, "price_multiplier": 1.0, "cash_cost_multiplier": 1.0},
-            {"name": "유리", "yield_multiplier": 1 + yield_change, "price_multiplier": 1 + price_change, "cash_cost_multiplier": 1 - cost_change},
+            {"name": "불리", "yield_multiplier": reference_scenario["yield_multiplier"] * (1 - yield_change), "price_multiplier": reference_scenario["price_multiplier"] * (1 - price_change), "cash_cost_multiplier": reference_scenario["cash_cost_multiplier"] * (1 + cost_change)},
+            {"name": "기준", "yield_multiplier": reference_scenario["yield_multiplier"], "price_multiplier": reference_scenario["price_multiplier"], "cash_cost_multiplier": reference_scenario["cash_cost_multiplier"]},
+            {"name": "유리", "yield_multiplier": reference_scenario["yield_multiplier"] * (1 + yield_change), "price_multiplier": reference_scenario["price_multiplier"] * (1 + price_change), "cash_cost_multiplier": reference_scenario["cash_cost_multiplier"] * (1 - cost_change)},
         ],
         "reference": {"crop": crop, "source_category": category, "region": region, "year": latest_year, "planned_year": int(planned_year), "source_url": row["source_url"], "source_page": int(row["source_page"]), "yield_mode": yield_mode, "model_prediction": prediction},
+        "capital_cost_basis": equipment_provenance or {"type": "user_entered_quote_or_assumption"},
+        "reference_scenario": reference_scenario,
+        "sensitivity_half_widths": {"yield": yield_change, "price": price_change, "cash_cost": cost_change},
     }
     if mode == "retrofit":
         payload["baseline"] = {"annual_cash_flow_krw": baseline_cash, "replacements_krw": {} if not has_replacement else {str(replacement_year): baseline_replacement_cost}}
@@ -190,6 +211,7 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
     if "calculation_result" in st.session_state:
         if st.session_state["calculation_payload"] == payload:
             render_results(st.session_state["calculation_result"], payload)
+            render_risk_distribution(payload)
         else:
             st.info("입력이 변경되었습니다. 시나리오 계산을 다시 누르면 새 조건의 결과를 표시합니다.")
     st.caption("상각비와 자가노동비는 선택한 소득조사의 연간 기준값입니다. 입력한 설치 견적에서 새로 계산한 상각비가 아니며, 면적만 환산했습니다.")
@@ -448,7 +470,7 @@ def render_sources(data: pd.DataFrame) -> None:
         {"항목": "ADP 출하량·면적 및 집계기간 정의", "상태": "원자료 확보·연결 완료, 생산량 타깃 정의 확인 필요"},
         {"항목": "스마트팜 API", "상태": api_status},
         {"항목": "대회 미개방 시설·경영 원자료", "상태": "대구 방문 완료(사용자 확인) · 현장에서 실제 파일로 실행"},
-        {"항목": "설치업체 현장 견적", "상태": "미확보 — 계산기에서 사용자가 직접 입력"},
+        {"항목": "설비별 가격과 현장 견적", "상태": "공개 등록가격 3종 연결 완료 · 현장 공사비·부가세·호환성은 별도 확인"},
     ]), hide_index=True)
 
 
@@ -516,14 +538,21 @@ def render_curation_sources() -> None:
 
 
 def main() -> None:
-    st.set_page_config(page_title="스마트팜 도입 전 계산", page_icon="🌱", layout="wide")
-    st.title("스마트팜 도입 전, 필요한 조건부터")
-    st.write("재배 기준과 투자 계획을 입력하고 가격·출하량·비용 변화에 따른 손익과 회수기간을 비교하세요.")
+    st.set_page_config(page_title="스마트팜 도입 시뮬레이터", page_icon="🌱", layout="wide")
+    apply_dashboard_style()
+    st.title("스마트팜 도입 시뮬레이터")
+    st.write("재배 계획과 설비 구성을 정하고, 가격·출하량·비용 변화에 따른 손익과 회수기간을 비교하세요.")
     data = read_csv(str(DATA / "rda_crop_income.csv"))
     metrics = json.loads((PROJECT / "artifacts" / "model_metrics.json").read_text(encoding="utf-8"))
-    calculator, validation, sources = st.tabs(["도입 전 계산", "모델 검증", "수집 자료"])
+    overview, calculator, prices, inseason, validation, sources = st.tabs(["한눈에 보기", "도입 전 계산", "가격 예측", "재배 중 점검", "모델 검증", "수집 자료"])
+    with overview:
+        render_overview(PROJECT)
     with calculator:
         render_calculator(data, metrics)
+    with prices:
+        render_price_forecast(PROJECT)
+    with inseason:
+        render_inseason_analysis(PROJECT)
     with validation:
         render_validation(metrics)
     with sources:

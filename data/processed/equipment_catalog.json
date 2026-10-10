@@ -1,0 +1,228 @@
+{
+  "currency": "KRW",
+  "packages": {
+    "5126": {
+      "equipment_id": "5126",
+      "name": "CRONOUS-AV-CR01 환경제어 구성",
+      "category": "environment_control",
+      "package_price_krw": 20903000,
+      "components_for_reference_only": [
+        {
+          "name": "CO2/온도/습도 센서",
+          "model": "SH-VT260-003",
+          "specification": "200mA/12~24(DC)",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 483000
+        },
+        {
+          "name": "토양 수분, 토양 온도, 토양 EC센서",
+          "model": "KSM-8900",
+          "specification": "70mA/5~24(DC)",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 420000
+        },
+        {
+          "name": "통합제어기",
+          "model": "CRONOUS-AV-CR01",
+          "specification": "단상 220V/60Hz, KS X 3267 호환 센서 및 장비, RS485 인터페이스 장비 지원",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 20000000
+        },
+        {
+          "name": "",
+          "model": "",
+          "specification": "",
+          "displayed_quantity": "",
+          "displayed_price_krw": null
+        },
+        {
+          "name": "어밸브",
+          "model": "어밸브",
+          "specification": "앱 UI",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 0
+        }
+      ],
+      "options": [],
+      "published_options_total_krw": null,
+      "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+      "request_method": "POST",
+      "request_parameters": {
+        "eqpmnSeq": "5126"
+      },
+      "catalog_url": "https://www.smartfarmkorea.net/company/equipmentInfo.do",
+      "checked_date": "2026-10-10",
+      "price_basis": "published_package_total",
+      "vat_included": null,
+      "installation_included": null
+    },
+    "6337": {
+      "equipment_id": "6337",
+      "name": "옹달샘300 양액 공급 구성",
+      "category": "fertigation",
+      "package_price_krw": 3270000,
+      "components_for_reference_only": [
+        {
+          "name": "EC 센서",
+          "model": "CDT8203DRM",
+          "specification": "측정범위 : 0.0~5.0㎳",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 600000
+        },
+        {
+          "name": "PH 센서",
+          "model": "PHT8203DRM",
+          "specification": "측정범위 : 0.0~14.0",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 550000
+        },
+        {
+          "name": "공급펌프",
+          "model": "PU-1700M",
+          "specification": "220V/1.7KW",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 600000
+        },
+        {
+          "name": "유량계",
+          "model": "IR-900-DO",
+          "specification": "10L/1펄스",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 450000
+        },
+        {
+          "name": "하이드로밸브",
+          "model": "Bermad Hydroulic valve",
+          "specification": "0.7~1bar,40mm",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 150000
+        },
+        {
+          "name": "액비전자밸브",
+          "model": "",
+          "specification": "15A/AC24V",
+          "displayed_quantity": "3",
+          "displayed_price_krw": 120000
+        },
+        {
+          "name": "",
+          "model": "",
+          "specification": "",
+          "displayed_quantity": "",
+          "displayed_price_krw": null
+        },
+        {
+          "name": "통합제어기",
+          "model": "FX5U-32MR",
+          "specification": "입력/출력/아나로그/통신",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 800000
+        }
+      ],
+      "options": [
+        {
+          "option_id": "6337-option-1",
+          "name": "일사센서",
+          "model": "",
+          "specification": "측정범위 : 0-1500",
+          "price_krw": 400000
+        }
+      ],
+      "published_options_total_krw": 400000,
+      "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+      "request_method": "POST",
+      "request_parameters": {
+        "eqpmnSeq": "6337"
+      },
+      "catalog_url": "https://www.smartfarmkorea.net/company/equipmentInfo.do",
+      "checked_date": "2026-10-10",
+      "price_basis": "published_package_total",
+      "vat_included": null,
+      "installation_included": null
+    },
+    "6688": {
+      "equipment_id": "6688",
+      "name": "MAGMA1000V20 양액기",
+      "category": "fertigation",
+      "package_price_krw": 15000000,
+      "components_for_reference_only": [
+        {
+          "name": "",
+          "model": "",
+          "specification": "",
+          "displayed_quantity": "",
+          "displayed_price_krw": null
+        },
+        {
+          "name": "양액기",
+          "model": "MAGMA1000V20",
+          "specification": "믹싱형, 10ton",
+          "displayed_quantity": "1",
+          "displayed_price_krw": 15000000
+        },
+        {
+          "name": "",
+          "model": "",
+          "specification": "",
+          "displayed_quantity": "",
+          "displayed_price_krw": null
+        },
+        {
+          "name": "",
+          "model": "",
+          "specification": "",
+          "displayed_quantity": "",
+          "displayed_price_krw": null
+        }
+      ],
+      "options": [
+        {
+          "option_id": "6688-option-1",
+          "name": "일사센서",
+          "model": "GCS-RAD",
+          "specification": "0~2000W/㎡",
+          "price_krw": 800000
+        },
+        {
+          "option_id": "6688-option-2",
+          "name": "pH센서",
+          "model": "GCS-PH",
+          "specification": "0~14",
+          "price_krw": 300000
+        },
+        {
+          "option_id": "6688-option-3",
+          "name": "EC센서",
+          "model": "GCS-EC",
+          "specification": "0~5",
+          "price_krw": 300000
+        },
+        {
+          "option_id": "6688-option-4",
+          "name": "NUF필터",
+          "model": "NUF-1ton",
+          "specification": "재활용 시스템",
+          "price_krw": 27000000
+        }
+      ],
+      "published_options_total_krw": 28400000,
+      "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+      "request_method": "POST",
+      "request_parameters": {
+        "eqpmnSeq": "6688"
+      },
+      "catalog_url": "https://www.smartfarmkorea.net/company/equipmentInfo.do",
+      "checked_date": "2026-10-10",
+      "price_basis": "published_package_total",
+      "vat_included": null,
+      "installation_included": null
+    }
+  },
+  "limitations": [
+    "업체 등록 표준가격이며 실제 계약·설치 견적이 아닙니다.",
+    "등록가격의 부가세·설치비 포함 여부는 확인되지 않았습니다.",
+    "구성품 가격을 재합산하지 않고 공개된 묶음 합계를 사용합니다.",
+    "옵션은 명시적으로 선택하며 선택한 옵션은 묶음 수량만큼 계산합니다.",
+    "장비 간 호환성, 재배면적별 필요 수량, 수확 증가 효과와 수명은 검증되지 않았습니다."
+  ]
+}

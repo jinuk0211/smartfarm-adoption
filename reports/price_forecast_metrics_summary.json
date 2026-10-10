@@ -1,0 +1,455 @@
+{
+  "source": "KAMIS 중도매인 판매가격; 전체지역 공개조회; 상품/중품 별도",
+  "target": "monthly KRW per kg, not farmgate revenue",
+  "raw_calendar_rows": 720,
+  "observed_kg_rows": 574,
+  "series_count": 12,
+  "split": {
+    "initial_train": "2021–2023",
+    "model_selection": "2024",
+    "untouched_holdout": "2025",
+    "holdout_training_cutoff": "2024-12-31",
+    "forecast_training_cutoff": "2025-12-31",
+    "forecast_calendar": "2026-01–2026-12"
+  },
+  "holdout_selected": {
+    "evaluated_months": 106,
+    "mae_krw_per_kg": 1249.1612578968268,
+    "wape_percent": 24.08595516041351
+  },
+  "holdout_baseline": {
+    "evaluated_months": 106,
+    "mae_krw_per_kg": 1061.622641509434,
+    "wape_percent": 20.469891440379524
+  },
+  "series": [
+    {
+      "crop": "딸기",
+      "variety": "설향",
+      "grade": "상품",
+      "observed_months": 31,
+      "selected_model": "seasonal_ridge",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 6,
+          "mae_krw_per_kg": 1847.5,
+          "wape_percent": 13.321716139887032
+        },
+        "seasonal_median": {
+          "evaluated_months": 6,
+          "mae_krw_per_kg": 2363.0,
+          "wape_percent": 17.038817449825743
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 6,
+          "mae_krw_per_kg": 1539.6999740902827,
+          "wape_percent": 11.102271174788722
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 5,
+        "mae_krw_per_kg": 1377.858176359024,
+        "wape_percent": 9.819959635377044
+      },
+      "holdout_baseline": {
+        "evaluated_months": 5,
+        "mae_krw_per_kg": 1259.4,
+        "wape_percent": 8.97571127202235
+      }
+    },
+    {
+      "crop": "딸기",
+      "variety": "설향",
+      "grade": "중품",
+      "observed_months": 31,
+      "selected_model": "seasonal_ridge",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 6,
+          "mae_krw_per_kg": 1568.5,
+          "wape_percent": 13.742698598130842
+        },
+        "seasonal_median": {
+          "evaluated_months": 6,
+          "mae_krw_per_kg": 2198.5,
+          "wape_percent": 19.262558411214954
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 6,
+          "mae_krw_per_kg": 1287.0372157182271,
+          "wape_percent": 11.276611119026525
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 5,
+        "mae_krw_per_kg": 1758.0807145191106,
+        "wape_percent": 16.05611816430838
+      },
+      "holdout_baseline": {
+        "evaluated_months": 5,
+        "mae_krw_per_kg": 1527.8,
+        "wape_percent": 13.953021114926573
+      }
+    },
+    {
+      "crop": "방울토마토",
+      "variety": "대추방울토마토",
+      "grade": "상품",
+      "observed_months": 60,
+      "selected_model": "seasonal_ridge",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1642.3333333333333,
+          "wape_percent": 21.51528384279476
+        },
+        "seasonal_median": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1723.9166666666667,
+          "wape_percent": 22.58406113537118
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1093.3793354381526,
+          "wape_percent": 14.323746752464881
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 2057.069373510378,
+        "wape_percent": 32.56960916484086
+      },
+      "holdout_baseline": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 1323.75,
+        "wape_percent": 20.95895290997612
+      }
+    },
+    {
+      "crop": "방울토마토",
+      "variety": "대추방울토마토",
+      "grade": "중품",
+      "observed_months": 60,
+      "selected_model": "seasonal_ridge",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1498.25,
+          "wape_percent": 23.16672465112683
+        },
+        "seasonal_median": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1488.0,
+          "wape_percent": 23.008233793343383
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1064.3553792498953,
+          "wape_percent": 16.45761922377974
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 1699.5639429012072,
+        "wape_percent": 32.14862673562711
+      },
+      "holdout_baseline": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 1218.0,
+        "wape_percent": 23.039455224704046
+      }
+    },
+    {
+      "crop": "방울토마토",
+      "variety": "방울토마토",
+      "grade": "상품",
+      "observed_months": 16,
+      "selected_model": "seasonal_last",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 0,
+          "mae_krw_per_kg": null,
+          "wape_percent": null
+        },
+        "seasonal_median": {
+          "evaluated_months": 0,
+          "mae_krw_per_kg": null,
+          "wape_percent": null
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 0,
+          "mae_krw_per_kg": null,
+          "wape_percent": null
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 0,
+        "mae_krw_per_kg": null,
+        "wape_percent": null
+      },
+      "holdout_baseline": {
+        "evaluated_months": 0,
+        "mae_krw_per_kg": null,
+        "wape_percent": null
+      }
+    },
+    {
+      "crop": "방울토마토",
+      "variety": "방울토마토",
+      "grade": "중품",
+      "observed_months": 16,
+      "selected_model": "seasonal_last",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 0,
+          "mae_krw_per_kg": null,
+          "wape_percent": null
+        },
+        "seasonal_median": {
+          "evaluated_months": 0,
+          "mae_krw_per_kg": null,
+          "wape_percent": null
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 0,
+          "mae_krw_per_kg": null,
+          "wape_percent": null
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 0,
+        "mae_krw_per_kg": null,
+        "wape_percent": null
+      },
+      "holdout_baseline": {
+        "evaluated_months": 0,
+        "mae_krw_per_kg": null,
+        "wape_percent": null
+      }
+    },
+    {
+      "crop": "오이",
+      "variety": "가시계통",
+      "grade": "상품",
+      "observed_months": 60,
+      "selected_model": "seasonal_last",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 469.5833333333333,
+          "wape_percent": 12.774301777294161
+        },
+        "seasonal_median": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 736.3333333333334,
+          "wape_percent": 20.030830612985127
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 705.3774116578624,
+          "wape_percent": 19.1887217534783
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 687.5,
+        "wape_percent": 22.36014744145707
+      },
+      "holdout_baseline": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 687.5,
+        "wape_percent": 22.36014744145707
+      }
+    },
+    {
+      "crop": "오이",
+      "variety": "가시계통",
+      "grade": "중품",
+      "observed_months": 60,
+      "selected_model": "seasonal_last",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 511.0,
+          "wape_percent": 16.614284166034466
+        },
+        "seasonal_median": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 721.0,
+          "wape_percent": 23.442072179473286
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 752.4152551518224,
+          "wape_percent": 24.463485048829167
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 783.4166666666666,
+        "wape_percent": 33.11960542540074
+      },
+      "holdout_baseline": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 783.4166666666666,
+        "wape_percent": 33.11960542540074
+      }
+    },
+    {
+      "crop": "토마토",
+      "variety": "토마토",
+      "grade": "상품",
+      "observed_months": 60,
+      "selected_model": "seasonal_ridge",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1325.8333333333333,
+          "wape_percent": 25.94416541647642
+        },
+        "seasonal_median": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1639.75,
+          "wape_percent": 32.08694801382819
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1021.7758446411484,
+          "wape_percent": 19.994309137847793
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 1759.5102076666883,
+        "wape_percent": 44.832092942076315
+      },
+      "holdout_baseline": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 1327.3333333333333,
+        "wape_percent": 33.82028197723798
+      }
+    },
+    {
+      "crop": "토마토",
+      "variety": "토마토",
+      "grade": "중품",
+      "observed_months": 60,
+      "selected_model": "seasonal_ridge",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1248.0833333333333,
+          "wape_percent": 28.936030448810836
+        },
+        "seasonal_median": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1393.4166666666667,
+          "wape_percent": 32.30549276454337
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1054.0854815985424,
+          "wape_percent": 24.438311750966033
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 1334.2647161444722,
+        "wape_percent": 40.469054174839926
+      },
+      "holdout_baseline": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 1143.9166666666667,
+        "wape_percent": 34.695682944090585
+      }
+    },
+    {
+      "crop": "파프리카",
+      "variety": "파프리카",
+      "grade": "상품",
+      "observed_months": 60,
+      "selected_model": "seasonal_last",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1215.75,
+          "wape_percent": 17.823415146665365
+        },
+        "seasonal_median": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1367.0833333333333,
+          "wape_percent": 20.042026559808438
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1295.8293791380493,
+          "wape_percent": 18.99741310600295
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 898.1666666666666,
+        "wape_percent": 13.920208712722951
+      },
+      "holdout_baseline": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 898.1666666666666,
+        "wape_percent": 13.920208712722951
+      }
+    },
+    {
+      "crop": "파프리카",
+      "variety": "파프리카",
+      "grade": "중품",
+      "observed_months": 60,
+      "selected_model": "seasonal_median",
+      "validation": {
+        "seasonal_last": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 892.9166666666666,
+          "wape_percent": 17.80639800581637
+        },
+        "seasonal_median": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 868.0833333333334,
+          "wape_percent": 17.31117573743249
+        },
+        "seasonal_ridge": {
+          "evaluated_months": 12,
+          "mae_krw_per_kg": 1046.3658984602241,
+          "wape_percent": 20.866457468255405
+        }
+      },
+      "holdout_selected": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 508.125,
+        "wape_percent": 10.841541908182498
+      },
+      "holdout_baseline": {
+        "evaluated_months": 12,
+        "mae_krw_per_kg": 834.25,
+        "wape_percent": 17.799864869670355
+      }
+    }
+  ],
+  "limitations": [
+    "No future fill; source dash and unlisted months are excluded, not treated as zero.",
+    "All 12 holdout months use a fixed 2024-12-31 origin; no in-year holdout updates.",
+    "Forecasts require a 2025 observation for the series and a 2024/2025 observation for the calendar month; supported months may still have no future trading.",
+    "The 2026 curve is a retrospective forecast from the archived 2025 cutoff, not a current-date or validated 2026 forecast.",
+    "Wholesale/intermediary prices must not replace farmgate prices without a verified margin/channel mapping.",
+    "No prediction intervals or causal weather/equipment effects are estimated.",
+    "Pooled MAE mixes crops with different price scales; inspect each series too."
+  ],
+  "input_sha256": "5a1015ad3cae3097254f376c840c7705ac85ef507d9a7ec21653e970457b5b22",
+  "source_sha256": {
+    "src/price_forecast.py": "06a4fb611d025cbc3567be2b5327b34747a8593fb5d2547178291995c3cc82ac",
+    "scripts/run_price_forecast.py": "d59d159e22f208cee4d1ed5ede47c2141ffe422be7c5bb55dd5fa1ac278d14e9"
+  },
+  "generated_at_utc": "2026-10-10T06:32:30.250651+00:00",
+  "output_sha256": {
+    "price_forecast_validation_predictions.csv": "4124256806173f9f4bc37483382c65b5f7efe9564a57d67c94f465420c2bb842",
+    "price_forecast_holdout_predictions.csv": "6cac4483e2f25ef90b0f37a49e1922994607517c3e58645bcf6db067181b689c",
+    "price_forecast_forecast.csv": "ac41c538800f5fcf4e4423d58d68953d1a3b64733bfa3f1e67b905dd3eca1493"
+  }
+}

@@ -16,7 +16,8 @@ vendor/
 wheelhouse/
 artifacts/
 runs/
-data/processed/
+data/processed/*
+!data/processed/equipment_catalog.json
 data/examples/dsz/processed/
 data/raw/*
 !data/raw/dsz/

@@ -1,0 +1,184 @@
+{
+  "study": "strawberry_observed_visit_height_7d",
+  "status": "actual_data_pilot_completed",
+  "generated_at": "2026-10-10T06:47:46.104846+00:00",
+  "target": "7일 뒤 시설·방문 관측 표본 평균 초장",
+  "target_unit": "mm",
+  "source_counts": {
+    "growth_raw_rows": 2529,
+    "environment_raw_rows": 9774,
+    "height_raw_rows_mm": 252,
+    "height_visits": 187,
+    "visits_without_cycle": 1,
+    "visits_ambiguous_cycle": 0,
+    "conflicting_growth_sample_rows_excluded": 0,
+    "conflicting_environment_day_rows_excluded": 0,
+    "exact_seven_day_pairs": 40,
+    "pairs_with_prior_temperature_28d": 40,
+    "facilities": 21,
+    "temperature_days_28d_min": 18.0,
+    "temperature_days_28d_median": 27.0,
+    "temperature_days_28d_max": 28.0,
+    "height_unit": "mm",
+    "horizon_days": 7
+  },
+  "cohort": {
+    "pairs": 40,
+    "facilities": 21,
+    "horizon_days": 7,
+    "folds": 5
+  },
+  "feature_groups": {
+    "growth": [
+      "height_mm",
+      "leaf_count",
+      "leaf_length_mm",
+      "leaf_width_mm",
+      "crown_diameter_mm",
+      "day_of_year",
+      "days_after_planting",
+      "previous_visit_gap_days",
+      "previous_height_delta_mm"
+    ],
+    "prior_environment": [
+      "temperature_c_7d_mean",
+      "temperature_c_7d_min",
+      "temperature_c_7d_max",
+      "temperature_c_7d_count",
+      "temperature_c_28d_mean",
+      "temperature_c_28d_min",
+      "temperature_c_28d_max",
+      "temperature_c_28d_count",
+      "humidity_pct_7d_mean",
+      "humidity_pct_7d_min",
+      "humidity_pct_7d_max",
+      "humidity_pct_7d_count",
+      "humidity_pct_28d_mean",
+      "humidity_pct_28d_min",
+      "humidity_pct_28d_max",
+      "humidity_pct_28d_count",
+      "co2_ppm_7d_mean",
+      "co2_ppm_7d_min",
+      "co2_ppm_7d_max",
+      "co2_ppm_7d_count",
+      "co2_ppm_28d_mean",
+      "co2_ppm_28d_min",
+      "co2_ppm_28d_max",
+      "co2_ppm_28d_count"
+    ]
+  },
+  "environment_units": {
+    "temperature_c": "°C",
+    "humidity_pct": "%",
+    "co2_ppm": "ppm"
+  },
+  "feature_count": 33,
+  "models": [
+    {
+      "model": "current_height",
+      "mae_mm": 36.079166666666666,
+      "rmse_mm": 45.92062142678627,
+      "median_absolute_error_mm": 24.0,
+      "n_scored": 40,
+      "fold_mae_mm": {
+        "0": 56.479166666666664,
+        "1": 40.541666666666664,
+        "2": 27.0,
+        "3": 29.0625,
+        "4": 27.3125
+      }
+    },
+    {
+      "model": "catboost_growth",
+      "mae_mm": 32.607384212432535,
+      "rmse_mm": 41.105035645802886,
+      "median_absolute_error_mm": 28.39139033868824,
+      "n_scored": 40,
+      "fold_mae_mm": {
+        "0": 47.23733944884858,
+        "1": 38.53465288379644,
+        "2": 25.452962354706457,
+        "3": 31.739428428356398,
+        "4": 20.072537946454823
+      }
+    },
+    {
+      "model": "catboost_growth_environment",
+      "mae_mm": 34.786178667408024,
+      "rmse_mm": 43.04013158412155,
+      "median_absolute_error_mm": 31.308795682006235,
+      "n_scored": 40,
+      "fold_mae_mm": {
+        "0": 51.323939935841395,
+        "1": 39.08287110972536,
+        "2": 23.753829855866528,
+        "3": 30.986052368486874,
+        "4": 28.784200067119976
+      }
+    },
+    {
+      "model": "xgboost_growth_environment",
+      "mae_mm": 34.589417345325145,
+      "rmse_mm": 42.29869377173107,
+      "median_absolute_error_mm": 28.7378511428833,
+      "n_scored": 40,
+      "fold_mae_mm": {
+        "0": 48.82260195414225,
+        "1": 46.171511928240456,
+        "2": 18.749809935688972,
+        "3": 28.14502251148224,
+        "4": 31.05814039707184
+      }
+    }
+  ],
+  "best_model": "catboost_growth",
+  "illustrative_holdout_examples": [
+    {
+      "group": 1,
+      "pairs": 10,
+      "current_height_mm_mean": 233.5,
+      "observed_next_height_mm_mean": 284.1333333333333,
+      "predicted_next_height_mm_mean": 264.6519092482094
+    },
+    {
+      "group": 2,
+      "pairs": 10,
+      "current_height_mm_mean": 324.8,
+      "observed_next_height_mm_mean": 333.1833333333333,
+      "predicted_next_height_mm_mean": 340.070591957401
+    },
+    {
+      "group": 3,
+      "pairs": 10,
+      "current_height_mm_mean": 362.35,
+      "observed_next_height_mm_mean": 370.7,
+      "predicted_next_height_mm_mean": 368.39330199731836
+    },
+    {
+      "group": 4,
+      "pairs": 10,
+      "current_height_mm_mean": 402.5,
+      "observed_next_height_mm_mean": 384.15,
+      "predicted_next_height_mm_mean": 394.5818915074793
+    }
+  ],
+  "limitations": [
+    "정확히 7일 간격으로 관측된 방문 쌍만 평가한 소규모 후향 실험이다. 불규칙 방문 농가 전체를 대표하지 않는다.",
+    "같은 개체의 연속 성장량이 아닌 시설·방문별 관측 표본 평균 초장(mm)을 예측한다. 표본 구성이 달라질 수 있다.",
+    "환경 분석일자를 관측일의 대리값으로 사용했다. 실제 과거 수신 시각/지연은 없어 실시간 가용성을 입증하지 않는다.",
+    "온도·습도의 7/28일 최소·최대는 기간 내 일평균 값의 최소·최대이며 순간 최저·최고 온도가 아니다. CO₂는 분석일자별 농도 기록을 요약하며 원본의 하루 내 집계 방식은 명시되지 않았다.",
+    "일사량·외부온도·기상특보·태풍은 이 큐레이션 원본에 없어 누적 일사량, GDD 및 기상 예측은 만들지 않았다.",
+    "mm 원문 값을 유지하고 의심 값의 임의 단위 환산이나 이상치 제거를 하지 않았다.",
+    "시설 분리 교차검증은 미래 연도 검증이 아니다. 모델 선택과 성능 보고에 같은 OOF 평가를 사용해 별도 외부검증이 필요하다.",
+    "운영 중 보조 실험이며 도입 전 수확량·투자수익 모델에는 관측 환경/생육 값을 넣지 않는다."
+  ],
+  "source_hashes": {
+    "data/processed/strawberry_curation_growth.csv": "fa9c47868d3c96d142580b56ad2e90b3f3e2e4ce604f7351e037a4c96875cf6f",
+    "data/processed/strawberry_curation_environment.csv": "b7aa4ca2fb6d52e755816b1c6e20c7192a57c654b32ff0ae05c546123bbb550f",
+    "data/raw/smartfarm_curation_docs/Strawberry_Growth_Env_Shipping_Definition.hwp": "e86d0bc61eabce71890a8a7c406d0ee98102c6f37afa4687681eb3966ed64197",
+    "src/inseason_model.py": "c52aa8d098e6f9579047642c57ce5d68dbd2f4681051341302e15d9ff1303a2d",
+    "scripts/run_inseason_model.py": "df181d24a14b342d4834b268c12b84708295c241f1788d9f3ac35df602e1a360"
+  },
+  "private_oof_sha256": "80e2507cccd372cb986dfcc2662ad673df739cc4f3bd99cd393df7a656e67346",
+  "private_oof_rows_not_published": true
+}

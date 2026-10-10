@@ -1,0 +1,429 @@
+{
+  "inputs": {
+    "benchmark": {
+      "farmgate_price_krw_per_kg": 10868.0,
+      "operating_cost_krw_per_1000m2": 20782965.0,
+      "depreciation_krw_per_1000m2": 4789801.0,
+      "family_labor_cost_krw_per_1000m2": 12098260.0,
+      "yield_kg_per_1000m2": 3344.5,
+      "period_basis": "년1기작/10a"
+    },
+    "area_m2": 1000,
+    "cycles_per_year": 1,
+    "initial_capex_krw": 112530300.0,
+    "horizon_years": 10,
+    "discount_rate": 0.04,
+    "mode": "new",
+    "replacements_krw": {},
+    "scenarios": [
+      {
+        "name": "불리",
+        "yield_multiplier": 0.9,
+        "price_multiplier": 0.8,
+        "cash_cost_multiplier": 1.1
+      },
+      {
+        "name": "기준",
+        "yield_multiplier": 1,
+        "price_multiplier": 1,
+        "cash_cost_multiplier": 1
+      },
+      {
+        "name": "유리",
+        "yield_multiplier": 1.1,
+        "price_multiplier": 1.2,
+        "cash_cost_multiplier": 0.9
+      }
+    ],
+    "reference": {
+      "crop": "딸기",
+      "source_category": "시설딸기(수경)",
+      "region": "전국",
+      "year": 2024,
+      "planned_year": 2027,
+      "source_url": "https://www.nongsaro.go.kr/portal/bsFileDownload.do?atchmnflGroupEsntlCode=BS000000045358&atchmnflSn=0",
+      "source_page": 95,
+      "yield_mode": "실험 모델",
+      "model_prediction": {
+        "status": "aggregate_reference_only",
+        "yield_kg_per_1000m2": 3344.5,
+        "model": "historical_median",
+        "n_reference_rows": 2,
+        "latest_source_year": 2024,
+        "period_basis": "년1기작/10a",
+        "warning": "Regional/crop survey reference, not a prediction validated for an individual prospective farm or a causal installation effect"
+      }
+    },
+    "capital_cost_basis": {
+      "equipment": {
+        "lines": [
+          {
+            "equipment_id": "5126",
+            "name": "CRONOUS-AV-CR01 환경제어 구성",
+            "quantity": 1,
+            "option_ids": [],
+            "package_price_krw": 20903000.0,
+            "options_price_per_package_krw": 0,
+            "line_total_krw": 20903000.0,
+            "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+            "checked_date": "2026-10-10"
+          },
+          {
+            "equipment_id": "6337",
+            "name": "옹달샘300 양액 공급 구성",
+            "quantity": 1,
+            "option_ids": [
+              "6337-option-1"
+            ],
+            "package_price_krw": 3270000.0,
+            "options_price_per_package_krw": 400000.0,
+            "line_total_krw": 3670000.0,
+            "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+            "checked_date": "2026-10-10"
+          }
+        ],
+        "equipment_subtotal_krw": 24573000.0,
+        "installation_krw": 5000000.0,
+        "additional_vat_krw": 2957300.0,
+        "initial_capex_krw": 32530300.0,
+        "unresolved_cost_inputs": [],
+        "status": "planning_assumption",
+        "is_verified_quote": false,
+        "scope": "선택 장비와 명시한 설치비·추가 부가세만 포함. 온실 신축·토목·기타 설비·호환성 검토는 별도.",
+        "limitations": [
+          "업체 등록 표준가격이며 실제 계약·설치 견적이 아닙니다.",
+          "등록가격의 부가세·설치비 포함 여부는 확인되지 않았습니다.",
+          "구성품 가격을 재합산하지 않고 공개된 묶음 합계를 사용합니다.",
+          "옵션은 명시적으로 선택하며 선택한 옵션은 묶음 수량만큼 계산합니다.",
+          "장비 간 호환성, 재배면적별 필요 수량, 수확 증가 효과와 수명은 검증되지 않았습니다."
+        ]
+      },
+      "other_capex_krw": 80000000,
+      "total_initial_capex_krw": 112530300.0
+    }
+  },
+  "results": {
+    "mode": "new",
+    "area_m2": 1000.0,
+    "period_basis": "년1기작/10a",
+    "cycles_per_year": 1.0,
+    "initial_capex_krw": 112530300.0,
+    "horizon_years": 10,
+    "discount_rate": 0.04,
+    "scenarios": [
+      {
+        "name": "불리",
+        "assumptions": {
+          "name": "불리",
+          "yield_multiplier": 0.9,
+          "price_multiplier": 0.8,
+          "cash_cost_multiplier": 1.1
+        },
+        "annual_yield_kg": 3010.05,
+        "farmgate_price_krw_per_kg": 8694.4,
+        "annual_revenue_krw": 26170578.72,
+        "annual_cash_operating_cost_krw": 17592480.400000002,
+        "annual_depreciation_krw": 4789801.0,
+        "annual_income_before_family_labor_krw": 3788297.3199999966,
+        "annual_family_labor_opportunity_cost_krw": 12098260.0,
+        "annual_income_after_family_labor_krw": -8309962.680000003,
+        "annual_cash_surplus_before_replacements_krw": 8578098.319999997,
+        "annual_incremental_cash_flow_before_replacements_krw": 8578098.319999997,
+        "annual_incremental_income_krw": null,
+        "maximum_capex_for_horizon_payback_krw": 85780983.19999996,
+        "maximum_capex_for_nonnegative_npv_krw": 69576061.45858042,
+        "required_annual_yield_for_horizon_payback_kg": 3317.711446448289,
+        "additional_yield_required_kg": 307.66144644828864,
+        "cash_flows_krw": [
+          -112530300.0,
+          8578098.319999997,
+          8578098.319999997,
+          8578098.319999997,
+          8578098.319999997,
+          8578098.319999997,
+          8578098.319999997,
+          8578098.319999997,
+          8578098.319999997,
+          8578098.319999997,
+          8578098.319999997
+        ],
+        "cumulative_cash_flows_krw": [
+          -112530300.0,
+          -103952201.68,
+          -95374103.36000001,
+          -86796005.04000002,
+          -78217906.72000003,
+          -69639808.40000004,
+          -61061710.08000004,
+          -52483611.76000005,
+          -43905513.44000006,
+          -35327415.120000064,
+          -26749316.800000068
+        ],
+        "payback_year": null,
+        "recovered_by_horizon": false,
+        "npv_krw": -42954238.54141958,
+        "undiscounted_balance_krw": -26749316.800000068
+      },
+      {
+        "name": "기준",
+        "assumptions": {
+          "name": "기준",
+          "yield_multiplier": 1,
+          "price_multiplier": 1,
+          "cash_cost_multiplier": 1
+        },
+        "annual_yield_kg": 3344.5,
+        "farmgate_price_krw_per_kg": 10868.0,
+        "annual_revenue_krw": 36348026.0,
+        "annual_cash_operating_cost_krw": 15993164.0,
+        "annual_depreciation_krw": 4789801.0,
+        "annual_income_before_family_labor_krw": 15565061.0,
+        "annual_family_labor_opportunity_cost_krw": 12098260.0,
+        "annual_income_after_family_labor_krw": 3466801.0,
+        "annual_cash_surplus_before_replacements_krw": 20354862.0,
+        "annual_incremental_cash_flow_before_replacements_krw": 20354862.0,
+        "annual_incremental_income_krw": null,
+        "maximum_capex_for_horizon_payback_krw": 203548620.0,
+        "maximum_capex_for_nonnegative_npv_krw": 165096164.285154,
+        "required_annual_yield_for_horizon_payback_kg": 2507.010857563489,
+        "additional_yield_required_kg": 0,
+        "cash_flows_krw": [
+          -112530300.0,
+          20354862.0,
+          20354862.0,
+          20354862.0,
+          20354862.0,
+          20354862.0,
+          20354862.0,
+          20354862.0,
+          20354862.0,
+          20354862.0,
+          20354862.0
+        ],
+        "cumulative_cash_flows_krw": [
+          -112530300.0,
+          -92175438.0,
+          -71820576.0,
+          -51465714.0,
+          -31110852.0,
+          -10755990.0,
+          9598872.0,
+          29953734.0,
+          50308596.0,
+          70663458.0,
+          91018320.0
+        ],
+        "payback_year": 6,
+        "recovered_by_horizon": true,
+        "npv_krw": 52565864.28515403,
+        "undiscounted_balance_krw": 91018320.0
+      },
+      {
+        "name": "유리",
+        "assumptions": {
+          "name": "유리",
+          "yield_multiplier": 1.1,
+          "price_multiplier": 1.2,
+          "cash_cost_multiplier": 0.9
+        },
+        "annual_yield_kg": 3678.9500000000003,
+        "farmgate_price_krw_per_kg": 13041.6,
+        "annual_revenue_krw": 47979394.32000001,
+        "annual_cash_operating_cost_krw": 14393847.6,
+        "annual_depreciation_krw": 4789801.0,
+        "annual_income_before_family_labor_krw": 28795745.720000006,
+        "annual_family_labor_opportunity_cost_krw": 12098260.0,
+        "annual_income_after_family_labor_krw": 16697485.720000006,
+        "annual_cash_surplus_before_replacements_krw": 33585546.720000006,
+        "annual_incremental_cash_flow_before_replacements_krw": 33585546.720000006,
+        "annual_incremental_income_krw": null,
+        "maximum_capex_for_horizon_payback_krw": 335855467.20000005,
+        "maximum_capex_for_nonnegative_npv_krw": 272408869.13857913,
+        "required_annual_yield_for_horizon_payback_kg": 1966.5437983069562,
+        "additional_yield_required_kg": 0,
+        "cash_flows_krw": [
+          -112530300.0,
+          33585546.720000006,
+          33585546.720000006,
+          33585546.720000006,
+          33585546.720000006,
+          33585546.720000006,
+          33585546.720000006,
+          33585546.720000006,
+          33585546.720000006,
+          33585546.720000006,
+          33585546.720000006
+        ],
+        "cumulative_cash_flows_krw": [
+          -112530300.0,
+          -78944753.28,
+          -45359206.559999995,
+          -11773659.839999989,
+          21811886.880000018,
+          55397433.600000024,
+          88982980.32000002,
+          122568527.04000002,
+          156154073.76000002,
+          189739620.48000002,
+          223325167.20000002
+        ],
+        "payback_year": 4,
+        "recovered_by_horizon": true,
+        "npv_krw": 159878569.13857913,
+        "undiscounted_balance_krw": 223325167.20000002
+      }
+    ],
+    "interpretation": "Assumption scenarios, not confidence intervals or causal equipment effects",
+    "exclusions": [
+      "tax",
+      "financing cash flows",
+      "grants",
+      "working-capital changes",
+      "terminal resale value"
+    ],
+    "cost_note": "Operating cost includes depreciation; cash cost excludes it. Family labor is a separate opportunity cost."
+  },
+  "sensitivity": {
+    "deterministic": {
+      "name": "기준",
+      "assumptions": {
+        "name": "기준",
+        "yield_multiplier": 1,
+        "price_multiplier": 1,
+        "cash_cost_multiplier": 1
+      },
+      "annual_yield_kg": 3344.5,
+      "farmgate_price_krw_per_kg": 10868.0,
+      "annual_revenue_krw": 36348026.0,
+      "annual_cash_operating_cost_krw": 15993164.0,
+      "annual_depreciation_krw": 4789801.0,
+      "annual_income_before_family_labor_krw": 15565061.0,
+      "annual_family_labor_opportunity_cost_krw": 12098260.0,
+      "annual_income_after_family_labor_krw": 3466801.0,
+      "annual_cash_surplus_before_replacements_krw": 20354862.0,
+      "annual_incremental_cash_flow_before_replacements_krw": 20354862.0,
+      "annual_incremental_income_krw": null,
+      "maximum_capex_for_horizon_payback_krw": 203548620.0,
+      "maximum_capex_for_nonnegative_npv_krw": 165096164.285154,
+      "required_annual_yield_for_horizon_payback_kg": 2507.010857563489,
+      "additional_yield_required_kg": 0,
+      "cash_flows_krw": [
+        -112530300.0,
+        20354862.0,
+        20354862.0,
+        20354862.0,
+        20354862.0,
+        20354862.0,
+        20354862.0,
+        20354862.0,
+        20354862.0,
+        20354862.0,
+        20354862.0
+      ],
+      "cumulative_cash_flows_krw": [
+        -112530300.0,
+        -92175438.0,
+        -71820576.0,
+        -51465714.0,
+        -31110852.0,
+        -10755990.0,
+        9598872.0,
+        29953734.0,
+        50308596.0,
+        70663458.0,
+        91018320.0
+      ],
+      "payback_year": 6,
+      "recovered_by_horizon": true,
+      "npv_krw": 52565864.28515403,
+      "undiscounted_balance_krw": 91018320.0
+    },
+    "quantiles": {
+      "annual_yield_kg": {
+        "p05": 3118.4708271946242,
+        "p50": 3343.1632735816615,
+        "p95": 3576.3011422141417
+      },
+      "annual_revenue_krw": {
+        "p05": 30880577.958346568,
+        "p50": 36159552.754757375,
+        "p95": 41982626.67146551
+      },
+      "annual_cash_operating_cost_krw": {
+        "p05": 14907059.790577881,
+        "p50": 15966226.557136651,
+        "p95": 17005997.98541987
+      },
+      "annual_income_before_family_labor_krw": {
+        "p05": 10060307.182395011,
+        "p50": 15449311.276979987,
+        "p95": 21315824.829562135
+      },
+      "annual_income_after_family_labor_krw": {
+        "p05": -2037952.8176049893,
+        "p50": 3351051.2769799866,
+        "p95": 9217564.829562133
+      },
+      "npv_krw": {
+        "p05": 7917379.779553248,
+        "p50": 51627030.34524949,
+        "p95": 99209710.3584171
+      },
+      "undiscounted_balance_krw": {
+        "p05": 35970781.82395009,
+        "p50": 89860822.76979987,
+        "p95": 148525958.29562134
+      },
+      "required_annual_yield_for_horizon_payback_kg": {
+        "p05": 2192.235146271235,
+        "p50": 2507.732150522207,
+        "p95": 2918.290445270116
+      }
+    },
+    "assumptions": {
+      "distribution": "independent symmetric triangular multipliers centered at 1",
+      "relative_half_widths": {
+        "yield": 0.1,
+        "price": 0.2,
+        "cash_cost": 0.1
+      },
+      "n_samples": 2000,
+      "seed": 42,
+      "correlation": "Independent yield/price/cash-cost factors; no estimated correlations",
+      "time_behavior": "Each draw remains constant over the full horizon, not independent annual shocks",
+      "fixed_inputs": "Capex, depreciation, baseline existing-operation cash flow, replacements and discount rate",
+      "interpretation": "Assumption-distribution percentiles, NOT calibrated confidence intervals or success probabilities",
+      "bep_definition": "Annual kg needed for undiscounted payback by the chosen horizon; family labor is separate",
+      "exclusions": [
+        "tax",
+        "financing cash flows",
+        "grants",
+        "working-capital changes",
+        "terminal resale value"
+      ]
+    }
+  },
+  "assumptions": [
+    "실제 농가 사업계획·견적이 아닌 기능 시연 예시",
+    "전국 시설딸기(수경) 조사 기준. 2027년 쿼리도 과거 중앙값을 사용하며 연도별 성장효과를 학습한 값이 아님",
+    "장비 가격은 공개 등록 표준가격. 설치5백만원·추가 부가세2,957,300원·기타 투자8천만원은 명시적 가정",
+    "추가 부가세는 장비와 설치비가 세전이라는 예시 가정의 10%. 실제 세법 적용·공제·환급 여부 미반영",
+    "기타8천만원은 장비/설치비와 중복 없는 온실·토목·기타 투자 가정. 정부75,000원/㎡ 기준은 사용하지 않음",
+    "10년 동안 같은 연간 조건 유지, 교체비0 가정. 실제 장비 수명이나 유지보수 보장이 아님",
+    "기준단가·운영비·감가상각·자가노동은2024년 조사값. 미래가격/비용 상승률 자동반영 없음",
+    "초기투자비 회수는 가족노동 기회비용 차감 전 현금흐름. 세금·금융조달·보조금·운전자금·처분가치 제외",
+    "장비 설치에 따른 생산성 증가 가정 없음. 가격전망은 별도 도매가격 실험으로 농가수취가격 자동대체 없음"
+  ],
+  "source_sha256": {
+    "data/processed/rda_crop_income.csv": "e041d5c5252ad5a4d2500b308494adf6b27d3671f216272ae521d5d7762bee07",
+    "data/processed/equipment_catalog.json": "9d85d1a27a901644bcc7f40d81b8b1a143df5c85fd3e362e605243b8e2794169",
+    "artifacts/rda_0.pkl": "62eea621cb64c1a8fb1eaae56a78ecf4c3fd2cfa74972d821513fc04f6e13cd4",
+    "src/economics.py": "158742df97cb92742695c2baf82d7a3303b745446a32d6ff87b9d7fc32b935fc",
+    "src/risk_simulation.py": "e9c57dc131d39966d89f93d6cc78d1cd06d23814de90a47ce32b3cb1f99bafa0",
+    "src/equipment_costs.py": "6457af0bc197a4516e60396ab8edee516f61aa7aaeae63c5fe64b49c7f9cc7e2",
+    "src/smartfarm_model.py": "be82755bc4b68af5d3c286bc6208b1599e6606d5d3791d617070a048f87019bb",
+    "scripts/run_planning_demo.py": "b4d3114448196b217f252f3919e0e0b8e1e31a9ec06552ce3eea470fbbbcbb1c"
+  },
+  "publication_note": "공개 집계 기준값과 명시적 투자비 가정으로 계산한 기능 시연. 농가 원행 및 샘플별 민감도 결과는 포함하지 않음."
+}

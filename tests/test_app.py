@@ -10,7 +10,7 @@ APP = Path(__file__).resolve().parents[1] / "app.py"
 def test_missing_quote_disables_only_calculation_not_other_tabs():
     app = AppTest.from_file(str(APP), default_timeout=30).run()
     assert not app.exception
-    assert [tab.label for tab in app.tabs] == ["도입 전 계산", "모델 검증", "수집 자료"]
+    assert [tab.label for tab in app.tabs] == ["한눈에 보기", "도입 전 계산", "가격 예측", "재배 중 점검", "모델 검증", "수집 자료"]
     assert app.number_input(key="capex").value is None
     assert app.button(key="calculate").disabled
     assert any("실제 자료로 실행한 비교" in item.value for item in app.subheader)
@@ -100,3 +100,47 @@ def test_market_prices_keep_variety_missingness_and_do_not_replace_farmgate_pric
     assert price_table["가격 (원/kg)"].isna().sum() == 44
     assert price_table.loc[price_table["연월"] >= "2023-01", "가격 (원/kg)"].isna().all()
     assert app.session_state["calculation_payload"]["benchmark"]["farmgate_price_krw_per_kg"] == farmgate_price
+
+
+def test_equipment_example_changes_capital_without_inventing_yield_gain():
+    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app.button(key="load_example").click().run()
+    assert not app.exception
+    app.button(key="calculate").click().run()
+    before = app.session_state["calculation_payload"]
+    assert before["initial_capex_krw"] == 112_530_300
+    assert before["benchmark"]["yield_kg_per_1000m2"] == 3344.5
+    app.number_input(key="equipment_qty_5126").set_value(2).run()
+    assert any("입력이 변경" in item.value for item in app.info)
+    app.button(key="calculate").click().run()
+    after = app.session_state["calculation_payload"]
+    assert after["initial_capex_krw"] == before["initial_capex_krw"] + 20_903_000
+    assert after["benchmark"] == before["benchmark"]
+    app.number_input(key="equipment_installation").set_value(None).run()
+    assert app.button(key="calculate").disabled
+    assert not app.exception
+
+
+def test_market_and_weather_assumptions_change_scenario_not_source_benchmark():
+    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app.button(key="load_example").click().run()
+    app.checkbox(key="use_market_transfer").check().run()
+    app.radio(key="transfer_method").set_value("2024년에 선택한 모델").run()
+    app.checkbox(key="use_weather_scenario").check().run()
+    assert app.button(key="calculate").disabled
+    app.number_input(key="weather_yield_change").set_value(-10.0)
+    app.number_input(key="weather_cost_change").set_value(15.0).run()
+    app.button(key="calculate").click().run()
+    assert not app.exception
+    payload = app.session_state["calculation_payload"]
+    base = app.session_state["calculation_result"]["scenarios"][1]
+    assert payload["benchmark"]["yield_kg_per_1000m2"] == 3344.5
+    assert payload["benchmark"]["farmgate_price_krw_per_kg"] == 10868
+    assert base["annual_yield_kg"] == pytest.approx(3344.5 * .9)
+    assert base["annual_cash_operating_cost_krw"] == pytest.approx((20_782_965 - 4_789_801) * 1.15)
+    assert base["farmgate_price_krw_per_kg"] == pytest.approx(10868 * payload["reference_scenario"]["market"]["factor"])
+    assert payload["reference_scenario"]["market"]["forecast_origin"] == "2025-12-31"
+    assert payload["sensitivity_half_widths"]["yield"] == .1
+    app.button(key="load_example").click().run()
+    assert not app.checkbox(key="use_market_transfer").value
+    assert not app.checkbox(key="use_weather_scenario").value
