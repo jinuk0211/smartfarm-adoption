@@ -2,6 +2,8 @@
 
 **작물·지역·온실·면적·재배 시작 시점을 입력해 출하량과 매출을 추정하고, 설치비·운영비 가정에 따른 경제성을 비교하는 연구용 프로젝트입니다.**
 
+**[공개 웹사이트 열기](https://smartfarm-adoption.vercel.app)** — 별도 DB 없이 브라우저에서 계산합니다. 공개 웹은 딸기 집계 기준의 계획·설비·시나리오 계산과 연구 요약을 제공하며, 실제 농가 원자료를 사용하는 로컬 연구 앱과 구분됩니다. [웹 실행·배포 안내](web/README.md)
+
 [PPT 기획서](presentation/smartfarm_proposal.pptx) · [PPT 글꼴 묶음](presentation/fonts/smartfarm_cute_fonts.zip) · [실행 대시보드 화면](assets/dashboard/) · [계산 예시와 가정](reports/planning_demo_summary.json) · [실제 가격 검증 결과](reports/price_forecast_metrics_summary.json)
 
 화면은 투자비·자가노동 반영 소득·회수기간을 먼저 보여줍니다. 최신 기획서는 **주아체·고운돋움체와 딸기 농부 일러스트 10장**으로 구성했습니다. 본편 14장과 근거 부록 14장이며, 데이터 정의와 전체 실험 결과를 부록에 보존했습니다. [발표자료와 글꼴 안내](presentation/README.md) · [이전 화면 개선 기록](reports/readability_revision.md)
