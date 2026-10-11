@@ -138,9 +138,11 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
         planned_year = columns[1].number_input("예정 재배연도", min_value=latest_year + 1, value=max(date.today().year, latest_year + 1), step=1, key="planned_year")
         cycles = 1.0
         columns[2].metric("계산 기간 기준", "연간 1기작")
-        yield_mode = st.radio("수량 기준", ["최신 실측 집계", "실험 모델"], horizontal=True, key="yield_mode")
+        yield_mode = st.radio("수량 기준", ["최신 실측 집계", "실험 모델", "농가 작기 모델"], horizontal=True, key="yield_mode")
         yield_value = float(row["yield_kg_per_1000m2"])
         prediction = None
+        farm_prediction = None
+        farm_period_agreed = True
         if yield_mode == "실험 모델":
             from src.smartfarm_model import predict_yield
 
@@ -154,8 +156,15 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
                 st.info("선택 조건을 지원하는 모델 자료가 없습니다. 최신 실측 집계를 선택해 계산할 수 있습니다.")
             else:
                 st.caption(f"선택된 방법: {prediction['model']} · 같은 조건 참고 행 {prediction['n_reference_rows']}개 · 최신 관측 {prediction['latest_source_year']}년. 비교 실험에서는 과거 중앙값이 CatBoost·XGBoost보다 오차가 작았습니다.")
+        if yield_mode == "농가 작기 모델":
+            from src.planning_ui import render_farm_prediction
+            farm_prediction, farm_period_agreed = render_farm_prediction(PROJECT, crop, area, int(planned_year))
+            if farm_prediction and farm_prediction["target"] == "shipment":
+                yield_value = farm_prediction["prediction"] / area * 1000
         if yield_value is not None:
             st.write(f"수량 기준 **{yield_value:,.1f} kg / 1,000㎡ / 년(1기작)** · 농가수취단가 **{row['farmgate_price_krw_per_kg']:,.0f} 원/kg**")
+        if farm_prediction is not None and farm_prediction["target"] == "revenue":
+            st.caption("조사 판매단가는 참고값입니다. 총매출 모델 예측에 단가를 다시 곱하지 않습니다.")
         st.caption("원자료가 연간 1기작 기준이므로 연간 횟수는 1로 고정합니다. 수량·비용·감가상각은 면적만 환산합니다. 예정연도에 따른 가격·비용 상승률을 자동 예측하지 않으며 선택한 연간 조건이 분석기간 동안 유지된다고 가정합니다.")
 
     with st.expander("02  투자 계획 · 설비와 비용", expanded=not st.session_state.get("example_loaded", False)):
@@ -196,7 +205,9 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
             if mode == "retrofit":
                 baseline_replacement_cost = st.number_input("같은 연도 기존 유지안 교체비 (원) · 없으면 0 명시", min_value=0, value=None, step=1000000, key="baseline_replacement_cost")
 
-    ready = capital is not None and yield_value is not None and references_ready
+    ready = capital is not None and yield_value is not None and references_ready and farm_period_agreed
+    if yield_mode == "농가 작기 모델":
+        ready = ready and farm_prediction is not None
     if mode == "retrofit":
         ready = ready and baseline_cash is not None
     if has_replacement:
@@ -230,6 +241,9 @@ def render_calculator(data: pd.DataFrame, metrics: dict) -> None:
     }
     if mode == "retrofit":
         payload["baseline"] = {"annual_cash_flow_krw": baseline_cash, "replacements_krw": {} if not has_replacement else {str(replacement_year): baseline_replacement_cost}}
+    if farm_prediction is not None:
+        from src.planning_models import apply_prediction_to_plan
+        payload = apply_prediction_to_plan(payload, farm_prediction, acknowledge_period=farm_period_agreed)
     if clicked:
         st.session_state["calculation_result"] = evaluate_plan(payload)
         st.session_state["calculation_payload"] = payload

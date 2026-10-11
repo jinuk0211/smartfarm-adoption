@@ -74,6 +74,7 @@ export function calculatePlan(payload) {
   const cashCostBase = expense - depreciation;
   const familyLabor = benchmark.family_labor_cost_krw_per_1000m2 == null ? null :
     number(benchmark.family_labor_cost_krw_per_1000m2, 'family labor') * scaling;
+  const revenueOverride = payload.annual_revenue_override_krw == null ? null : number(payload.annual_revenue_override_krw, 'annual_revenue_override_krw');
 
   let baselineCash = 0;
   let baselineIncome = null;
@@ -93,9 +94,10 @@ export function calculatePlan(payload) {
     const name = String(scenario.name ?? '').trim();
     if (!name) throw new Error('Each scenario needs a name');
     const quantity = yieldBase * number(scenario.yield_multiplier, 'yield_multiplier');
-    const scenarioPrice = price * number(scenario.price_multiplier, 'price_multiplier');
+    const scenarioPrice = revenueOverride === null ? price * number(scenario.price_multiplier, 'price_multiplier') :
+      (yieldBase === 0 ? null : revenueOverride / yieldBase * number(scenario.price_multiplier, 'price_multiplier'));
     const cashCost = cashCostBase * number(scenario.cash_cost_multiplier, 'cash_cost_multiplier');
-    const revenue = quantity * scenarioPrice;
+    const revenue = revenueOverride === null ? quantity * scenarioPrice : revenueOverride * number(scenario.yield_multiplier, 'yield_multiplier') * number(scenario.price_multiplier, 'price_multiplier');
     const cashSurplus = revenue - cashCost;
     const income = cashSurplus - depreciation;
     const incrementalCash = cashSurplus - baselineCash;
@@ -107,10 +109,11 @@ export function calculatePlan(payload) {
     const discountedFuture = sum(flows.slice(1).map((value, index) => value / (1 + rate) ** (index + 1)));
     const annualRepayment = (capital + sum(Object.values(replacementCosts)) - sum(Object.values(baselineReplacements))) / horizon;
     const requiredRevenue = cashCost + baselineCash + annualRepayment;
-    const requiredQuantity = scenarioPrice === 0 ? null : Math.max(0, requiredRevenue / scenarioPrice);
+    const requiredQuantity = scenarioPrice === null || scenarioPrice === 0 ? null : Math.max(0, requiredRevenue / scenarioPrice);
     return {
       name, assumptions: {...scenario}, annual_yield_kg: quantity,
       farmgate_price_krw_per_kg: scenarioPrice, annual_revenue_krw: revenue,
+      revenue_basis: revenueOverride === null ? 'quantity_times_farmgate_price' : 'recorded_cycle_revenue_model',
       annual_cash_operating_cost_krw: cashCost, annual_depreciation_krw: depreciation,
       annual_income_before_family_labor_krw: income,
       annual_family_labor_opportunity_cost_krw: familyLabor,
@@ -127,6 +130,7 @@ export function calculatePlan(payload) {
   });
   return {
     mode, area_m2: area, period_basis: periodBasis, cycles_per_year: cycles,
+    ...(payload.model_connection ? {model_connection: structuredClone(payload.model_connection)} : {}),
     initial_capex_krw: capital, horizon_years: horizon, discount_rate: rate, scenarios: outputs,
     interpretation: 'Assumption scenarios, not confidence intervals or causal equipment effects',
     exclusions: ['tax', 'financing cash flows', 'grants', 'working-capital changes', 'terminal resale value'],

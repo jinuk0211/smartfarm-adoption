@@ -2,7 +2,9 @@
 
 **작물·지역·온실·면적·재배 시작 시점을 입력해 출하량과 매출을 추정하고, 설치비·운영비 가정에 따른 경제성을 비교하는 연구용 프로젝트입니다.**
 
-**[공개 웹사이트 열기](https://smartfarm-adoption.vercel.app)** — 별도 DB 없이 브라우저에서 계산합니다. 공개 웹은 딸기 집계 기준의 계획·설비·시나리오 계산과 연구 요약을 제공하며, 실제 농가 원자료를 사용하는 로컬 연구 앱과 구분됩니다. [웹 실행·배포 안내](web/README.md)
+**[공개 웹사이트 열기](https://smartfarm-adoption.vercel.app)** — 별도 DB 없이 브라우저에서 학습한 농가 모델을 실행하고 계산합니다. 딸기 출하량과 5품목 총매출 예측을 선택한 소득조사 비용·설비비와 연결했습니다. [웹 실행·배포 안내](web/README.md)
+
+**[2026-10-11 데이터 재확인·성능 검증·계산 연결 결과](reports/planning_connection_validation.md)** — 확인된 API 면적을 사용하는 출하량 76작기·매출 189작기, 중첩 시설 분리·시간 검증, 실제 모델 → 매출·소득·회수기간 연결입니다. 전체 평균에서는 단순 면적당 중앙값이 모델 선택 절차보다 오차가 작았습니다.
 
 [PPT 기획서](presentation/smartfarm_proposal.pptx) · [PPT 글꼴 묶음](presentation/fonts/smartfarm_cute_fonts.zip) · [실행 대시보드 화면](assets/dashboard/) · [계산 예시와 가정](reports/planning_demo_summary.json) · [실제 가격 검증 결과](reports/price_forecast_metrics_summary.json)
 
@@ -20,7 +22,7 @@
 
 원래의 기술 도식도 유지합니다: [시설·경영조사 연결과 모델](assets/diagrams/dsz-data-flow.png) · [실제 데이터 분석 전체 흐름](assets/diagrams/actual-data-flow.png). 쉬운 설명 그림은 이미지 생성 도구로 제작했으며, [생성 문안](assets/diagrams/easy-explanation.prompts.json)과 [문구 수정 내역](assets/diagrams/easy-explanation.edits.json)을 함께 보관합니다.
 
-작기별 예측은 연간 경제성 계산에 자동 연결하지 않습니다. 실제 미개방 원자료는 로컬에 없으며, 현장 실행 코드는 합성 40시설·80작기로 검증했습니다.
+작기별 예측은 사용자가 **연 1작기 가정**을 확인하면 연간 경제성 계산에 연결됩니다. 총매출 예측에 면적·단가를 다시 곱하지 않으며 연간 비용은 면적만 환산합니다. 실제 미개방 원자료는 로컬에 없고, 현장 코드의 예측 CSV도 비용 계획에 연결할 수 있습니다. 합성 40시설·80작기 실행은 실제 자료 검증과 구분합니다.
 
 ## 지금까지 만든 것
 

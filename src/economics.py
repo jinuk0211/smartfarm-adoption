@@ -87,6 +87,9 @@ def evaluate_plan(payload: Mapping[str, Any]) -> dict[str, Any]:
     cash_cost_base = expense - depreciation
     family_labor = benchmark.get("family_labor_cost_krw_per_1000m2")
     family_labor = None if family_labor is None else _number(family_labor, "family labor") * scaling
+    revenue_override = payload.get("annual_revenue_override_krw")
+    if revenue_override is not None:
+        revenue_override = _number(revenue_override, "annual_revenue_override_krw")
 
     baseline_cash = 0.0
     baseline_income = None
@@ -113,7 +116,10 @@ def evaluate_plan(payload: Mapping[str, Any]) -> dict[str, Any]:
         cost_multiplier = _number(scenario.get("cash_cost_multiplier"), "cash_cost_multiplier")
         quantity = yield_base * yield_multiplier
         scenario_price = price * price_multiplier
-        revenue = quantity * scenario_price
+        if revenue_override is not None:
+            scenario_price = None if yield_base == 0 else revenue_override / yield_base * price_multiplier
+        revenue = (quantity * scenario_price if revenue_override is None else
+                   revenue_override * yield_multiplier * price_multiplier)
         cash_cost = cash_cost_base * cost_multiplier
         cash_surplus = revenue - cash_cost
         income = cash_surplus - depreciation
@@ -129,13 +135,14 @@ def evaluate_plan(payload: Mapping[str, Any]) -> dict[str, Any]:
             capital + sum(replacements.values()) - sum(baseline_replacements.values())
         ) / horizon
         required_revenue = cash_cost + baseline_cash + annual_repayment_requirement
-        required_quantity = None if scenario_price == 0 else max(0, required_revenue / scenario_price)
+        required_quantity = None if scenario_price in (None, 0) else max(0, required_revenue / scenario_price)
         outputs.append({
             "name": name,
             "assumptions": dict(scenario),
             "annual_yield_kg": quantity,
             "farmgate_price_krw_per_kg": scenario_price,
             "annual_revenue_krw": revenue,
+            "revenue_basis": "quantity_times_farmgate_price" if revenue_override is None else "recorded_cycle_revenue_model",
             "annual_cash_operating_cost_krw": cash_cost,
             "annual_depreciation_krw": depreciation,
             "annual_income_before_family_labor_krw": income,
@@ -162,4 +169,5 @@ def evaluate_plan(payload: Mapping[str, Any]) -> dict[str, Any]:
         "interpretation": "Assumption scenarios, not confidence intervals or causal equipment effects",
         "exclusions": ["tax", "financing cash flows", "grants", "working-capital changes", "terminal resale value"],
         "cost_note": "Operating cost includes depreciation; cash cost excludes it. Family labor is a separate opportunity cost.",
+        **({"model_connection": dict(payload["model_connection"])} if "model_connection" in payload else {}),
     }

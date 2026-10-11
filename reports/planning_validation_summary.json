@@ -1,0 +1,1203 @@
+{
+  "generated_at_utc": "2026-10-11T11:54:02.288733+00:00",
+  "source_integrity_checked": true,
+  "cohort_policy": "API-confirmed m2 only; previously flagged scale records quarantined, never corrected. Primary original evaluations remain separate.",
+  "target_period_confirmed": false,
+  "cohorts": {
+    "shipment": {
+      "primary_rows": 77,
+      "training_rows": 76,
+      "training_facilities": 61,
+      "quarantined_rows": 1,
+      "selected_model": "xgboost_log_density",
+      "validation": {
+        "method": "nested_facility_group_cv_5_outer_3_inner",
+        "folds": [
+          {
+            "fold": 0,
+            "n_train": 60,
+            "n_query": 16,
+            "selected": "catboost_log_density",
+            "inner_mae": {
+              "crop_area_median": 6613.8835840983875,
+              "catboost_log_density": 6297.812714263843,
+              "xgboost_log_density": 6546.569003947576
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          },
+          {
+            "fold": 1,
+            "n_train": 61,
+            "n_query": 15,
+            "selected": "xgboost_log_density",
+            "inner_mae": {
+              "crop_area_median": 6081.581929607815,
+              "catboost_log_density": 5348.588955854637,
+              "xgboost_log_density": 5093.008946356226
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          },
+          {
+            "fold": 2,
+            "n_train": 61,
+            "n_query": 15,
+            "selected": "catboost_log_density",
+            "inner_mae": {
+              "crop_area_median": 7389.379904544687,
+              "catboost_log_density": 7020.9064150741415,
+              "xgboost_log_density": 7698.386884974651
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          },
+          {
+            "fold": 3,
+            "n_train": 61,
+            "n_query": 15,
+            "selected": "catboost_log_density",
+            "inner_mae": {
+              "crop_area_median": 7420.361290285992,
+              "catboost_log_density": 6805.701517260204,
+              "xgboost_log_density": 6906.491124481451
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          },
+          {
+            "fold": 4,
+            "n_train": 61,
+            "n_query": 15,
+            "selected": "crop_area_median",
+            "inner_mae": {
+              "crop_area_median": 6665.917479327918,
+              "catboost_log_density": 6724.60640229134,
+              "xgboost_log_density": 7040.921563969284
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          }
+        ],
+        "metrics": {
+          "nested_selection": {
+            "n": 76,
+            "mae": 7095.08535225198,
+            "rmse": 16382.057451565466,
+            "median_absolute_error": 3191.0529411764705
+          },
+          "baseline": {
+            "n": 76,
+            "mae": 6837.657011569708,
+            "rmse": 14582.479406693852,
+            "median_absolute_error": 3191.0529411764705
+          }
+        },
+        "by_crop": {
+          "딸기": {
+            "selected": {
+              "n": 76,
+              "mae": 7095.08535225198,
+              "rmse": 16382.057451565466,
+              "median_absolute_error": 3191.0529411764705
+            },
+            "baseline": {
+              "n": 76,
+              "mae": 6837.657011569708,
+              "rmse": 14582.479406693852,
+              "median_absolute_error": 3191.0529411764705
+            }
+          }
+        },
+        "temporal": {
+          "query_year": 2024,
+          "n_train": 68,
+          "n_query": 7,
+          "group_overlap": 0,
+          "status": "evaluated",
+          "selected": "crop_area_median",
+          "metrics": {
+            "n": 7,
+            "mae": 5416.349216025394,
+            "rmse": 6496.5216073878255,
+            "median_absolute_error": 4412.917439111237
+          },
+          "baseline": {
+            "n": 7,
+            "mae": 5416.349216025394,
+            "rmse": 6496.5216073878255,
+            "median_absolute_error": 4412.917439111237
+          },
+          "unsupported_rows": 0
+        },
+        "unsupported_rows": 0,
+        "final_selection_mae": {
+          "crop_area_median": 6644.626022765819,
+          "catboost_log_density": 6658.547216663134,
+          "xgboost_log_density": 6601.841381465134
+        },
+        "oof_sha256": "2d0c198b9c669492ce9bcacf6da16acf0841c2ab4459a6cebe4a0d9d8cf9fe07"
+      }
+    },
+    "revenue": {
+      "primary_rows": 192,
+      "training_rows": 189,
+      "training_facilities": 143,
+      "quarantined_rows": 3,
+      "selected_model": "crop_area_median",
+      "validation": {
+        "method": "nested_facility_group_cv_5_outer_3_inner",
+        "folds": [
+          {
+            "fold": 0,
+            "n_train": 151,
+            "n_query": 38,
+            "selected": "catboost_log_density",
+            "inner_mae": {
+              "crop_area_median": 143122382.13797602,
+              "catboost_log_density": 132325992.65923029,
+              "xgboost_log_density": 134702839.3381687
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          },
+          {
+            "fold": 1,
+            "n_train": 151,
+            "n_query": 38,
+            "selected": "crop_area_median",
+            "inner_mae": {
+              "crop_area_median": 143578832.6810888,
+              "catboost_log_density": 145246718.5536299,
+              "xgboost_log_density": 146535473.33701754
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          },
+          {
+            "fold": 2,
+            "n_train": 151,
+            "n_query": 38,
+            "selected": "catboost_log_density",
+            "inner_mae": {
+              "crop_area_median": 139724689.0654297,
+              "catboost_log_density": 135388175.31229427,
+              "xgboost_log_density": 139144767.3839766
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          },
+          {
+            "fold": 3,
+            "n_train": 151,
+            "n_query": 38,
+            "selected": "xgboost_log_density",
+            "inner_mae": {
+              "crop_area_median": 155823098.6877307,
+              "catboost_log_density": 152244518.26801634,
+              "xgboost_log_density": 151311226.75629914
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          },
+          {
+            "fold": 4,
+            "n_train": 152,
+            "n_query": 37,
+            "selected": "catboost_log_density",
+            "inner_mae": {
+              "crop_area_median": 146339485.0542406,
+              "catboost_log_density": 137222977.77292866,
+              "xgboost_log_density": 150625896.46127158
+            },
+            "unsupported_rows": 0,
+            "group_overlap": 0
+          }
+        ],
+        "metrics": {
+          "nested_selection": {
+            "n": 189,
+            "mae": 143992069.34420967,
+            "rmse": 277700981.64865005,
+            "median_absolute_error": 64546753.30006249
+          },
+          "baseline": {
+            "n": 189,
+            "mae": 139606535.23732287,
+            "rmse": 267931498.7704562,
+            "median_absolute_error": 63911103.610606074
+          }
+        },
+        "by_crop": {
+          "딸기": {
+            "selected": {
+              "n": 91,
+              "mae": 87802518.79688984,
+              "rmse": 163950207.2633947,
+              "median_absolute_error": 47573907.953155845
+            },
+            "baseline": {
+              "n": 91,
+              "mae": 89817394.99047297,
+              "rmse": 179030649.94089624,
+              "median_absolute_error": 40093691.255500555
+            }
+          },
+          "방울토마토": {
+            "selected": {
+              "n": 33,
+              "mae": 254691560.22110763,
+              "rmse": 484527502.40388185,
+              "median_absolute_error": 86857556.96376553
+            },
+            "baseline": {
+              "n": 33,
+              "mae": 250993033.43120638,
+              "rmse": 466351049.01645905,
+              "median_absolute_error": 93504313.681198
+            }
+          },
+          "오이": {
+            "selected": {
+              "n": 19,
+              "mae": 112310071.79052222,
+              "rmse": 148407257.50704667,
+              "median_absolute_error": 83014320.72265625
+            },
+            "baseline": {
+              "n": 19,
+              "mae": 113922375.35724281,
+              "rmse": 153969728.99676165,
+              "median_absolute_error": 80854030.56984566
+            }
+          },
+          "토마토": {
+            "selected": {
+              "n": 20,
+              "mae": 157673635.0176359,
+              "rmse": 225263183.59796676,
+              "median_absolute_error": 108565962.64400385
+            },
+            "baseline": {
+              "n": 20,
+              "mae": 150104546.73312303,
+              "rmse": 219342030.62573096,
+              "median_absolute_error": 98417779.79166667
+            }
+          },
+          "파프리카": {
+            "selected": {
+              "n": 26,
+              "mae": 212780243.99497917,
+              "rmse": 336759073.76596254,
+              "median_absolute_error": 100599666.56773369
+            },
+            "baseline": {
+              "n": 26,
+              "mae": 183187155.616965,
+              "rmse": 281580259.7190176,
+              "median_absolute_error": 105577779.81818184
+            }
+          }
+        },
+        "temporal": {
+          "query_year": 2023,
+          "n_train": 184,
+          "n_query": 5,
+          "group_overlap": 0,
+          "status": "evaluated",
+          "selected": "catboost_log_density",
+          "metrics": {
+            "n": 5,
+            "mae": 91187844.12746564,
+            "rmse": 122303211.28090948,
+            "median_absolute_error": 59373813.13868781
+          },
+          "baseline": {
+            "n": 5,
+            "mae": 106432458.32727273,
+            "rmse": 137803914.9371902,
+            "median_absolute_error": 69164059.0
+          },
+          "unsupported_rows": 0
+        },
+        "unsupported_rows": 0,
+        "final_selection_mae": {
+          "crop_area_median": 143700805.52624378,
+          "catboost_log_density": 146894743.69611064,
+          "xgboost_log_density": 148725624.3681124
+        },
+        "oof_sha256": "fbbee8cd8099df439416b567f0ee11ab7c010fa90ceacd4bd14aa4eaab320930"
+      }
+    }
+  },
+  "other_experiments": {
+    "growth": {
+      "status": "stored_scores_recomputed",
+      "n": 40,
+      "groups": 21,
+      "selection_used_same_oof": true,
+      "models": [
+        {
+          "model": "current_height",
+          "mae_mm": 36.079166666666666,
+          "rmse_mm": 45.92062142678627,
+          "median_absolute_error_mm": 24.0,
+          "n_scored": 40,
+          "fold_mae_mm": {
+            "0": 56.479166666666664,
+            "1": 40.541666666666664,
+            "2": 27.0,
+            "3": 29.0625,
+            "4": 27.3125
+          }
+        },
+        {
+          "model": "catboost_growth",
+          "mae_mm": 32.607384212432535,
+          "rmse_mm": 41.105035645802886,
+          "median_absolute_error_mm": 28.39139033868824,
+          "n_scored": 40,
+          "fold_mae_mm": {
+            "0": 47.23733944884858,
+            "1": 38.53465288379644,
+            "2": 25.452962354706457,
+            "3": 31.739428428356398,
+            "4": 20.072537946454823
+          }
+        },
+        {
+          "model": "catboost_growth_environment",
+          "mae_mm": 34.786178667408024,
+          "rmse_mm": 43.04013158412155,
+          "median_absolute_error_mm": 31.308795682006235,
+          "n_scored": 40,
+          "fold_mae_mm": {
+            "0": 51.323939935841395,
+            "1": 39.08287110972536,
+            "2": 23.753829855866528,
+            "3": 30.986052368486874,
+            "4": 28.784200067119976
+          }
+        },
+        {
+          "model": "xgboost_growth_environment",
+          "mae_mm": 34.589417345325145,
+          "rmse_mm": 42.29869377173107,
+          "median_absolute_error_mm": 28.7378511428833,
+          "n_scored": 40,
+          "fold_mae_mm": {
+            "0": 48.82260195414225,
+            "1": 46.171511928240456,
+            "2": 18.749809935688972,
+            "3": 28.14502251148224,
+            "4": 31.05814039707184
+          }
+        }
+      ]
+    },
+    "price": {
+      "status": "time_separated_experiment_rerun",
+      "split": {
+        "initial_train": "2021–2023",
+        "model_selection": "2024",
+        "untouched_holdout": "2025",
+        "holdout_training_cutoff": "2024-12-31",
+        "forecast_training_cutoff": "2025-12-31",
+        "forecast_calendar": "2026-01–2026-12"
+      },
+      "holdout_selected": {
+        "evaluated_months": 106,
+        "mae_krw_per_kg": 1249.1612578968268,
+        "wape_percent": 24.08595516041351
+      },
+      "holdout_baseline": {
+        "evaluated_months": 106,
+        "mae_krw_per_kg": 1061.622641509434,
+        "wape_percent": 20.469891440379524
+      }
+    }
+  },
+  "models_sha256": "6afc518ce40eb954629adba98d697ca4b70b39e119f79656b1e90d22a676554d",
+  "code_sha256": {
+    "src/planning_models.py": "8a8e6b1439a297afb6f20d2deae196d52ef38b1afa958dc647007e28d47ca16d",
+    "src/economics.py": "49722ded93936f6dd2afb8940167e53836ad415edfe4bd1e8d501333c02115c4",
+    "scripts/validate_planning_pipeline.py": "cdd58e630d76257837141679e30479c86ab6b38b7268dd2550325d27d1cfc4bc"
+  },
+  "examples": [
+    {
+      "target": "shipment",
+      "inputs": {
+        "benchmark": {
+          "farmgate_price_krw_per_kg": 10868.0,
+          "operating_cost_krw_per_1000m2": 20782965.0,
+          "depreciation_krw_per_1000m2": 4789801.0,
+          "family_labor_cost_krw_per_1000m2": 12098260.0,
+          "yield_kg_per_1000m2": 4244.349030746877,
+          "period_basis": "년1기작/10a"
+        },
+        "area_m2": 1000,
+        "cycles_per_year": 1,
+        "initial_capex_krw": 112530300.0,
+        "horizon_years": 10,
+        "discount_rate": 0.04,
+        "mode": "new",
+        "replacements_krw": {},
+        "scenarios": [
+          {
+            "name": "불리",
+            "yield_multiplier": 0.9,
+            "price_multiplier": 0.8,
+            "cash_cost_multiplier": 1.1
+          },
+          {
+            "name": "기준",
+            "yield_multiplier": 1,
+            "price_multiplier": 1,
+            "cash_cost_multiplier": 1
+          },
+          {
+            "name": "유리",
+            "yield_multiplier": 1.1,
+            "price_multiplier": 1.2,
+            "cash_cost_multiplier": 0.9
+          }
+        ],
+        "reference": {
+          "crop": "딸기",
+          "source_category": "시설딸기(수경)",
+          "region": "전국",
+          "year": 2024,
+          "planned_year": 2027,
+          "source_url": "https://www.nongsaro.go.kr/portal/bsFileDownload.do?atchmnflGroupEsntlCode=BS000000045358&atchmnflSn=0",
+          "source_page": 95,
+          "yield_mode": "실험 모델",
+          "model_prediction": {
+            "status": "aggregate_reference_only",
+            "yield_kg_per_1000m2": 3344.5,
+            "model": "historical_median",
+            "n_reference_rows": 2,
+            "latest_source_year": 2024,
+            "period_basis": "년1기작/10a",
+            "warning": "Regional/crop survey reference, not a prediction validated for an individual prospective farm or a causal installation effect"
+          }
+        },
+        "capital_cost_basis": {
+          "equipment": {
+            "lines": [
+              {
+                "equipment_id": "5126",
+                "name": "CRONOUS-AV-CR01 환경제어 구성",
+                "quantity": 1,
+                "option_ids": [],
+                "package_price_krw": 20903000.0,
+                "options_price_per_package_krw": 0,
+                "line_total_krw": 20903000.0,
+                "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+                "checked_date": "2026-10-10"
+              },
+              {
+                "equipment_id": "6337",
+                "name": "옹달샘300 양액 공급 구성",
+                "quantity": 1,
+                "option_ids": [
+                  "6337-option-1"
+                ],
+                "package_price_krw": 3270000.0,
+                "options_price_per_package_krw": 400000.0,
+                "line_total_krw": 3670000.0,
+                "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+                "checked_date": "2026-10-10"
+              }
+            ],
+            "equipment_subtotal_krw": 24573000.0,
+            "installation_krw": 5000000.0,
+            "additional_vat_krw": 2957300.0,
+            "initial_capex_krw": 32530300.0,
+            "unresolved_cost_inputs": [],
+            "status": "planning_assumption",
+            "is_verified_quote": false,
+            "scope": "선택 장비와 명시한 설치비·추가 부가세만 포함. 온실 신축·토목·기타 설비·호환성 검토는 별도.",
+            "limitations": [
+              "업체 등록 표준가격이며 실제 계약·설치 견적이 아닙니다.",
+              "등록가격의 부가세·설치비 포함 여부는 확인되지 않았습니다.",
+              "구성품 가격을 재합산하지 않고 공개된 묶음 합계를 사용합니다.",
+              "옵션은 명시적으로 선택하며 선택한 옵션은 묶음 수량만큼 계산합니다.",
+              "장비 간 호환성, 재배면적별 필요 수량, 수확 증가 효과와 수명은 검증되지 않았습니다."
+            ]
+          },
+          "other_capex_krw": 80000000,
+          "total_initial_capex_krw": 112530300.0
+        },
+        "model_connection": {
+          "prediction": {
+            "status": "predicted",
+            "target": "shipment",
+            "unit": "kg_per_recorded_cycle",
+            "prediction": 4244.349030746877,
+            "model": "xgboost_log_density",
+            "query": {
+              "crop": "딸기",
+              "variety": "설향",
+              "region": "전라남도",
+              "district": "보성군",
+              "facility_type": "비닐",
+              "planting_year": 2027,
+              "planting_month": 9,
+              "area_m2": 1000
+            },
+            "warnings": [
+              "future_year_not_prospectively_validated"
+            ],
+            "target_period_confirmed": false
+          },
+          "period_assumption": "one_recorded_cycle_per_year",
+          "cost_basis": "unchanged annual per-1000m2 reference",
+          "income_accuracy_validated": false
+        }
+      },
+      "results": {
+        "mode": "new",
+        "area_m2": 1000.0,
+        "period_basis": "년1기작/10a",
+        "cycles_per_year": 1.0,
+        "initial_capex_krw": 112530300.0,
+        "horizon_years": 10,
+        "discount_rate": 0.04,
+        "scenarios": [
+          {
+            "name": "불리",
+            "assumptions": {
+              "name": "불리",
+              "yield_multiplier": 0.9,
+              "price_multiplier": 0.8,
+              "cash_cost_multiplier": 1.1
+            },
+            "annual_yield_kg": 3819.91412767219,
+            "farmgate_price_krw_per_kg": 8694.4,
+            "annual_revenue_krw": 33211861.391633086,
+            "revenue_basis": "quantity_times_farmgate_price",
+            "annual_cash_operating_cost_krw": 17592480.400000002,
+            "annual_depreciation_krw": 4789801.0,
+            "annual_income_before_family_labor_krw": 10829579.991633084,
+            "annual_family_labor_opportunity_cost_krw": 12098260.0,
+            "annual_income_after_family_labor_krw": -1268680.0083669163,
+            "annual_cash_surplus_before_replacements_krw": 15619380.991633084,
+            "annual_incremental_cash_flow_before_replacements_krw": 15619380.991633084,
+            "annual_incremental_income_krw": null,
+            "maximum_capex_for_horizon_payback_krw": 156193809.91633084,
+            "maximum_capex_for_nonnegative_npv_krw": 126687171.36117491,
+            "required_annual_yield_for_horizon_payback_kg": 3317.711446448289,
+            "additional_yield_required_kg": 0,
+            "cash_flows_krw": [
+              -112530300.0,
+              15619380.991633084,
+              15619380.991633084,
+              15619380.991633084,
+              15619380.991633084,
+              15619380.991633084,
+              15619380.991633084,
+              15619380.991633084,
+              15619380.991633084,
+              15619380.991633084,
+              15619380.991633084
+            ],
+            "cumulative_cash_flows_krw": [
+              -112530300.0,
+              -96910919.00836691,
+              -81291538.01673383,
+              -65672157.02510074,
+              -50052776.03346765,
+              -34433395.04183456,
+              -18814014.05020148,
+              -3194633.0585683957,
+              12424747.933064688,
+              28044128.92469777,
+              43663509.91633086
+            ],
+            "payback_year": 8,
+            "recovered_by_horizon": true,
+            "npv_krw": 14156871.361174917,
+            "undiscounted_balance_krw": 43663509.91633086
+          },
+          {
+            "name": "기준",
+            "assumptions": {
+              "name": "기준",
+              "yield_multiplier": 1,
+              "price_multiplier": 1,
+              "cash_cost_multiplier": 1
+            },
+            "annual_yield_kg": 4244.349030746877,
+            "farmgate_price_krw_per_kg": 10868.0,
+            "annual_revenue_krw": 46127585.26615706,
+            "revenue_basis": "quantity_times_farmgate_price",
+            "annual_cash_operating_cost_krw": 15993164.0,
+            "annual_depreciation_krw": 4789801.0,
+            "annual_income_before_family_labor_krw": 25344620.26615706,
+            "annual_family_labor_opportunity_cost_krw": 12098260.0,
+            "annual_income_after_family_labor_krw": 13246360.26615706,
+            "annual_cash_surplus_before_replacements_krw": 30134421.26615706,
+            "annual_incremental_cash_flow_before_replacements_krw": 30134421.26615706,
+            "annual_incremental_income_krw": null,
+            "maximum_capex_for_horizon_payback_krw": 301344212.6615706,
+            "maximum_capex_for_nonnegative_npv_krw": 244417150.26097968,
+            "required_annual_yield_for_horizon_payback_kg": 2507.010857563489,
+            "additional_yield_required_kg": 0,
+            "cash_flows_krw": [
+              -112530300.0,
+              30134421.26615706,
+              30134421.26615706,
+              30134421.26615706,
+              30134421.26615706,
+              30134421.26615706,
+              30134421.26615706,
+              30134421.26615706,
+              30134421.26615706,
+              30134421.26615706,
+              30134421.26615706
+            ],
+            "cumulative_cash_flows_krw": [
+              -112530300.0,
+              -82395878.73384294,
+              -52261457.46768588,
+              -22127036.201528817,
+              8007385.064628243,
+              38141806.330785304,
+              68276227.59694237,
+              98410648.86309943,
+              128545070.12925649,
+              158679491.39541355,
+              188813912.6615706
+            ],
+            "payback_year": 4,
+            "recovered_by_horizon": true,
+            "npv_krw": 131886850.26097968,
+            "undiscounted_balance_krw": 188813912.6615706
+          },
+          {
+            "name": "유리",
+            "assumptions": {
+              "name": "유리",
+              "yield_multiplier": 1.1,
+              "price_multiplier": 1.2,
+              "cash_cost_multiplier": 0.9
+            },
+            "annual_yield_kg": 4668.783933821565,
+            "farmgate_price_krw_per_kg": 13041.6,
+            "annual_revenue_krw": 60888412.551327325,
+            "revenue_basis": "quantity_times_farmgate_price",
+            "annual_cash_operating_cost_krw": 14393847.6,
+            "annual_depreciation_krw": 4789801.0,
+            "annual_income_before_family_labor_krw": 41704763.951327324,
+            "annual_family_labor_opportunity_cost_krw": 12098260.0,
+            "annual_income_after_family_labor_krw": 29606503.951327324,
+            "annual_cash_surplus_before_replacements_krw": 46494564.951327324,
+            "annual_incremental_cash_flow_before_replacements_krw": 46494564.951327324,
+            "annual_incremental_income_krw": null,
+            "maximum_capex_for_horizon_payback_krw": 464945649.51327324,
+            "maximum_capex_for_nonnegative_npv_krw": 377112570.62666893,
+            "required_annual_yield_for_horizon_payback_kg": 1966.5437983069562,
+            "additional_yield_required_kg": 0,
+            "cash_flows_krw": [
+              -112530300.0,
+              46494564.951327324,
+              46494564.951327324,
+              46494564.951327324,
+              46494564.951327324,
+              46494564.951327324,
+              46494564.951327324,
+              46494564.951327324,
+              46494564.951327324,
+              46494564.951327324,
+              46494564.951327324
+            ],
+            "cumulative_cash_flows_krw": [
+              -112530300.0,
+              -66035735.048672676,
+              -19541170.097345352,
+              26953394.85398197,
+              73447959.8053093,
+              119942524.75663662,
+              166437089.70796394,
+              212931654.65929127,
+              259426219.6106186,
+              305920784.5619459,
+              352415349.51327324
+            ],
+            "payback_year": 3,
+            "recovered_by_horizon": true,
+            "npv_krw": 264582270.62666896,
+            "undiscounted_balance_krw": 352415349.51327324
+          }
+        ],
+        "interpretation": "Assumption scenarios, not confidence intervals or causal equipment effects",
+        "exclusions": [
+          "tax",
+          "financing cash flows",
+          "grants",
+          "working-capital changes",
+          "terminal resale value"
+        ],
+        "cost_note": "Operating cost includes depreciation; cash cost excludes it. Family labor is a separate opportunity cost.",
+        "model_connection": {
+          "prediction": {
+            "status": "predicted",
+            "target": "shipment",
+            "unit": "kg_per_recorded_cycle",
+            "prediction": 4244.349030746877,
+            "model": "xgboost_log_density",
+            "query": {
+              "crop": "딸기",
+              "variety": "설향",
+              "region": "전라남도",
+              "district": "보성군",
+              "facility_type": "비닐",
+              "planting_year": 2027,
+              "planting_month": 9,
+              "area_m2": 1000
+            },
+            "warnings": [
+              "future_year_not_prospectively_validated"
+            ],
+            "target_period_confirmed": false
+          },
+          "period_assumption": "one_recorded_cycle_per_year",
+          "cost_basis": "unchanged annual per-1000m2 reference",
+          "income_accuracy_validated": false
+        }
+      },
+      "sensitivity_quantiles": {
+        "annual_yield_kg": {
+          "p05": 3957.505944929262,
+          "p50": 4242.6526535670155,
+          "p95": 4538.517053854252
+        },
+        "annual_revenue_krw": {
+          "p05": 39189101.84673692,
+          "p50": 45888402.657167,
+          "p95": 53278194.295482926
+        },
+        "annual_cash_operating_cost_krw": {
+          "p05": 14907059.790577881,
+          "p50": 15966226.557136651,
+          "p95": 17005997.98541987
+        },
+        "annual_income_before_family_labor_krw": {
+          "p05": 18418836.94622199,
+          "p50": 25148941.225493036,
+          "p95": 32619887.7756213
+        },
+        "annual_income_after_family_labor_krw": {
+          "p05": 6320576.94622199,
+          "p50": 13050681.225493038,
+          "p95": 20521627.7756213
+        },
+        "npv_krw": {
+          "p05": 75712543.56259087,
+          "p50": 130299717.95594962,
+          "p95": 190895786.79717192
+        },
+        "undiscounted_balance_krw": {
+          "p05": 119556079.4622199,
+          "p50": 186857122.25493038,
+          "p95": 261566587.75621298
+        },
+        "required_annual_yield_for_horizon_payback_kg": {
+          "p05": 2192.235146271235,
+          "p50": 2507.732150522207,
+          "p95": 2918.290445270116
+        }
+      }
+    },
+    {
+      "target": "revenue",
+      "inputs": {
+        "benchmark": {
+          "farmgate_price_krw_per_kg": 10868.0,
+          "operating_cost_krw_per_1000m2": 20782965.0,
+          "depreciation_krw_per_1000m2": 4789801.0,
+          "family_labor_cost_krw_per_1000m2": 12098260.0,
+          "yield_kg_per_1000m2": 3344.5,
+          "period_basis": "년1기작/10a"
+        },
+        "area_m2": 1000,
+        "cycles_per_year": 1,
+        "initial_capex_krw": 112530300.0,
+        "horizon_years": 10,
+        "discount_rate": 0.04,
+        "mode": "new",
+        "replacements_krw": {},
+        "scenarios": [
+          {
+            "name": "불리",
+            "yield_multiplier": 0.9,
+            "price_multiplier": 0.8,
+            "cash_cost_multiplier": 1.1
+          },
+          {
+            "name": "기준",
+            "yield_multiplier": 1,
+            "price_multiplier": 1,
+            "cash_cost_multiplier": 1
+          },
+          {
+            "name": "유리",
+            "yield_multiplier": 1.1,
+            "price_multiplier": 1.2,
+            "cash_cost_multiplier": 0.9
+          }
+        ],
+        "reference": {
+          "crop": "딸기",
+          "source_category": "시설딸기(수경)",
+          "region": "전국",
+          "year": 2024,
+          "planned_year": 2027,
+          "source_url": "https://www.nongsaro.go.kr/portal/bsFileDownload.do?atchmnflGroupEsntlCode=BS000000045358&atchmnflSn=0",
+          "source_page": 95,
+          "yield_mode": "실험 모델",
+          "model_prediction": {
+            "status": "aggregate_reference_only",
+            "yield_kg_per_1000m2": 3344.5,
+            "model": "historical_median",
+            "n_reference_rows": 2,
+            "latest_source_year": 2024,
+            "period_basis": "년1기작/10a",
+            "warning": "Regional/crop survey reference, not a prediction validated for an individual prospective farm or a causal installation effect"
+          }
+        },
+        "capital_cost_basis": {
+          "equipment": {
+            "lines": [
+              {
+                "equipment_id": "5126",
+                "name": "CRONOUS-AV-CR01 환경제어 구성",
+                "quantity": 1,
+                "option_ids": [],
+                "package_price_krw": 20903000.0,
+                "options_price_per_package_krw": 0,
+                "line_total_krw": 20903000.0,
+                "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+                "checked_date": "2026-10-10"
+              },
+              {
+                "equipment_id": "6337",
+                "name": "옹달샘300 양액 공급 구성",
+                "quantity": 1,
+                "option_ids": [
+                  "6337-option-1"
+                ],
+                "package_price_krw": 3270000.0,
+                "options_price_per_package_krw": 400000.0,
+                "line_total_krw": 3670000.0,
+                "source_url": "https://www.smartfarmkorea.net/company/selectEquipment.do?menuId=",
+                "checked_date": "2026-10-10"
+              }
+            ],
+            "equipment_subtotal_krw": 24573000.0,
+            "installation_krw": 5000000.0,
+            "additional_vat_krw": 2957300.0,
+            "initial_capex_krw": 32530300.0,
+            "unresolved_cost_inputs": [],
+            "status": "planning_assumption",
+            "is_verified_quote": false,
+            "scope": "선택 장비와 명시한 설치비·추가 부가세만 포함. 온실 신축·토목·기타 설비·호환성 검토는 별도.",
+            "limitations": [
+              "업체 등록 표준가격이며 실제 계약·설치 견적이 아닙니다.",
+              "등록가격의 부가세·설치비 포함 여부는 확인되지 않았습니다.",
+              "구성품 가격을 재합산하지 않고 공개된 묶음 합계를 사용합니다.",
+              "옵션은 명시적으로 선택하며 선택한 옵션은 묶음 수량만큼 계산합니다.",
+              "장비 간 호환성, 재배면적별 필요 수량, 수확 증가 효과와 수명은 검증되지 않았습니다."
+            ]
+          },
+          "other_capex_krw": 80000000,
+          "total_initial_capex_krw": 112530300.0
+        },
+        "annual_revenue_override_krw": 32991977.17271727,
+        "model_connection": {
+          "prediction": {
+            "status": "predicted",
+            "target": "revenue",
+            "unit": "krw_per_recorded_cycle",
+            "prediction": 32991977.17271727,
+            "model": "crop_area_median",
+            "query": {
+              "crop": "딸기",
+              "variety": "설향",
+              "region": "전라남도",
+              "district": "보성군",
+              "facility_type": "비닐",
+              "planting_year": 2027,
+              "planting_month": 9,
+              "area_m2": 1000
+            },
+            "warnings": [
+              "future_year_not_prospectively_validated"
+            ],
+            "target_period_confirmed": false
+          },
+          "period_assumption": "one_recorded_cycle_per_year",
+          "cost_basis": "unchanged annual per-1000m2 reference",
+          "income_accuracy_validated": false
+        }
+      },
+      "results": {
+        "mode": "new",
+        "area_m2": 1000.0,
+        "period_basis": "년1기작/10a",
+        "cycles_per_year": 1.0,
+        "initial_capex_krw": 112530300.0,
+        "horizon_years": 10,
+        "discount_rate": 0.04,
+        "scenarios": [
+          {
+            "name": "불리",
+            "assumptions": {
+              "name": "불리",
+              "yield_multiplier": 0.9,
+              "price_multiplier": 0.8,
+              "cash_cost_multiplier": 1.1
+            },
+            "annual_yield_kg": 3010.05,
+            "farmgate_price_krw_per_kg": 7891.637535707525,
+            "annual_revenue_krw": 23754223.564356435,
+            "revenue_basis": "recorded_cycle_revenue_model",
+            "annual_cash_operating_cost_krw": 17592480.400000002,
+            "annual_depreciation_krw": 4789801.0,
+            "annual_income_before_family_labor_krw": 1371942.1643564329,
+            "annual_family_labor_opportunity_cost_krw": 12098260.0,
+            "annual_income_after_family_labor_krw": -10726317.835643567,
+            "annual_cash_surplus_before_replacements_krw": 6161743.164356433,
+            "annual_incremental_cash_flow_before_replacements_krw": 6161743.164356433,
+            "annual_incremental_income_krw": null,
+            "maximum_capex_for_horizon_payback_krw": 61617431.64356433,
+            "maximum_capex_for_nonnegative_npv_krw": 49977256.62524828,
+            "required_annual_yield_for_horizon_payback_kg": 3655.1996045791348,
+            "additional_yield_required_kg": 645.1496045791346,
+            "cash_flows_krw": [
+              -112530300.0,
+              6161743.164356433,
+              6161743.164356433,
+              6161743.164356433,
+              6161743.164356433,
+              6161743.164356433,
+              6161743.164356433,
+              6161743.164356433,
+              6161743.164356433,
+              6161743.164356433,
+              6161743.164356433
+            ],
+            "cumulative_cash_flows_krw": [
+              -112530300.0,
+              -106368556.83564356,
+              -100206813.67128712,
+              -94045070.50693068,
+              -87883327.34257424,
+              -81721584.1782178,
+              -75559841.01386136,
+              -69398097.84950492,
+              -63236354.685148485,
+              -57074611.52079205,
+              -50912868.35643562
+            ],
+            "payback_year": null,
+            "recovered_by_horizon": false,
+            "npv_krw": -62553043.37475172,
+            "undiscounted_balance_krw": -50912868.35643562
+          },
+          {
+            "name": "기준",
+            "assumptions": {
+              "name": "기준",
+              "yield_multiplier": 1,
+              "price_multiplier": 1,
+              "cash_cost_multiplier": 1
+            },
+            "annual_yield_kg": 3344.5,
+            "farmgate_price_krw_per_kg": 9864.546919634406,
+            "annual_revenue_krw": 32991977.17271727,
+            "revenue_basis": "recorded_cycle_revenue_model",
+            "annual_cash_operating_cost_krw": 15993164.0,
+            "annual_depreciation_krw": 4789801.0,
+            "annual_income_before_family_labor_krw": 12209012.17271727,
+            "annual_family_labor_opportunity_cost_krw": 12098260.0,
+            "annual_income_after_family_labor_krw": 110752.17271726951,
+            "annual_cash_surplus_before_replacements_krw": 16998813.17271727,
+            "annual_incremental_cash_flow_before_replacements_krw": 16998813.17271727,
+            "annual_incremental_income_krw": null,
+            "maximum_capex_for_horizon_payback_krw": 169988131.7271727,
+            "maximum_capex_for_nonnegative_npv_krw": 137875602.01663715,
+            "required_annual_yield_for_horizon_payback_kg": 2762.03197389321,
+            "additional_yield_required_kg": 0,
+            "cash_flows_krw": [
+              -112530300.0,
+              16998813.17271727,
+              16998813.17271727,
+              16998813.17271727,
+              16998813.17271727,
+              16998813.17271727,
+              16998813.17271727,
+              16998813.17271727,
+              16998813.17271727,
+              16998813.17271727,
+              16998813.17271727
+            ],
+            "cumulative_cash_flows_krw": [
+              -112530300.0,
+              -95531486.82728273,
+              -78532673.65456545,
+              -61533860.48184818,
+              -44535047.30913091,
+              -27536234.136413638,
+              -10537420.963696368,
+              6461392.2090209015,
+              23460205.38173817,
+              40459018.554455444,
+              57457831.72717272
+            ],
+            "payback_year": 7,
+            "recovered_by_horizon": true,
+            "npv_krw": 25345302.01663714,
+            "undiscounted_balance_krw": 57457831.72717272
+          },
+          {
+            "name": "유리",
+            "assumptions": {
+              "name": "유리",
+              "yield_multiplier": 1.1,
+              "price_multiplier": 1.2,
+              "cash_cost_multiplier": 0.9
+            },
+            "annual_yield_kg": 3678.9500000000003,
+            "farmgate_price_krw_per_kg": 11837.456303561286,
+            "annual_revenue_krw": 43549409.86798679,
+            "revenue_basis": "recorded_cycle_revenue_model",
+            "annual_cash_operating_cost_krw": 14393847.6,
+            "annual_depreciation_krw": 4789801.0,
+            "annual_income_before_family_labor_krw": 24365761.26798679,
+            "annual_family_labor_opportunity_cost_krw": 12098260.0,
+            "annual_income_after_family_labor_krw": 12267501.26798679,
+            "annual_cash_surplus_before_replacements_krw": 29155562.26798679,
+            "annual_incremental_cash_flow_before_replacements_krw": 29155562.26798679,
+            "annual_incremental_income_krw": null,
+            "maximum_capex_for_horizon_payback_krw": 291555622.67986786,
+            "maximum_capex_for_nonnegative_npv_krw": 236477726.94413674,
+            "required_annual_yield_for_horizon_payback_kg": 2166.58688676926,
+            "additional_yield_required_kg": 0,
+            "cash_flows_krw": [
+              -112530300.0,
+              29155562.26798679,
+              29155562.26798679,
+              29155562.26798679,
+              29155562.26798679,
+              29155562.26798679,
+              29155562.26798679,
+              29155562.26798679,
+              29155562.26798679,
+              29155562.26798679,
+              29155562.26798679
+            ],
+            "cumulative_cash_flows_krw": [
+              -112530300.0,
+              -83374737.73201321,
+              -54219175.46402642,
+              -25063613.196039632,
+              4091949.0719471574,
+              33247511.339933947,
+              62403073.607920736,
+              91558635.87590753,
+              120714198.14389431,
+              149869760.4118811,
+              179025322.67986786
+            ],
+            "payback_year": 4,
+            "recovered_by_horizon": true,
+            "npv_krw": 123947426.94413674,
+            "undiscounted_balance_krw": 179025322.67986786
+          }
+        ],
+        "interpretation": "Assumption scenarios, not confidence intervals or causal equipment effects",
+        "exclusions": [
+          "tax",
+          "financing cash flows",
+          "grants",
+          "working-capital changes",
+          "terminal resale value"
+        ],
+        "cost_note": "Operating cost includes depreciation; cash cost excludes it. Family labor is a separate opportunity cost.",
+        "model_connection": {
+          "prediction": {
+            "status": "predicted",
+            "target": "revenue",
+            "unit": "krw_per_recorded_cycle",
+            "prediction": 32991977.17271727,
+            "model": "crop_area_median",
+            "query": {
+              "crop": "딸기",
+              "variety": "설향",
+              "region": "전라남도",
+              "district": "보성군",
+              "facility_type": "비닐",
+              "planting_year": 2027,
+              "planting_month": 9,
+              "area_m2": 1000
+            },
+            "warnings": [
+              "future_year_not_prospectively_validated"
+            ],
+            "target_period_confirmed": false
+          },
+          "period_assumption": "one_recorded_cycle_per_year",
+          "cost_basis": "unchanged annual per-1000m2 reference",
+          "income_accuracy_validated": false
+        }
+      },
+      "sensitivity_quantiles": {
+        "annual_yield_kg": {
+          "p05": 3118.4708271946242,
+          "p50": 3343.1632735816615,
+          "p95": 3576.3011422141417
+        },
+        "annual_revenue_krw": {
+          "p05": 28029343.961679954,
+          "p50": 32820905.846733496,
+          "p95": 38106329.64760456
+        },
+        "annual_cash_operating_cost_krw": {
+          "p05": 14907059.790577881,
+          "p50": 15966226.557136651,
+          "p95": 17005997.98541987
+        },
+        "annual_income_before_family_labor_krw": {
+          "p05": 7181775.954473217,
+          "p50": 12111849.221070798,
+          "p95": 17409860.208402183
+        },
+        "annual_income_after_family_labor_krw": {
+          "p05": -4916484.045526783,
+          "p50": 13589.221070798114,
+          "p95": 5311600.208402183
+        },
+        "npv_krw": {
+          "p05": -15430087.007739278,
+          "p50": 24557223.4422181,
+          "p95": 67528838.39834079
+        },
+        "undiscounted_balance_krw": {
+          "p05": 7185469.544732153,
+          "p50": 56486202.21070797,
+          "p95": 109466312.08402185
+        },
+        "required_annual_yield_for_horizon_payback_kg": {
+          "p05": 2415.2362763112874,
+          "p50": 2762.826639065286,
+          "p95": 3215.148229065452
+        }
+      }
+    }
+  ],
+  "connection_status": "Actual fitted model -> plan -> economics -> 2000 sensitivity runs verified",
+  "external_or_prospective_validation_completed": false,
+  "dsz_actual_data_available_locally": false
+}

@@ -1,4 +1,5 @@
 import { calculatePlan, calculateEquipment, simulateSensitivity } from './economics.mjs';
+import { predictModel, connectPrediction } from './prediction.mjs';
 
 const byId = (id) => document.getElementById(id);
 const form = byId('planning-form');
@@ -10,7 +11,8 @@ const benchmarkFields = {
   operating: 'operating_cost_krw_per_1000m2', depreciation: 'depreciation_krw_per_1000m2',
   labor: 'family_labor_cost_krw_per_1000m2',
 };
-const state = { demo: null, catalog: null, inputs: null, result: null, equipment: null, sensitivity: null };
+const state = { demo: null, catalog: null, models: null, references: null, inputs: null, result: null, equipment: null, sensitivity: null };
+const modelLabels = {crop_area_median: '품목별 면적당 중앙값', catboost_log_density: 'CatBoost', xgboost_log_density: 'XGBoost'};
 const number = (value, digits = 0) => Number(value).toLocaleString('ko-KR', { maximumFractionDigits: digits });
 const money = (value) => `${number(value / 10000)}만원`;
 const exactMoney = (value) => `${number(value)}원`;
@@ -22,7 +24,9 @@ const readNumber = (id) => byId(id).valueAsNumber;
 async function loadJson(name) {
   const response = await fetch(`/data/${name}.json`);
   if (!response.ok) throw new Error(`${name} could not be loaded`);
-  return response.json();
+  const bytes = await response.arrayBuffer();
+  if (name === 'planning_models') state.modelHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), value => value.toString(16).padStart(2, '0')).join('');
+  return JSON.parse(new TextDecoder().decode(bytes));
 }
 
 function renderEquipment() {
@@ -51,7 +55,7 @@ function validateCrossFields() {
 }
 
 function buildInputs() {
-  const inputs = structuredClone(state.demo.inputs);
+  let inputs = structuredClone(state.demo.inputs);
   for (const [id, key] of Object.entries(fields)) inputs[key] = readNumber(id);
   for (const [id, key] of Object.entries(benchmarkFields)) inputs.benchmark[key] = readNumber(id);
   inputs.discount_rate = readNumber('discount') / 100;
@@ -62,12 +66,93 @@ function buildInputs() {
   inputs.capital_cost_basis = { equipment, other_capex_krw: equipment.other_capex_krw, total_initial_capex_krw: equipment.initial_capex_krw };
   inputs.reference = {
     ...state.demo.inputs.reference,
+    ...state.currentReference, crop: byId('plan-crop').value,
     yield_mode: '공개 조사자료 참고 + 사용자 가정',
     model_prediction: undefined,
     calculation_scope: 'Browser-local assumption calculator; no individual farm prediction or causal equipment effect',
     note: '입력값은 사용자가 바꿀 수 있습니다. 원자료 출처는 최초 참고 조건을 설명합니다.',
   };
+  const mode = byId('model-mode').value;
+  if (mode !== 'reference') {
+    const prediction = predictModel(state.models[mode], modelQuery());
+    inputs = connectPrediction(inputs, prediction, byId('model-period').checked);
+    inputs.reference.yield_mode = '확보한 농가 자료 모델 예측 + 연 1작기 가정';
+    inputs.reference.model_prediction = prediction;
+    inputs.reference.calculation_scope = 'Fitted recorded-cycle forecast with explicit annual cost assumptions';
+  }
   return { inputs, equipment };
+}
+
+function modelQuery() {
+  return {crop: byId('plan-crop').value, area_m2: readNumber('area'), planting_year: readNumber('model-year'),
+    planting_month: readNumber('model-month'), variety: byId('model-variety').value,
+    region: byId('model-region').value, district: byId('model-district').value,
+    facility_type: byId('model-facility-type').value};
+}
+
+function fillOptions(id, values, preferred) {
+  byId(id).replaceChildren(...values.map(value => new Option(value, value)));
+  byId(id).value = values.includes(preferred) ? preferred : values[0];
+}
+
+function updateModelMode() {
+  const crop = byId('plan-crop').value;
+  const mode = byId('model-mode').value;
+  byId('model-controls').hidden = mode === 'reference';
+  byId('cycles').readOnly = mode !== 'reference';
+  if (mode !== 'reference') byId('cycles').value = 1;
+  byId('yield').readOnly = mode === 'shipment';
+  if (mode === 'reference') return;
+  const bundle = state.models[mode];
+  const support = bundle.support.by_crop[crop];
+  const ids = {variety: 'model-variety', region: 'model-region', district: 'model-district', facility_type: 'model-facility-type'};
+  for (const [name, id] of Object.entries(ids)) fillOptions(id, support.categories[name], bundle.example_query?.[name]);
+  const validation = bundle.validation.metrics;
+  const unit = mode === 'shipment' ? 'kg' : '원';
+  setText('model-validation', `${bundle.training_rows}작기 · ${bundle.training_facilities}시설. 농가 분리 중첩 검증 평균오차: 선택 절차 ${number(validation.nested_selection.mae)}${unit}, 면적당 중앙값 ${number(validation.baseline.mae)}${unit}. 미래 농가 성능·설비 효과는 검증되지 않았습니다.`);
+  if (validation.nested_selection.mae > validation.baseline.mae) byId('model-validation').textContent += ' 현재 선택 절차는 단순 기준보다 평균 오차가 큽니다.';
+  updateModelPreview();
+}
+
+function updateModelPreview() {
+  const mode = byId('model-mode').value;
+  if (mode === 'reference') return;
+  try {
+    const prediction = predictModel(state.models[mode], modelQuery());
+    if (prediction.status !== 'predicted') throw new Error('지원하는 농가 자료가 없습니다.');
+    if (mode === 'shipment') byId('yield').value = prediction.prediction / readNumber('area') * 1000;
+    setText('model-preview', `작기 ${mode === 'shipment' ? '출하량' : '총매출'} 예측: ${number(prediction.prediction, 1)} ${mode === 'shipment' ? 'kg' : '원'} · ${modelLabels[prediction.model] ?? prediction.model}. ${prediction.warnings.length ? '관측 범주·면적 또는 미래연도에서 벗어난 조건이 포함됩니다.' : ''}`);
+    setText('quantity-basis-note', mode === 'shipment' ? '수확량에 실제 출하량 모델 예측을 반영했습니다. 비용은 선택한 소득조사의 연간 기준입니다.' : '매출에는 총매출 모델 예측을 사용합니다. 표시 수확량은 조사 참고값이며 판매단가를 매출에 다시 곱하지 않습니다.');
+  } catch (error) {
+    setText('model-preview', error.message);
+  }
+}
+
+function updateModelDistrict() {
+  const mode = byId('model-mode').value;
+  if (mode === 'reference') return;
+  const support = state.models[mode].support.by_crop[byId('plan-crop').value];
+  fillOptions('model-district', support.locations?.[byId('model-region').value] ?? support.categories.district, byId('model-district').value);
+  updateModelPreview();
+}
+
+function updateCropReference() {
+  const crop = byId('plan-crop').value;
+  const candidates = state.references.filter(row => row.crop === crop);
+  fillOptions('plan-reference', candidates.map(row => row.source_category), candidates.find(row => row.source_category.includes('수경'))?.source_category);
+  byId('model-mode').querySelector('option[value=shipment]').disabled = !state.models.shipment.support.crops.includes(crop);
+  byId('model-mode').querySelector('option[value=revenue]').textContent = `${crop} 총매출 모델로 계산`;
+  if (byId('model-mode').value === 'shipment' && crop !== '딸기') byId('model-mode').value = 'revenue';
+  applyCostReference();
+}
+
+function applyCostReference() {
+  state.currentReference = state.references.find(row => row.crop === byId('plan-crop').value && row.source_category === byId('plan-reference').value);
+  for (const [id, key] of Object.entries(benchmarkFields)) byId(id).value = state.currentReference[key];
+  if (byId('plan-crop').value === '딸기' && state.currentReference.source_category.includes('수경')) byId('yield').value = state.demo.inputs.benchmark.yield_kg_per_1000m2;
+  setText('quantity-basis-note', `${state.currentReference.year}년 전국 ${state.currentReference.source_category} 소득조사 기준입니다. 개별 농가의 실측 성과는 아닙니다.`);
+  updateModelMode();
+  updateModelDistrict();
 }
 
 function paybackText(scenario, horizon) {
@@ -100,7 +185,7 @@ function renderResults() {
   const { result, inputs } = state;
   const base = result.scenarios[1];
   const horizon = result.horizon_years;
-  setText('result-basis', `딸기 · ${number(inputs.area_m2)}㎡ · 연 ${number(inputs.cycles_per_year)}작기`);
+  setText('result-basis', `${inputs.reference.crop} · ${number(inputs.area_m2)}㎡ · 연 ${number(inputs.cycles_per_year)}작기${inputs.model_connection ? ' · 모델 예측 연결' : ''}`);
   setText('result-income', money(base.annual_income_after_family_labor_krw));
   byId('result-income').title = exactMoney(base.annual_income_after_family_labor_krw);
   setText('result-capex', compactMoney(inputs.initial_capex_krw));
@@ -147,6 +232,10 @@ function calculate(scroll = false) {
 }
 
 function resetExample() {
+  byId('plan-crop').value = '딸기';
+  byId('model-mode').value = 'reference';
+  byId('model-period').checked = false;
+  updateCropReference();
   const { inputs } = state.demo;
   for (const [id, key] of Object.entries(fields)) byId(id).value = inputs[key];
   for (const [id, key] of Object.entries(benchmarkFields)) byId(id).value = inputs.benchmark[key];
@@ -202,10 +291,15 @@ form.addEventListener('invalid', (event) => {
   for (let parent = event.target.parentElement; parent && parent !== form; parent = parent.parentElement) if (parent.tagName === 'DETAILS') parent.open = true;
 }, true);
 form.addEventListener('input', () => {
+  updateModelPreview();
   validateCrossFields();
   setText('input-status', '입력값이 바뀌었어요. 계산 버튼을 눌러 결과를 갱신해주세요.');
   byId('input-status').classList.add('changed');
 });
+byId('model-mode').addEventListener('change', applyCostReference);
+byId('plan-crop').addEventListener('change', updateCropReference);
+byId('plan-reference').addEventListener('change', applyCostReference);
+byId('model-region').addEventListener('change', updateModelDistrict);
 byId('reset-example').addEventListener('click', resetExample);
 byId('download-result').addEventListener('click', downloadPlan);
 byId('run-sensitivity').addEventListener('click', () => {
@@ -219,11 +313,15 @@ byId('run-sensitivity').addEventListener('click', () => {
 });
 
 try {
-  const [demo, catalog, price, growth, references] = await Promise.all([
+  const [demo, catalog, price, growth, references, planning, costReferences, validation] = await Promise.all([
     loadJson('planning_demo_summary'), loadJson('equipment_catalog'), loadJson('price_forecast_metrics_summary'),
     loadJson('inseason_metrics_summary'), loadJson('planning_reference_scenarios'),
+    loadJson('planning_models'), loadJson('planning_cost_references'),
+    loadJson('planning_validation_summary'),
   ]);
-  Object.assign(state, { demo, catalog });
+  if (state.modelHash !== validation.models_sha256) throw new Error('학습 모델과 검증 보고서가 일치하지 않습니다.');
+  Object.assign(state, { demo, catalog, models: planning.models, references: costReferences });
+  fillOptions('plan-crop', [...new Set(costReferences.map(row => row.crop))], '딸기');
   renderEquipment();
   byId('planning-inputs').disabled = false;
   byId('reset-example').disabled = false;

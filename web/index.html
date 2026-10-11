@@ -23,7 +23,7 @@
         <h1 id="hero-title">우리 농장,<br>시작해도 괜찮을까?</h1>
         <p class="hero-description">얼마나 수확하고, 얼마가 남을까요?<br>설비부터 한 해 소득까지, 조건을 바꾸며 비교해보세요.</p>
         <a class="button primary" href="#planner">딸기 농장 계획해보기 <span aria-hidden="true">→</span></a>
-        <p class="hero-footnote">공개 조사자료를 바탕으로 한 계획 시뮬레이터</p>
+        <p class="hero-footnote">학습한 농가 모델과 공개 조사자료로 계획을 비교합니다.</p>
       </div>
     </section>
     <div class="journey-strip" aria-label="계산 순서"><span><b>01</b> 농장 조건 입력</span><span aria-hidden="true">→</span><span><b>02</b> 설비·비용 확인</span><span aria-hidden="true">→</span><span><b>03</b> 소득과 회수기간 비교</span></div>
@@ -38,13 +38,26 @@
             <legend class="sr-only">농장 계획 입력</legend>
             <div class="input-section">
               <div class="block-heading"><span class="step-number">1</span><h3>농장과 수확 조건</h3></div>
+              <div class="field-grid model-controls"><label>작물<select id="plan-crop"></select></label><label>조사 비용 기준<select id="plan-reference"></select></label></div>
+              <label class="model-mode-label">수량·매출 기준<select id="model-mode"><option value="reference">공개 조사자료 · 직접 입력</option><option value="shipment">딸기 출하량 모델로 계산</option><option value="revenue">딸기 총매출 모델로 계산</option></select></label>
+              <div id="model-controls" class="model-controls" hidden>
+                <div class="field-grid">
+                  <label>품종<select id="model-variety"></select></label><label>지역<select id="model-region"></select></label>
+                  <label>시군구<select id="model-district"></select></label><label>시설유형<select id="model-facility-type"></select></label>
+                  <label>정식 월<input id="model-month" type="number" min="1" max="12" value="9" step="1"></label>
+                  <label>예정 재배연도<input id="model-year" type="number" min="2025" max="2100" value="2027" step="1"></label>
+                </div>
+                <label class="model-agreement"><input id="model-period" type="checkbox">기록된 작기 예측을 연 1작기로 가정하고, 아래 연간 조사비용을 적용합니다.</label>
+                <p id="model-preview" class="field-note" aria-live="polite"></p>
+                <p id="model-validation" class="field-note"></p>
+              </div>
               <div class="field-grid">
                 <label>온실 면적 <span class="input-wrap"><input id="area" name="area" type="number" min="1" max="10000000" step="1" value="1000" required><span>㎡</span></span></label>
                 <label>연간 작기 수 <span class="input-wrap"><input id="cycles" name="cycles" type="number" min="1" max="4" step="1" value="1" required><span>회</span></span></label>
                 <label>1작기 수확량 <span class="input-wrap"><input id="yield" name="yield" type="number" min="0" max="1000000" step="any" value="3344.5" required><span>kg</span></span><small>1,000㎡당 기준</small></label>
                 <label>농가 판매단가 <span class="input-wrap"><input id="price" name="price" type="number" min="0" max="10000000" step="any" value="10868" required><span>원/kg</span></span></label>
               </div>
-              <p class="field-note">수확량은 2023–2024년 전국 딸기 수경 조사 2개 행의 중간값입니다. 개별 농장 예측값은 아닙니다.</p>
+              <p id="quantity-basis-note" class="field-note">수확량은 공개 소득조사 참고값에서 시작합니다. 모델을 선택하면 실제 학습한 모델의 예측값을 계산에 연결합니다.</p>
             </div>
 
             <details class="form-details" open>

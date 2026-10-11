@@ -10,7 +10,7 @@ function close(actual, expected, path = 'result') {
   if (typeof expected === 'number') {
     assert.ok(Math.abs(actual - expected) <= Math.max(1e-7, Math.abs(expected) * 1e-12), `${path}: ${actual} != ${expected}`);
   } else if (expected && typeof expected === 'object') {
-    assert.deepEqual(Object.keys(actual), Object.keys(expected), path);
+    assert.deepEqual(Object.keys(actual).sort(), Object.keys(expected).sort(), path);
     for (const key of Object.keys(expected)) close(actual[key], expected[key], `${path}.${key}`);
   } else {
     assert.equal(actual, expected, path);
@@ -28,7 +28,9 @@ function simplePlan() {
 }
 
 test('every scenario value matches archived Python output', () => {
-  close(calculatePlan(fixture.inputs), fixture.results);
+  const expected = structuredClone(fixture.results);
+  for (const scenario of expected.scenarios) scenario.revenue_basis = 'quantity_times_farmgate_price';
+  close(calculatePlan(fixture.inputs), expected);
 });
 
 test('benchmark equipment includes selected options and explicit additional costs', () => {

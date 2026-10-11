@@ -1,0 +1,142 @@
+[
+  {
+    "target": "shipment",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 500,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 2122.173309326172
+  },
+  {
+    "target": "shipment",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 1000,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 4244.346618652344
+  },
+  {
+    "target": "shipment",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 2000,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 6889.92977142334
+  },
+  {
+    "target": "shipment",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 9916.99999999,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 30179.816506355368
+  },
+  {
+    "target": "shipment",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 13222.50000001,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 40239.24813512031
+  },
+  {
+    "target": "revenue",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 500,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 16495988.586358635
+  },
+  {
+    "target": "revenue",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 1000,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 32991977.17271727
+  },
+  {
+    "target": "revenue",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 2000,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 65983954.34543454
+  },
+  {
+    "target": "revenue",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 9916.99999999,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 327181437.6215072
+  },
+  {
+    "target": "revenue",
+    "query": {
+      "variety": "설향",
+      "region": "전라남도",
+      "district": "보성군",
+      "facility_type": "비닐",
+      "crop": "딸기",
+      "area_m2": 13222.50000001,
+      "planting_year": 2027,
+      "planting_month": 9
+    },
+    "expected_native_prediction": 436236418.1665841
+  }
+]
