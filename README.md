@@ -6,15 +6,21 @@
 
 **[2026-10-11 데이터 재확인·성능 검증·계산 연결 결과](reports/planning_connection_validation.md)** — 확인된 API 면적을 사용하는 출하량 76작기·매출 189작기, 중첩 시설 분리·시간 검증, 실제 모델 → 매출·소득·회수기간 연결입니다. 전체 평균에서는 단순 면적당 중앙값이 모델 선택 절차보다 오차가 작았습니다.
 
-[PPT 기획서](presentation/smartfarm_proposal.pptx) · [PPT 글꼴 묶음](presentation/fonts/smartfarm_cute_fonts.zip) · [실행 대시보드 화면](assets/dashboard/) · [계산 예시와 가정](reports/planning_demo_summary.json) · [실제 가격 검증 결과](reports/price_forecast_metrics_summary.json)
+[PPT 기획서](presentation/smartfarm_proposal.pptx) · [열람용 PDF](presentation/smartfarm_proposal.pdf) · [명세서 반영 코드 설명](reports/dsz_spec_usage.md) · [실행 대시보드 화면](assets/dashboard/) · [계산 예시와 가정](reports/planning_demo_summary.json)
 
-화면은 투자비·자가노동 반영 소득·회수기간을 먼저 보여줍니다. 최신 기획서는 **주아체·고운돋움체와 딸기 농부 일러스트 10장**으로 구성했습니다. 본편 14장과 근거 부록 14장이며, 데이터 정의와 전체 실험 결과를 부록에 보존했습니다. [발표자료와 글꼴 안내](presentation/README.md) · [이전 화면 개선 기록](reports/readability_revision.md)
+2026-10-17 발표자료는 **본편 16장과 근거 부록 12장**으로 구성했습니다. Noto Sans KR 글꼴, 설명용 생성 사진 9개, 실제 앱 화면 2개를 사용하고 표 12개와 차트 5개는 PPT에서 편집할 수 있게 유지했습니다. 전체 79개 필드는 18번 슬라이드 발표자 노트에 보존했습니다. PDF는 글꼴 설치 없이 볼 수 있는 이미지 기반 열람본이며, 편집과 발표자 노트는 PPTX를 사용합니다.
 
-[전 과정 구현·자료 한계·검증 근거](reports/full_process_delivery.md)에 최신 상태를 정리했습니다. 아래 그림은 도입 전 예측의 기본 구조이며, 추가한 설비·가격·날씨 연결과 재배 중 생육 분석은 PPT와 상세 다이어그램에서 확인할 수 있습니다.
+### 대회 명세서는 어디에 사용했나요?
 
-![스마트팜 도입 판단의 데이터와 예측 과정을 쉽게 설명한 그림](assets/diagrams/easy-service-flow.png)
+**시설(DZ_002)의 7개 계획 입력과 경영조사(DZ_004)의 출하량·총수입을 연결하는 검사·학습·예측 코드에 반영했습니다.** 시설ID와 조사일이 포함되는 유일한 작기로 연결하며, 예측값은 별도로 선택한 비용 가정과 함께 경제성 계산에 전달합니다. 환경·생육·기상·기상특보·태풍은 컬럼·타입·키 검사 대상으로 구현했고 현재 도입 전 예측의 입력에는 포함하지 않았습니다.
 
-![실제 사용한 데이터의 규모와 역할을 쉽게 설명한 그림](assets/diagrams/easy-data-sources.png)
+**실제 대회 미개방 원자료는 로컬에 0행입니다.** 명세서 기반 코드의 동작은 합성 40시설·80작기로 확인했습니다. 공개 농가자료 실험의 성능을 대회 원자료의 성능으로 제시하지 않습니다. DSZ 계획 입력은 7개이며, 현재 공개자료 모델의 후보 입력 8개와도 구분합니다.
+
+![대회 명세서의 시설·경영조사 연결, 구현 범위와 실제 자료 검증 상태](assets/diagrams/dsz-spec-usage-easy.png)
+
+[명세 반영 발표 슬라이드](assets/diagrams/dsz-spec-usage.png) · [작기 연결 기준](assets/diagrams/dsz-cycle-join.png) · [명세서의 7개 계획 입력](assets/diagrams/dsz-planning-inputs.png) · [예측에서 경제성까지의 연결](assets/diagrams/dsz-economic-link.png)
+
+[전 과정 구현·자료 한계·검증 근거](reports/full_process_delivery.md)에 세부 상태를 정리했습니다. 이전 설명 이미지도 보관합니다: [서비스 흐름](assets/diagrams/easy-service-flow.png) · [자료 구성](assets/diagrams/easy-data-sources.png).
 
 **[사용 데이터·컬럼·연결 키·모델 입력·출력을 상세 다이어그램으로 보기 → DATA_FLOW.md](DATA_FLOW.md)**
 
@@ -29,7 +35,7 @@
 | 구성 | 완료한 작업 | 결과 해석 |
 |---|---|---|
 | 자료 수집 | RDA 소득자료, ADP 농가자료, 스마트팜코리아 API·큐레이션 자료, 가격·기후·설치 계획단가 수집 | 원자료는 이 저장소에 재배포하지 않음 |
-| 실제 모델 비교 | 딸기 77작기 출하량, 5품목 192작기 매출에 기준선·CatBoost·XGBoost·LimiX 비교 | 공개·회원 제공 자료 실험, 대회 미개방 자료의 성능이 아님 |
+| 실제 모델 비교 | 면적을 확인한 딸기 76작기 출하량·5품목 189작기 매출에 기준선·CatBoost·XGBoost 비교; 초기 LimiX 결과는 별도 보존 | 공개·회원 제공 자료 실험, 대회 미개방 자료의 성능이 아님 |
 | 재배 중 생육 점검 | 실제 생육·과거 7/28일 환경을 40개 방문 쌍·21시설로 연결하고 33입력 후보 비교 | 7일 뒤 시설·방문 표본 평균 초장; 생육만 사용한 MAE 32.61mm가 환경 추가보다 우수 |
 | 설비비 계산 | 공개 장비 3종의 묶음 가격·수량·선택 옵션 + 명시한 설치비·부가세·기타 투자비 | 등록 표준가격이며 실제 설치 견적 아님; 누락 비용은 0으로 간주하지 않음 |
 | 가격 예측 실험 | KAMIS 원/kg 574관측·12시계열로 2024 모형 선택 → 2025 고정 검증 | 선택 모형 MAE 1,249.16원/kg, 계절 기준선 1,061.62원/kg; 기준선이 더 우수 |
