@@ -1,0 +1,125 @@
+{
+  "retrieved_date": "2026-10-17",
+  "purpose": "쉬운 스마트팜 발표자료의 공식 모델 식별 이미지와 선택적 구조도",
+  "asset_policy": "공식 프로젝트의 원본 파일을 다운로드했으며 이미지 내용을 편집하거나 새 로고를 생성하지 않았다.",
+  "limix_identity": {
+    "project_evidence": "내부 비교 실험 기록의 모델 ID와 파라미터 수를 확인했다. 이 기록의 원자료는 공개 저장소에 포함하지 않는다.",
+    "official_repository": "https://github.com/limix-ldm-ai/LimiX",
+    "official_checkpoint": "https://huggingface.co/stable-ai/LimiX-2",
+    "model_name": "LimiX-2",
+    "nominal_parameters": "400M",
+    "project_verified_parameters": 406222100,
+    "distinction": "LimiX-2M(2M) 및 LimiX-16M과 구분한다.",
+    "project_role": "기존 공개자료 비교 실험의 고정 사전학습 모델. 현재 계산기의 기본 출하량 모델 또는 총매출 모델이라고 표현하지 않는다."
+  },
+  "assets": [
+    {
+      "id": "catboost_logo",
+      "model": "CatBoost",
+      "kind": "official_logo",
+      "source_page": "https://github.com/catboost/catboost/tree/master/logo",
+      "official_repository": "https://github.com/catboost/catboost",
+      "source_image_url": "https://raw.githubusercontent.com/catboost/catboost/master/logo/catboost.png",
+      "local_path": "../assets/presentation/model_catboost_logo.png",
+      "width_px": 559,
+      "height_px": 235,
+      "bytes": 11867,
+      "sha256": "7a5d32a2354742abcfa05ffe3bb799fd0236a151f82bca0afdd577a42fc1b8f8",
+      "description": "공식 저장소 logo 폴더의 CatBoost 로고. 투명 영역과 검정 글자가 있으므로 흰 바탕에서 사용한다.",
+      "recommended_slide_size_px": {
+        "width": 220,
+        "height": 92
+      },
+      "simple_explanation_ko": "표 자료에서 여러 판단 규칙을 차례로 학습하는 비교 모델",
+      "license": {
+        "repository_license": "Apache License 2.0",
+        "license_url": "https://github.com/catboost/catboost/blob/master/LICENSE",
+        "local_license_copy": "../assets/presentation/model_catboost_LICENSE.txt",
+        "asset_specific_license": "별도의 로고 전용 라이선스 표시는 확인하지 못했다. 저장소의 일반 라이선스를 기록하며, 별도 상표 사용권까지 확인한 것으로 해석하지 않는다.",
+        "presentation_attribution": "CatBoost — official project logo, catboost/catboost."
+      },
+      "visual_inspection": "원본을 열어 노랑·빨강 심볼과 검정 워드마크 확인. 이미지 내용 변경 없음."
+    },
+    {
+      "id": "xgboost_logo",
+      "model": "XGBoost",
+      "kind": "official_logo",
+      "source_page": "https://github.com/dmlc/xgboost",
+      "official_repository": "https://github.com/dmlc/xgboost",
+      "source_image_url": "https://xgboost.ai/images/logo/xgboost-logo-trimmed.png",
+      "local_path": "../assets/presentation/model_xgboost_logo.png",
+      "width_px": 408,
+      "height_px": 138,
+      "bytes": 27905,
+      "sha256": "6637e38dea1db7a54d6c16fd5b149c2c443d7a4c54a45829ce4b25cef6edbb15",
+      "description": "공식 dmlc/xgboost README가 직접 참조하는 xgboost.ai의 로고. 파란 워드마크와 DMLC 표기.",
+      "recommended_slide_size_px": {
+        "width": 235,
+        "height": 80
+      },
+      "simple_explanation_ko": "앞선 예측의 오차를 보완하는 판단 규칙을 쌓는 모델",
+      "license": {
+        "repository_license": "Apache License 2.0",
+        "license_url": "https://github.com/dmlc/xgboost/blob/master/LICENSE",
+        "local_license_copy": "../assets/presentation/model_xgboost_LICENSE.txt",
+        "asset_specific_license": "공식 README에서 이미지의 공식 사용을 확인했다. xgboost.ai 로고 파일에 대한 별도 자산 라이선스는 확인하지 못했으며 저장소 코드 라이선스와 구분한다.",
+        "presentation_attribution": "XGBoost — official project logo, xgboost.ai / dmlc/xgboost."
+      },
+      "visual_inspection": "원본을 열어 공식 파랑 워드마크 확인. 이미지 내용 변경 없음."
+    },
+    {
+      "id": "limix_logo",
+      "model": "LimiX family; presentation label LimiX-2 400M",
+      "kind": "official_logo_banner",
+      "source_page": "https://github.com/limix-ldm-ai/LimiX",
+      "official_repository": "https://github.com/limix-ldm-ai/LimiX",
+      "source_image_url": "https://raw.githubusercontent.com/limix-ldm-ai/LimiX/main/doc/LimiX-Logo.png",
+      "local_path": "../assets/presentation/model_limix_logo.png",
+      "width_px": 1936,
+      "height_px": 736,
+      "bytes": 867539,
+      "sha256": "039f044b288b96cab8cae8f6d86ac7644c038df83d619474313035eeb264038a",
+      "description": "공식 LimiX README 상단의 파란 배경 로고 배너. 로고 자체는 LimiX 가족명을 표시하므로 LimiX-2 · 400M은 편집 가능한 별도 텍스트로 붙인다.",
+      "recommended_slide_size_px": {
+        "width": 230,
+        "height": 87
+      },
+      "simple_explanation_ko": "미리 학습한 표 데이터 모델에 사례를 보여 주고 예측을 비교",
+      "license": {
+        "repository_license": "Stable AI Technology Co., Ltd. License, Version 1.0, September 2026 (Apache 2.0 기반 추가 조항)",
+        "license_url": "https://github.com/limix-ldm-ai/LimiX/blob/main/LICENSE.txt",
+        "local_license_copy": "../assets/presentation/model_limix_repo_LICENSE.txt",
+        "checkpoint_license": "StableAI LimiX Non-Commercial License Version 1.0",
+        "checkpoint_license_url": "https://huggingface.co/stable-ai/LimiX-2/blob/main/LICENSE",
+        "checkpoint_license_local_copy": "../assets/presentation/model_limix2_checkpoint_LICENSE.txt",
+        "asset_specific_license": "공식 저장소 이미지이며 별도의 로고 전용 라이선스 표시는 확인하지 못했다. 일반 코드 라이선스와 400M 체크포인트 라이선스를 서로 구분하여 기록한다.",
+        "presentation_attribution": "Built with StableAI LimiX",
+        "attribution_note": "모델 기반 연구의 공개에는 체크포인트 라이선스 11절의 귀속 문구를 유지한다. 공식 제휴·인증·후원을 뜻하는 배치나 문구를 사용하지 않는다."
+      },
+      "visual_inspection": "원본 파란 로고 배너 확인. 문서의 공식 400M 모델 정체성과 일치하는 프로젝트 출처를 확인했고 이미지 내용 변경 없음."
+    },
+    {
+      "id": "limix2_architecture",
+      "model": "LimiX-2 400M",
+      "kind": "official_architecture_figure",
+      "source_page": "https://github.com/limix-ldm-ai/LimiX#-introduction",
+      "official_repository": "https://github.com/limix-ldm-ai/LimiX",
+      "source_image_url": "https://raw.githubusercontent.com/limix-ldm-ai/LimiX/main/doc/figures/fig2_architecture.png",
+      "local_path": "../assets/presentation/model_limix2_architecture.png",
+      "width_px": 1446,
+      "height_px": 1664,
+      "bytes": 176894,
+      "sha256": "682136b995edecc040767550ac161fa4b701f708464d8be8ef18405ee2dc5017",
+      "description": "공식 README에서 Figure 2: Overall structure of LimiX-2로 소개한 구조도. 표 입력, 행·특성 축 attention, 분류·회귀·특성복원 출력을 표시한다.",
+      "recommended_usage": "영문과 수식이 많은 세로 구조도이므로 쉬운 본문의 모델 소개에는 로고를 우선 사용하고 이 그림은 기술 부록에서 전체를 크게 표시한다.",
+      "license": {
+        "repository_license": "Stable AI Technology Co., Ltd. License, Version 1.0, September 2026",
+        "license_url": "https://github.com/limix-ldm-ai/LimiX/blob/main/LICENSE.txt",
+        "local_license_copy": "../assets/presentation/model_limix_repo_LICENSE.txt",
+        "asset_specific_license": "별도의 Figure 2 전용 라이선스 표시는 확인하지 못했다. 공식 저장소의 일반 라이선스와 원본 귀속을 기록한다.",
+        "presentation_attribution": "LimiX-2 official architecture (Figure 2), limix-ldm-ai/LimiX. Built with StableAI LimiX."
+      },
+      "visual_inspection": "전체 구조도를 열어 입력 표, Transformer Block, Sample-axis attention, Feature-axis attention, 세 출력 head 확인. 이미지 내용 변경 없음."
+    }
+  ]
+}

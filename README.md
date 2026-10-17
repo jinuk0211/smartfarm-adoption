@@ -6,9 +6,9 @@
 
 **[2026-10-11 데이터 재확인·성능 검증·계산 연결 결과](reports/planning_connection_validation.md)** — 확인된 API 면적을 사용하는 출하량 76작기·매출 189작기, 중첩 시설 분리·시간 검증, 실제 모델 → 매출·소득·회수기간 연결입니다. 전체 평균에서는 단순 면적당 중앙값이 모델 선택 절차보다 오차가 작았습니다.
 
-[PPT 기획서](presentation/smartfarm_proposal.pptx) · [열람용 PDF](presentation/smartfarm_proposal.pdf) · [명세서 반영 코드 설명](reports/dsz_spec_usage.md) · [실행 대시보드 화면](assets/dashboard/) · [계산 예시와 가정](reports/planning_demo_summary.json)
+[쉬운 설명 PPT](presentation/smartfarm_easy.pptx) · [쉬운 설명 PDF](presentation/smartfarm_easy.pdf) · [상세 PPT](presentation/smartfarm_proposal.pptx) · [상세 PDF](presentation/smartfarm_proposal.pdf) · [명세서 반영 코드 설명](reports/dsz_spec_usage.md) · [실행 대시보드 화면](assets/dashboard/) · [계산 예시와 가정](reports/planning_demo_summary.json)
 
-2026-10-17 발표자료는 **본편 16장과 근거 부록 12장**으로 구성했습니다. Noto Sans KR 글꼴, 설명용 생성 사진 11개, 실제 앱 화면 2개를 사용하고 표 5개와 차트 11개는 PPT에서 편집할 수 있게 유지했습니다. 17–28장 부록은 작은 표·차트·도식·이미지를 섞어 구성했으며, 전체 79개 필드는 18번 슬라이드 발표자 노트에 보존했습니다. PDF는 글꼴 설치 없이 볼 수 있는 이미지 기반 열람본이며, 편집과 발표자 노트는 PPTX를 사용합니다.
+2026-10-17 발표자료는 **쉬운 설명본 17장**과 **상세본 28장(본편 16·부록 12)**을 함께 제공합니다. 쉬운본은 큰 글씨와 그림, 쉬운 용어로 흐름을 설명하고 CatBoost·XGBoost·LimiX 공식 로고를 포함합니다. 상세본의 표 5개와 차트 11개는 PPT에서 편집할 수 있습니다. 사진 아래 생성 이미지 표시 문구는 제거했으며, 이미지 출처는 노트와 문서에 보존했습니다. 전체 79개 필드는 쉬운본 3장·상세본 18장 발표자 노트에 있습니다. PDF는 이미지 기반 열람본이고 편집·발표자 노트에는 PPTX를 사용합니다.
 
 ### 대회 명세서는 어디에 사용했나요?
 
