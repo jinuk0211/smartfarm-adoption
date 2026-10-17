@@ -1,7 +1,7 @@
 {
   "date": "2026-10-17",
   "mode": "built-in image_gen",
-  "image_count": 9,
+  "image_count": 11,
   "note": "설명용 생성 이미지이며 실제 농가·상품·안심구역의 기록 사진이 아닙니다. 글자·표·차트는 PPTX의 별도 편집 요소입니다.",
   "images": [
     {
@@ -48,6 +48,16 @@
       "key": "offline_workstation",
       "asset": "offline_workstation.png",
       "prompt": "Create a single premium editorial photograph-style concept illustration for a Korean data-analysis presentation, 4:3 landscape. A plain quiet analysis desk with one desktop monitor showing an out-of-focus neutral grey abstract spreadsheet with no readable text or numbers, keyboard, mouse and a blank notebook. Office interior calm, light walls, daylight, forest-green chair. No internet/cloud icon, no lock icon, no logos or brands, no people. Large clear composition. This is a generic offline analysis workstation concept and must not imply a photo of any real data secure zone. Crisp realistic materials, not futuristic."
+    },
+    {
+      "key": "appendix_equipment",
+      "prompt": "Use case: photorealistic-natural. Asset type: explanatory photograph for a Korean smart-farm presentation, used once at 358x269 on a white slide. Create a realistic editorial close detail view of generic greenhouse environment control and nutrient dosing equipment: clean matte pale-gray control enclosure with a few simple unlabelled knobs, neatly routed tubing, a compact translucent flow meter and small blue nutrient tanks in the background. The equipment is entirely generic, no brand or product identity. Hints of green greenhouse plants softly out of focus behind it. Landscape 4:3 composition, enough breathing room around all objects, warm natural daylight, restrained forest green, neutral white and pale gray palette matching a scientific presentation. High quality material details, believable installation. No text, no numbers, no logo, no watermark, no person, no screen interface. This is a conceptual illustration, not a record of a real commercial product.",
+      "asset": "appendix_equipment.png"
+    },
+    {
+      "key": "appendix_field_check",
+      "prompt": "Use case: photorealistic-natural. Asset type: explanatory photograph for a Korean smart-farm presentation, used once at 386x290 on a white slide. Realistic close editorial view of a field inspection inside a modern strawberry greenhouse. Show only an agronomist's hands holding a small unbranded tablet and a paper crop-record clipboard beside strawberry leaves and part of a small environmental sensor. The hands, record and greenhouse plants together clearly suggest checking real observations before using a model. Tablet angled so its dim screen contains no readable text or numbers; paper has very faint abstract rules, no legible writing. Landscape 4:3, centered human hands in lower-left, plants and sensor toward upper-right, softly focused greenhouse architecture in background. Natural diffuse morning light, muted green and warm neutral colors, crisp realistic textures, calm professional mood. No identifiable face, logos, product marks, text, numbers, watermark, charts, or fabricated data. This is an explanatory generated concept photograph.",
+      "asset": "appendix_field_check.png"
     }
   ]
 }
