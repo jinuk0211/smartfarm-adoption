@@ -18,7 +18,7 @@
 
 ![대회 명세서의 시설·경영조사 연결, 구현 범위와 실제 자료 검증 상태](assets/diagrams/dsz-spec-usage-easy.png)
 
-[명세 반영 발표 슬라이드](assets/diagrams/dsz-spec-usage.png) · [작기 연결 기준](assets/diagrams/dsz-cycle-join.png) · [명세서의 7개 계획 입력](assets/diagrams/dsz-planning-inputs.png) · [예측에서 경제성까지의 연결](assets/diagrams/dsz-economic-link.png)
+[큰 글씨 세로 그림](assets/diagrams/dsz-spec-usage-portrait.png) · [명세 반영 발표 슬라이드](assets/diagrams/dsz-spec-usage.png) · [작기 연결 기준](assets/diagrams/dsz-cycle-join.png) · [명세서의 7개 계획 입력](assets/diagrams/dsz-planning-inputs.png) · [예측에서 경제성까지의 연결](assets/diagrams/dsz-economic-link.png)
 
 [전 과정 구현·자료 한계·검증 근거](reports/full_process_delivery.md)에 세부 상태를 정리했습니다. 이전 설명 이미지도 보관합니다: [서비스 흐름](assets/diagrams/easy-service-flow.png) · [자료 구성](assets/diagrams/easy-data-sources.png).
 

@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-17",
+  "mode": "built-in image_gen",
+  "image_count": 9,
+  "note": "설명용 생성 이미지이며 실제 농가·상품·안심구역의 기록 사진이 아닙니다. 글자·표·차트는 PPTX의 별도 편집 요소입니다.",
+  "images": [
+    {
+      "key": "hero_greenhouse",
+      "asset": "hero_greenhouse.png",
+      "prompt": "Use case: photorealistic-natural. Create a premium realistic editorial photograph-style concept image for a Korean university agriculture data competition presentation. Wide landscape 16:9. A clean modern Korean strawberry greenhouse with long raised hydroponic beds, precise metal structure, sunlight, healthy foliage and natural strawberries. Place the greenhouse perspective and an adult farmer holding a plain tablet entirely in the RIGHT 58%. LEFT 42% should be a seamless softly lit very pale gray-white wall/air negative space for later native slide titles. Modern calm documentary photography, crisp detail, neutral white balance with forest green foliage, no watercolor, no cartoon, no toy 3D. No letters, no text, no logo, no watermarks, no charts. Realistic human hands. It is an illustrative concept, not a named real facility."
+    },
+    {
+      "key": "planning_table",
+      "asset": "planning_table.png",
+      "prompt": "Use case: photorealistic-natural. Wide 4:3 realistic editorial still life at a Korean smart greenhouse planning desk. A clean architectural outline of a simple greenhouse on large white paper, plain calculator, tape measure, pencil and a small strawberry seedling in a black nursery pot. Greenhouse rows softly visible beyond the desk. The paper contains only faint architectural lines with NO readable labels or numbers. Natural diffuse daylight, refined modern photography, clean off-white and dark green palette, clear space between objects. Top-down three-quarter angle. No person, no text, no logo, no watermark, no fake UI, no decorative graphs."
+    },
+    {
+      "key": "shipment_crate",
+      "asset": "shipment_crate.png",
+      "prompt": "Use case: product-mockup. A single realistic clean reusable dark green shallow produce crate filled with neatly arranged transparent punnets of ripe Korean strawberries. Precise professional agricultural product photography, full object visible, three-quarter front view, soft studio daylight, isolated on pure white background with a very light natural contact shadow. Strawberry skin and leaves should look real, accurate practical packing rather than overflowing fantasy fruit. Landscape 4:3 composition, generous margins. No labels, no numbers, no logo, no text, no watercolor, no people."
+    },
+    {
+      "key": "sensor_closeup",
+      "asset": "sensor_closeup.png",
+      "prompt": "Create a single premium editorial documentary concept photograph for an educational Korean smart-farm presentation, 4:3 landscape. Close view of a simple generic white temperature humidity sensor with a perforated protective shell suspended at strawberry leaf height inside a clean hydroponic greenhouse. Fine cable, natural strawberry leaves and a few red berries, background softly out of focus. Sensor occupies the right half, plant leaves left half. Neutral daylight, exceptionally crisp materials, restrained green/white/charcoal palette, no dramatic color cast, no people. No text, no digits, no logos, no UI, no charts. This is an illustrative concept, not a photograph of any actual named experiment. A real-looking straightforward agricultural scene, not sci-fi."
+    },
+    {
+      "key": "control_equipment",
+      "asset": "control_equipment.png",
+      "prompt": "Create a single premium editorial explanatory concept photograph for a Korean smart-farm investment presentation, 4:3 landscape. A generic greenhouse environmental control cabinet and compact nutrient dosing equipment installed neatly in the service end of a modern strawberry greenhouse. Stainless frame, simple white cabinet, tidy pipes, transparent water tanks, strawberry rows blurred behind. Modern clean functional realistic equipment; no model-specific branding, no logos, no readable numbers or screen text. Daylight white background feeling, crisp focus, muted forest-green accents. Attractive readable composition with 3 large comprehensible components, not cluttered. It is an illustration of types of equipment, not actual product evidence. No person, no charts, no currency."
+    },
+    {
+      "key": "farm_ledger",
+      "asset": "farm_ledger.png",
+      "prompt": "Create an isolated photorealistic editorial still life for a Korean farm-business presentation, 4:3 landscape. An open simple cream bookkeeping notebook with subtle faint blank ruled lines, a clean dark grey calculator with blank display, black pen, and two red strawberries at one corner. White seamless background, soft realistic grounded shadow, high contrast crisp edges, overhead three-quarter angle. Large objects fill center 75%, minimal white negative space. No readable writing, no digits anywhere including keys, no currency bills, no logo, no captions. This image symbolizes recorded gross revenue and cost, but contains no data."
+    },
+    {
+      "key": "greenhouse_model",
+      "asset": "greenhouse_model.png",
+      "prompt": "Create a single clean editorial 3D explanatory model image, 4:3 landscape. A compact modern multi-span agricultural greenhouse miniature seen in elevated three-quarter perspective, two connected arched roof bays with partly transparent roof revealing neat hydroponic strawberry growing benches and a few red fruits. Simple white frame, green plants, grey floor. Isolated on pure white seamless background with gentle soft shadow. Large clear overall silhouette, not an intricate engineering schematic, suitable as the central image with external native labels about greenhouse type, floor area, crop and planned season. Do not draw any text, numbers, arrows, labels, scales, diagrams or surrounding icons. Realistic premium architectural model materials, no cartoon, no branding."
+    },
+    {
+      "key": "wholesale_market",
+      "asset": "wholesale_market.png",
+      "prompt": "Create a single premium editorial documentary concept photograph for a Korean agricultural data presentation, 4:3 landscape. A clean modern fruit wholesale distribution aisle with stacked green produce crates and white shallow boxes of red strawberries, a few pallets and a simple wheeled cart. Foreground strawberry boxes large and sharp, long warehouse perspective behind. No visible workers, no store signs, no labels, no numbers, no readable text, no logos. Neutral daylight, realistic restrained colors, clean professional composition. The concept is wholesale market prices, not a specific actual market or evidence of a real transaction."
+    },
+    {
+      "key": "offline_workstation",
+      "asset": "offline_workstation.png",
+      "prompt": "Create a single premium editorial photograph-style concept illustration for a Korean data-analysis presentation, 4:3 landscape. A plain quiet analysis desk with one desktop monitor showing an out-of-focus neutral grey abstract spreadsheet with no readable text or numbers, keyboard, mouse and a blank notebook. Office interior calm, light walls, daylight, forest-green chair. No internet/cloud icon, no lock icon, no logos or brands, no people. Large clear composition. This is a generic offline analysis workstation concept and must not imply a photo of any real data secure zone. Crisp realistic materials, not futuristic."
+    }
+  ]
+}
