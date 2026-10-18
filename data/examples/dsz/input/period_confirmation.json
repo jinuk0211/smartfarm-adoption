@@ -1,0 +1,1071 @@
+{
+  "schema_version": 1,
+  "policy": "single_record_per_cycle",
+  "data_kind": "synthetic_schema_fixture",
+  "target_columns": [
+    "ALL_SHPMNT_KGUNT_QTY",
+    "ALL_INCM_AMT"
+  ],
+  "source_files": [
+    {
+      "dataset": "DZ_002",
+      "file": "DZ_002.csv",
+      "sha256": "1f5c64bd48410869f324e3dd5d88cac8d93b3e4d0e4a54b6027ce3c4158b63e7"
+    },
+    {
+      "dataset": "DZ_004",
+      "file": "DZ_004.csv",
+      "sha256": "e33ae15d961d669830a048367a4581990eb6c415ce05874b8df711edad5cb8c1"
+    }
+  ],
+  "definition": {
+    "path": "synthetic_period_definition.txt",
+    "sha256": "8c8f2501472a512c08a84360c256a788116b23538275d2e458e0a743e937e380",
+    "locator": "lines 1-4",
+    "reviewed_by": "synthetic fixture generator",
+    "reviewed_at": "2026-10-18",
+    "aggregation_definition": "One fictional record is the complete cycle shipment and gross revenue total."
+  },
+  "cycles": [
+    {
+      "facility_id": "SYN_FARM_000",
+      "cycle_id": "1",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 2,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_000",
+      "cycle_id": "41",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 3,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_001",
+      "cycle_id": "2",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 4,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_001",
+      "cycle_id": "42",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 5,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_002",
+      "cycle_id": "3",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 6,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_002",
+      "cycle_id": "43",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 7,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_003",
+      "cycle_id": "4",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 8,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_003",
+      "cycle_id": "44",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 9,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_004",
+      "cycle_id": "5",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 10,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_004",
+      "cycle_id": "45",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 11,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_005",
+      "cycle_id": "6",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 12,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_005",
+      "cycle_id": "46",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 13,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_006",
+      "cycle_id": "7",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 14,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_006",
+      "cycle_id": "47",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 15,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_007",
+      "cycle_id": "8",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 16,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_007",
+      "cycle_id": "48",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 17,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_008",
+      "cycle_id": "9",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 18,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_008",
+      "cycle_id": "49",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 19,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_009",
+      "cycle_id": "10",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 20,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_009",
+      "cycle_id": "50",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 21,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_010",
+      "cycle_id": "11",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 22,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_010",
+      "cycle_id": "51",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 23,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_011",
+      "cycle_id": "12",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 24,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_011",
+      "cycle_id": "52",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 25,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_012",
+      "cycle_id": "13",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 26,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_012",
+      "cycle_id": "53",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 27,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_013",
+      "cycle_id": "14",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 28,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_013",
+      "cycle_id": "54",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 29,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_014",
+      "cycle_id": "15",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 30,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_014",
+      "cycle_id": "55",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 31,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_015",
+      "cycle_id": "16",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 32,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_015",
+      "cycle_id": "56",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 33,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_016",
+      "cycle_id": "17",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 34,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_016",
+      "cycle_id": "57",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 35,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_017",
+      "cycle_id": "18",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 36,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_017",
+      "cycle_id": "58",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 37,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_018",
+      "cycle_id": "19",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 38,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_018",
+      "cycle_id": "59",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 39,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_019",
+      "cycle_id": "20",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 40,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_019",
+      "cycle_id": "60",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 41,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_020",
+      "cycle_id": "21",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 42,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_020",
+      "cycle_id": "61",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 43,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_021",
+      "cycle_id": "22",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 44,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_021",
+      "cycle_id": "62",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 45,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_022",
+      "cycle_id": "23",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 46,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_022",
+      "cycle_id": "63",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 47,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_023",
+      "cycle_id": "24",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 48,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_023",
+      "cycle_id": "64",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 49,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_024",
+      "cycle_id": "25",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 50,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_024",
+      "cycle_id": "65",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 51,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_025",
+      "cycle_id": "26",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 52,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_025",
+      "cycle_id": "66",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 53,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_026",
+      "cycle_id": "27",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 54,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_026",
+      "cycle_id": "67",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 55,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_027",
+      "cycle_id": "28",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 56,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_027",
+      "cycle_id": "68",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 57,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_028",
+      "cycle_id": "29",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 58,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_028",
+      "cycle_id": "69",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 59,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_029",
+      "cycle_id": "30",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 60,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_029",
+      "cycle_id": "70",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 61,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_030",
+      "cycle_id": "31",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 62,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_030",
+      "cycle_id": "71",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 63,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_031",
+      "cycle_id": "32",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 64,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_031",
+      "cycle_id": "72",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 65,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_032",
+      "cycle_id": "33",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 66,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_032",
+      "cycle_id": "73",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 67,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_033",
+      "cycle_id": "34",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 68,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_033",
+      "cycle_id": "74",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 69,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_034",
+      "cycle_id": "35",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 70,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_034",
+      "cycle_id": "75",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 71,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_035",
+      "cycle_id": "36",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 72,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_035",
+      "cycle_id": "76",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 73,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_036",
+      "cycle_id": "37",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 74,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_036",
+      "cycle_id": "77",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 75,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_037",
+      "cycle_id": "38",
+      "start": "2021-02-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 76,
+          "start": "2021-02-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_037",
+      "cycle_id": "78",
+      "start": "2022-02-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 77,
+          "start": "2022-02-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_038",
+      "cycle_id": "39",
+      "start": "2021-03-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 78,
+          "start": "2021-03-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_038",
+      "cycle_id": "79",
+      "start": "2022-03-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 79,
+          "start": "2022-03-01",
+          "end": "2022-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_039",
+      "cycle_id": "40",
+      "start": "2021-01-01",
+      "end": "2021-06-30",
+      "records": [
+        {
+          "source_row": 80,
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ]
+    },
+    {
+      "facility_id": "SYN_FARM_039",
+      "cycle_id": "80",
+      "start": "2022-01-01",
+      "end": "2022-06-30",
+      "records": [
+        {
+          "source_row": 81,
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ]
+    }
+  ]
+}

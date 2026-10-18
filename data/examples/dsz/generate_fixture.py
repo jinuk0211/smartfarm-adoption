@@ -11,7 +11,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
-from src.dsz_data import FEATURES, load_schema  # noqa: E402
+from src.dsz_data import FEATURES, load_schema, sha256  # noqa: E402
 
 
 def main() -> None:
@@ -52,6 +52,27 @@ def main() -> None:
     record("DZ_007", FCLT_ID="SYN_FARM_000", OBSV_PNT_CDCN="001", TPHN_ENG_NM="SYNTHETIC", OBSV_DT="2021-01-10 12:00:00", TPHN_NM="합성태풍")
     for table_id, records in rows.items():
         pd.DataFrame(records).to_csv(target / f"{table_id}.csv", index=False, encoding="utf-8-sig")
+    definition = target / "synthetic_period_definition.txt"
+    definition.write_text(
+        "SYNTHETIC EXECUTION FIXTURE ONLY. No real farm evidence or provider confirmation.\n"
+        "The generator defines each DZ_004 record as the full shipment and gross revenue total\n"
+        "for the matching DZ_002 facility cycle, from FRMTM_BGNG_YMD through FRMTM_END_YMD.\n"
+        "There is exactly one management record per fictional facility cycle.\n", encoding="utf-8")
+    def iso(value):
+        return f"{value[:4]}-{value[4:6]}-{value[6:]}"
+    declaration = {"schema_version": 1, "policy": "single_record_per_cycle", "data_kind": "synthetic_schema_fixture",
+                   "target_columns": ["ALL_SHPMNT_KGUNT_QTY", "ALL_INCM_AMT"],
+                   "source_files": [{"dataset": key, "file": key + ".csv", "sha256": sha256(target / (key + ".csv"))}
+                                    for key in ["DZ_002", "DZ_004"]],
+                   "definition": {"path": definition.name, "sha256": sha256(definition), "locator": "lines 1-4",
+                                  "reviewed_by": "synthetic fixture generator", "reviewed_at": "2026-10-18",
+                                  "aggregation_definition": "One fictional record is the complete cycle shipment and gross revenue total."},
+                   "cycles": [{"facility_id": row["FCLT_ID"], "cycle_id": row["FRMTM_SNO"],
+                               "start": iso(row["FRMTM_BGNG_YMD"]), "end": iso(row["FRMTM_END_YMD"]),
+                               "records": [{"source_row": index + 2, "start": iso(row["FRMTM_BGNG_YMD"]),
+                                            "end": iso(row["FRMTM_END_YMD"])}]}
+                              for index, row in enumerate(rows["DZ_002"])]}
+    (target / "period_confirmation.json").write_text(json.dumps(declaration, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (target / "fixture_manifest.json").write_text(json.dumps({
         "data_kind": "synthetic_schema_fixture", "seed": 142, "facility_count": 40, "cycle_count": 80,
         "purpose": "Execution and schema-contract demonstration only. No real farm measurements or predictive accuracy.",

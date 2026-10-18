@@ -12,24 +12,60 @@ from scripts.predict_dsz import predict_from_artifacts
 from scripts.train_dsz import read_data, train
 from src.dsz_model import (FEATURES, CropMedian, features, fit_target, grouped_folds, predict_plans,
                            prepare_target, sha256)
+from src.dsz_period import evidence_digest, evidence_json
+
+
+def confirmation(rows):
+    return {"schema_version": 1, "policy": "single_record_per_cycle", "data_kind": rows.data_kind.iloc[0],
+            "target_columns": ["ALL_SHPMNT_KGUNT_QTY", "ALL_INCM_AMT"],
+            "source_files": [{"dataset": key, "file": key + ".csv", "sha256": "a" * 64} for key in ["DZ_002", "DZ_004"]],
+            "definition": {"path": "synthetic_test_only.txt", "sha256": "b" * 64, "locator": "fictional definition",
+                           "reviewed_by": "synthetic unit test", "reviewed_at": "2026-10-18",
+                           "aggregation_definition": "Fictional full-cycle records for contract tests only."},
+            "cycles": [{"facility_id": row.facility_id, "cycle_id": row.cycle_id, "start": "2024-09-01", "end": "2025-06-30",
+                        "records": [{"source_row": i + 2, "start": "2024-09-01", "end": "2025-06-30"}]}
+                       for i, row in enumerate(rows.itertuples())]}
+
+
+def confirm_candidates(rows):
+    declaration = confirmation(rows)
+    for index, cycle in zip(rows.index, declaration["cycles"], strict=True):
+        proof = {key: value for key, value in declaration.items() if key != "cycles"}
+        proof["cycle"] = cycle
+        rows.loc[index, "target_period_confirmed"] = True
+        rows.loc[index, "target_period_evidence_json"] = evidence_json(proof)
+        rows.loc[index, "target_period_evidence_sha256"] = evidence_digest(proof)
+    return rows
+
+
+def period_provenance(rows):
+    declaration = confirmation(rows)
+    cohort = {"candidate_rows": len(rows), "used_rows": len(rows), "unconfirmed_excluded_rows": 0,
+              "confirmed_ineligible_excluded_rows": 0, "source_all_periods_confirmed": True,
+              "source_period_evidence_sha256": evidence_digest(declaration),
+              "source_manifest_sha256": "test-only-source", "candidate_sha256": "c" * 64,
+              "used_candidates": rows[["row_id", "facility_id", "cycle_id", "target_period_evidence_sha256"]].to_dict("records")}
+    return {"target_period_confirmed": True, "target_period_confirmation": declaration,
+            "target_period_evidence_sha256": evidence_digest(declaration),
+            "candidate_sha256": "c" * 64, "training_cohort": cohort, "training_cohort_sha256": evidence_digest(cohort)}
 
 
 def candidates():
-    return pd.DataFrame([{
+    return confirm_candidates(pd.DataFrame([{
         "row_id": f"r{i}", "facility_id": f"SYN_FARM_{i // 2}", "cycle_id": f"c{i}",
         "crop": "딸기", "region": "테스트지역", "greenhouse_type": "단동", "greenhouse_size": "소형",
         "area_m2": 1000 + i * 10, "planned_start_year": 2024, "planned_start_month": 9,
         "reported_shipment_kg": i * 100., "reported_revenue_krw": i * 1000.,
         "shipment_eligible": True, "revenue_eligible": True,
         "data_kind": "synthetic_schema_fixture", "target_assumption": "single_record_per_cycle",
-    } for i in range(8)])
+    } for i in range(8)]))
 
 
 def bundle(rows):
     return {"features": FEATURES, "model": CropMedian().fit(features(rows), rows["reported_shipment_kg"]),
             "training_crops": ["딸기"], "target": "shipment", "unit": "kg",
             "data_kind": "synthetic_schema_fixture", "target_assumption": "single_record_per_cycle",
-            "target_period_confirmed": False,
+            **period_provenance(rows),
             "source_manifest_sha256": "test-only-source", "selected_cpu_model": "crop_median"}
 
 
@@ -103,14 +139,16 @@ def test_artifact_hash_checked_before_loading_and_tag_survives(tmp_path, monkeyp
     saved = bundle(rows)
     joblib.dump(saved, path)
     manifest = {"status": "completed", **{key: saved[key] for key in
-                ["data_kind", "target_assumption", "target_period_confirmed", "source_manifest_sha256"]},
+                ["data_kind", "target_assumption", "target_period_confirmed", "source_manifest_sha256",
+                 "target_period_evidence_sha256", "target_period_confirmation", "training_cohort",
+                 "training_cohort_sha256", "candidate_sha256"]},
                 "source_sha256": {name: sha256(Path(__file__).resolve().parents[1] / name) for name in
-                                  ["src/dsz_model.py", "scripts/predict_dsz.py"]},
+                                  ["src/dsz_model.py", "src/dsz_period.py", "scripts/predict_dsz.py"]},
                 "targets": {"shipment": {"status": "completed", "artifact_file": path.name, "artifact_sha256": sha256(path)}}}
     (tmp_path / "dsz_model_metrics.json").write_text(json.dumps(manifest), encoding="utf-8")
     predicted = predict_from_artifacts(tmp_path, rows[FEATURES].iloc[:1])
     assert predicted.data_kind.item() == "synthetic_schema_fixture"
-    assert not predicted.target_period_confirmed.item()
+    assert predicted.target_period_confirmed.item()
     manifest["source_sha256"]["src/dsz_model.py"] = "modified-code"
     (tmp_path / "dsz_model_metrics.json").write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(ValueError, match="Current prediction source"):
@@ -142,13 +180,15 @@ def test_manifest_provenance_mismatch_and_early_failure_invalidate_old_success(t
     assert json.loads(metrics.read_text(encoding="utf-8"))["status"] == "failed"
 
 
-def write_inputs(directory, rows):
+def write_inputs(directory, rows, confirm=True):
+    rows = confirm_candidates(rows.copy()) if confirm else rows.copy()
     path = directory / "dsz_model_candidates.csv"
     rows.to_csv(path, index=False)
     manifest = {"features": FEATURES, "data_kind": rows.data_kind.iloc[0],
-                "target_assumption": "single_record_per_cycle", "target_period_confirmed": False,
+                "target_assumption": "single_record_per_cycle", **period_provenance(rows.loc[rows.target_period_confirmed.eq(True)]),
                 "schema_sha256": "test-only-schema", "target_units": {"reported_shipment_kg": "kg", "reported_revenue_krw": "KRW"},
                 "artifacts": {"candidates": {"file": path.name, "sha256": sha256(path)}}}
+    manifest["target_period_confirmed"] = bool(rows.target_period_confirmed.eq(True).all())
     (directory / "dsz_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
 
@@ -191,11 +231,11 @@ def test_both_targets_insufficient_fail_without_success_artifact(tmp_path):
     rows[["shipment_eligible", "revenue_eligible"]] = False
     write_inputs(tmp_path, rows)
     output = tmp_path / "models"
-    with pytest.raises(ValueError, match="Neither target"):
+    with pytest.raises(ValueError, match="No confirmed eligible"):
         train(tmp_path, output)
     result = json.loads((output / "dsz_model_metrics.json").read_text(encoding="utf-8"))
     assert result["status"] == "failed"
-    assert all(item["status"] == "skipped_insufficient_data" for item in result["targets"].values())
+    assert "No confirmed eligible" in result["failure"]["message"]
 
 
 @pytest.mark.parametrize("case", ["all_zero", "constant_each_facility", "constant_features"])
@@ -209,7 +249,7 @@ def test_valid_degenerate_training_folds_produce_audited_predictions(case):
     else:
         rows[FEATURES] = rows[FEATURES].iloc[0].to_numpy()
     provenance = {"data_kind": "synthetic_schema_fixture", "target_assumption": "single_record_per_cycle",
-                  "target_period_confirmed": False, "source_manifest_sha256": "test-only-source"}
+                  **period_provenance(rows), "source_manifest_sha256": "test-only-source"}
     saved, oof, summary = fit_target(prepare_target(rows, "shipment"), "shipment", provenance)
     assert summary["constant_training_fallbacks"]
     assert set(item["method"] for item in summary["constant_training_fallbacks"]) == {"catboost", "xgboost"}
@@ -217,3 +257,49 @@ def test_valid_degenerate_training_folds_produce_audited_predictions(case):
     if case == "all_zero":
         assert oof[["crop_median", "area_scaled_crop_median", "catboost", "xgboost"]].eq(0).all().all()
         assert predict_plans(saved, rows[FEATURES].iloc[:1]).prediction.item() == 0
+
+
+def test_unconfirmed_existing_model_and_bare_true_flag_cannot_predict():
+    rows = candidates()
+    for damage in ["unconfirmed", "missing_evidence", "changed_definition"]:
+        saved = bundle(rows)
+        if damage == "unconfirmed":
+            saved["target_period_confirmed"] = False
+        elif damage == "missing_evidence":
+            saved.pop("target_period_confirmation")
+        else:
+            saved["target_period_confirmation"]["policy"] = "incremental_sum"
+        with pytest.raises(ValueError, match="period"):
+            predict_plans(saved, rows[FEATURES].iloc[:1])
+
+
+def test_mixed_audit_candidates_select_only_documented_eligible_facilities(tmp_path):
+    rows = candidates()
+    rows.loc[4:, ["target_period_confirmed", "shipment_eligible", "revenue_eligible"]] = False
+    rows.loc[4:, ["target_period_evidence_json", "target_period_evidence_sha256"]] = ""
+    write_inputs(tmp_path, rows, confirm=False)
+    loaded, provenance, source = read_data(tmp_path)
+    assert loaded.row_id.tolist() == rows.iloc[:4].row_id.tolist()
+    assert set(loaded.facility_id) == {"SYN_FARM_0", "SYN_FARM_1"}
+    assert source["target_period_confirmed"] is False
+    assert provenance["target_period_confirmed"] is True
+    assert provenance["training_cohort"]["candidate_rows"] == 8
+    assert provenance["training_cohort"]["used_rows"] == 4
+    assert provenance["training_cohort"]["unconfirmed_excluded_rows"] == 4
+    assert len(pd.read_csv(tmp_path / "dsz_model_candidates.csv")) == 8
+    assert prepare_target(rows, "shipment").row_id.tolist() == loaded.row_id.tolist()
+    saved = {**bundle(loaded), **provenance}
+    assert predict_plans(saved, loaded[FEATURES].iloc[:1]).target_period_confirmed.item()
+    saved["training_cohort"]["used_candidates"][0]["row_id"] = "changed"
+    with pytest.raises(ValueError, match="cohort"):
+        predict_plans(saved, loaded[FEATURES].iloc[:1])
+
+
+def test_unconfirmed_candidate_cannot_claim_eligibility_in_a_mixed_cohort(tmp_path):
+    rows = candidates()
+    rows.loc[4:, "target_period_confirmed"] = False
+    write_inputs(tmp_path, rows, confirm=False)
+    with pytest.raises(ValueError, match="Unconfirmed candidate was marked training eligible"):
+        read_data(tmp_path)
+    with pytest.raises(ValueError, match="Unconfirmed target period"):
+        prepare_target(rows, "shipment")

@@ -59,7 +59,12 @@ data/processed/equipment_catalog.json  # 저장소에 포함한 공개가격 예
 
 전체 준비 후 `run_app.ps1` 또는 `python -m streamlit run app.py`를 사용합니다. 새로 복제한 저장소만으로 바로 재현 가능한 경로는 README의 **DSZ 합성 CPU 데모**입니다.
 
+## 이전 흐름 설명 보존
 
+**2026-10-18 정정: 아래는 과거 설명입니다. 현재 자료 연결·집계기간 규칙은 [DATA_FLOW.md](DATA_FLOW.md), [시설별 계산 수정](reports/farm_economics_repair_20261018.md), [DSZ 기간 수정](reports/dsz_period_gate_repair_20261018.md)이 대체합니다. 조사일이 작기 안이라는 사실만으로 학습하거나 외부 평균을 같은 농가의 실측 비용으로 해석하지 않습니다.**
+
+<details>
+<summary>수정 전 흐름 펼치기 — 현재 기준으로 사용하지 않음</summary>
 
 # 어떤 데이터를 어디에 쓰는가
 
@@ -229,3 +234,5 @@ API 전체 4,224행은 목록 651 + 작기 메타데이터 651 + 생산 2,823 + 
 - 경제성 계산: [src/economics.py](src/economics.py), [MODEL_RESULTS.md](MODEL_RESULTS.md)
 
 GitHub에는 코드·정의서·집계 결과·합성 예제를 올렸습니다. 실제 농가 원행·인증 정보·학습 모델은 포함하지 않았습니다.
+
+</details>

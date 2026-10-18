@@ -21,6 +21,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from src.dsz_model import CATEGORICAL, FEATURES, NUMERIC, TARGETS, features, fit_target, grouped_folds, prepare_target, scores, sha256  # noqa: E402
+from src.dsz_period import evidence_digest, require_confirmed_rows, require_model_confirmation  # noqa: E402
 
 
 def write_json(path, value):
@@ -46,17 +47,58 @@ def read_data(data_dir):
     for name in ["data_kind", "target_assumption"]:
         if not rows[name].eq(manifest[name]).all():
             raise ValueError(f"Candidate/manifest provenance mismatch: {name}")
+    if "target_period_confirmed" not in rows or not rows.target_period_confirmed.isin([True, False]).all():
+        raise ValueError("Candidate period confirmation flags are missing or invalid")
+    eligible = pd.Series(False, index=rows.index)
+    for _, flag, _ in TARGETS.values():
+        if not rows[flag].isin([True, False]).all():
+            raise ValueError(f"Expected explicit boolean eligibility: {flag}")
+        eligible |= rows[flag].eq(True)
+    confirmed = rows.target_period_confirmed.eq(True)
+    if (eligible & ~confirmed).any():
+        raise ValueError("Unconfirmed candidate was marked training eligible")
+    if manifest["target_period_confirmed"] != bool(len(rows) and confirmed.all()):
+        raise ValueError("Candidate/manifest period confirmation flags differ")
+    selected = rows.loc[confirmed & eligible].copy()
+    if selected.empty:
+        raise ValueError("No confirmed eligible training cohort; unconfirmed candidates remain audit-only")
+    require_confirmed_rows(selected)
+    declaration = manifest["target_period_confirmation"]
+    if not isinstance(declaration, dict) or evidence_digest(declaration) != manifest.get("target_period_evidence_sha256"):
+        raise ValueError("Source period evidence declaration SHA256 differs")
+    proofs = {}
+    for cycle in declaration["cycles"]:
+        proof = {key: value for key, value in declaration.items() if key != "cycles"}
+        proof["cycle"] = cycle
+        proofs[(cycle["facility_id"], cycle["cycle_id"])] = evidence_digest(proof)
+    for row in selected.to_dict("records"):
+        if proofs.get((row["facility_id"], row["cycle_id"])) != row["target_period_evidence_sha256"]:
+            raise ValueError("Candidate/manifest period evidence mismatch")
     synthetic_ids = rows["facility_id"].astype(str).str.startswith("SYN_FARM_")
     if len(rows) and ((data_kind == "synthetic_schema_fixture" and not synthetic_ids.all())
                       or (data_kind != "synthetic_schema_fixture" and synthetic_ids.any())):
         raise ValueError("Synthetic facility identity and provenance disagree")
+    selected_keys = set(zip(selected.facility_id, selected.cycle_id, strict=True))
+    selected_declaration = {**declaration, "cycles": [cycle for cycle in declaration["cycles"]
+                           if (cycle["facility_id"], cycle["cycle_id"]) in selected_keys]}
+    cohort = {"candidate_rows": len(rows), "used_rows": len(selected),
+              "unconfirmed_excluded_rows": int((~confirmed).sum()),
+              "confirmed_ineligible_excluded_rows": int((confirmed & ~eligible).sum()),
+              "source_all_periods_confirmed": manifest["target_period_confirmed"],
+              "source_period_evidence_sha256": manifest["target_period_evidence_sha256"],
+              "source_manifest_sha256": sha256(manifest_path), "candidate_sha256": sha256(path),
+              "used_candidates": selected[["row_id", "facility_id", "cycle_id", "target_period_evidence_sha256"]].to_dict("records")}
     provenance = {"data_kind": data_kind, "target_assumption": manifest["target_assumption"],
-                  "target_period_confirmed": manifest["target_period_confirmed"],
+                  "target_period_confirmed": True,
+                  "target_period_evidence_sha256": evidence_digest(selected_declaration),
+                  "target_period_confirmation": selected_declaration,
+                  "training_cohort": cohort, "training_cohort_sha256": evidence_digest(cohort),
                   "source_manifest_sha256": sha256(manifest_path), "candidate_sha256": sha256(path),
                   "source_schema_sha256": manifest["schema_sha256"],
                   "interpretation": "SYNTHETIC RUNTIME DEMO ONLY" if data_kind == "synthetic_schema_fixture"
-                  else "Unverified recorded candidates; assumptions require onsite confirmation"}
-    return rows, provenance, manifest
+                  else "Document-backed period review; not independent provider verification"}
+    require_model_confirmation(provenance)
+    return selected, provenance, manifest
 
 
 def regression_check(predictor, train_x, train_y, query_x):
@@ -139,9 +181,9 @@ def train(data_dir, output_dir, include_limix=False, limix_python=None):
     result = {**provenance, "status": "running", "created_at_utc": datetime.now(timezone.utc).isoformat(),
               "features": FEATURES, "target_units": manifest["target_units"], "targets": {},
               "source_sha256": {name: sha256(ROOT / name) for name in
-                                ["src/dsz_model.py", "scripts/train_dsz.py", "scripts/predict_dsz.py"]},
+                                ["src/dsz_model.py", "src/dsz_period.py", "scripts/train_dsz.py", "scripts/predict_dsz.py"]},
               "limitations": ["Synthetic results are execution tests, never real farm accuracy.",
-                              "Target assumption is explicit; recorded values are not certified full-cycle totals.",
+                              "Target periods require document-backed review; this is not independent provider verification.",
                               "Same facility cycles stay together; future-year and causal performance are not established.",
                               "CPU model selection uses the same OOF data; no untouched final test.",
                               "Revenue is gross receipts, not profit. No annualization or investment payback is inferred."]}

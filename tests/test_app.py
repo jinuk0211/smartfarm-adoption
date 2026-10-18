@@ -7,8 +7,14 @@ from streamlit.testing.v1 import AppTest
 APP = Path(__file__).resolve().parents[1] / "app.py"
 
 
-def test_missing_quote_disables_only_calculation_not_other_tabs():
+def reference_app():
     app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app.radio(key="calculation_route").set_value("외부 평균으로 참고 계산").run()
+    return app
+
+
+def test_missing_quote_disables_only_calculation_not_other_tabs():
+    app = reference_app()
     assert not app.exception
     assert [tab.label for tab in app.tabs] == ["한눈에 보기", "도입 전 계산", "가격 예측", "재배 중 점검", "모델 검증", "수집 자료"]
     assert app.number_input(key="capex").value is None
@@ -18,7 +24,7 @@ def test_missing_quote_disables_only_calculation_not_other_tabs():
 
 
 def test_completed_limix_results_appear_without_replacing_calculator_model():
-    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app = reference_app()
     assert not app.exception
     comparison = next(frame.value for frame in app.dataframe if "MAE (kg/10a)" in frame.value.columns)
     limix_rows = comparison.loc[comparison["모델"] == "LimiX-2 (400M)"]
@@ -32,7 +38,7 @@ def test_completed_limix_results_appear_without_replacing_calculator_model():
 
 
 def test_explicit_test_quote_calculates_real_source_scenarios():
-    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app = reference_app()
     # This amount is a test assumption, not a collected equipment quote.
     app.number_input(key="area").set_value(1000.0)
     app.number_input(key="capex").set_value(100_000_000).run()
@@ -54,7 +60,7 @@ def test_explicit_test_quote_calculates_real_source_scenarios():
 
 
 def test_retrofit_requires_baseline_and_experimental_model_runs():
-    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app = reference_app()
     app.radio(key="yield_mode").set_value("실험 모델").run()
     app.radio(key="mode").set_value("기존 시설 개량").run()
     app.number_input(key="capex").set_value(100_000_000).run()
@@ -69,7 +75,7 @@ def test_retrofit_requires_baseline_and_experimental_model_runs():
 
 
 def test_annual_rda_costs_cannot_be_multiplied_by_cycles_input():
-    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app = reference_app()
     assert not any(widget.key == "cycles" for widget in app.number_input)
     # A stale session from the earlier UI must not multiply annual depreciation.
     app.session_state["cycles"] = 6.0
@@ -86,7 +92,7 @@ def test_annual_rda_costs_cannot_be_multiplied_by_cycles_input():
 
 
 def test_market_prices_keep_variety_missingness_and_do_not_replace_farmgate_price():
-    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app = reference_app()
     app.number_input(key="capex").set_value(100_000_000).run()
     app.button(key="calculate").click().run()
     farmgate_price = app.session_state["calculation_payload"]["benchmark"]["farmgate_price_krw_per_kg"]
@@ -103,7 +109,7 @@ def test_market_prices_keep_variety_missingness_and_do_not_replace_farmgate_pric
 
 
 def test_equipment_example_changes_capital_without_inventing_yield_gain():
-    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app = reference_app()
     app.button(key="load_example").click().run()
     assert not app.exception
     app.button(key="calculate").click().run()
@@ -122,7 +128,7 @@ def test_equipment_example_changes_capital_without_inventing_yield_gain():
 
 
 def test_market_and_weather_assumptions_change_scenario_not_source_benchmark():
-    app = AppTest.from_file(str(APP), default_timeout=30).run()
+    app = reference_app()
     app.button(key="load_example").click().run()
     app.checkbox(key="use_market_transfer").check().run()
     app.radio(key="transfer_method").set_value("2024년에 선택한 모델").run()
