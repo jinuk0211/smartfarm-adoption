@@ -1,4 +1,4 @@
-# 스마트팜 도입 전 판단 도우미
+# 스마트팜 재배 계획·재배 중 출하량 분석
 
 **작물·지역·온실·면적·재배 시작 시점을 입력해 출하량과 매출을 추정하고, 설치비·운영비 가정에 따른 경제성을 비교하는 연구용 프로젝트입니다.**
 
@@ -12,9 +12,15 @@
 
 ### 대회 명세서는 어디에 사용했나요?
 
-**시설(DZ_002)의 7개 계획 입력과 경영조사(DZ_004)의 출하량·총수입을 연결하는 검사·학습·예측 코드에 반영했습니다.** 시설ID와 조사일이 포함되는 유일한 작기로 연결하며, 예측값은 별도로 선택한 비용 가정과 함께 경제성 계산에 전달합니다. 환경·생육·기상·기상특보·태풍은 컬럼·타입·키 검사 대상으로 구현했고 현재 도입 전 예측의 입력에는 포함하지 않았습니다.
+**2026-10-18: 딸기 재배 중 출하량 예측을 추가했습니다.** 같은 시설·작기의 예측일까지 관측된 환경·생육·기상을 요약해 기본 7개 입력과 총 42개 입력 후보를 동일한 시설 분리 검증에서 비교합니다. 원자료의 성능은 아직 미검증이며, 아래 과거 발표 그림보다 [현재 입력·Python 실행 안내](reports/dsz_inseason_guide.md)를 우선합니다.
 
-**실제 대회 미개방 원자료는 로컬에 0행입니다.** 명세서 기반 코드의 동작은 합성 40시설·80작기로 확인했으며, 검사 전용 5종은 각 1행 합성 예제로 별도 확인했습니다. 공개 농가자료 실험의 성능을 대회 원자료의 성능으로 제시하지 않습니다. DSZ 계획 입력은 7개이며, 현재 공개자료 모델의 후보 입력 8개와도 구분합니다.
+```powershell
+.\run_dsz.ps1 -Demo -InSeason -CutoffDays 30 -Python .\.venv\Scripts\python.exe -UseExistingEnvironment
+```
+
+**시설(DZ_002)의 7개 계획 입력과 경영조사(DZ_004)의 출하량·총수입을 연결하는 검사·학습·예측 코드에 반영했습니다.** 학습에는 시설·작기별 출하량 집계기간을 원본 행과 근거 문서에 대조한 확인 기록이 필요합니다. 재배 전 경로는 7개 입력을 사용하고, 새 재배 중 경로는 환경·생육·기상 및 발표된 특보 기록을 추가합니다. 태풍은 발표시점 확인이 없어 입력에서 제외합니다. 재배 중 출하량 결과는 소득·투자 회수나 설비 도입 효과에 자동 연결하지 않습니다.
+
+**실제 대회 미개방 원자료는 로컬에 0행입니다.** 명세서 기반 코드의 동작은 합성 40시설·80작기로 확인했으며, 기존 검사 전용 예제와 별도로 딸기 16작기의 합성 관측 및 미학습 가상 시설 예측 예제를 추가했습니다. 공개 농가자료 실험의 성능을 대회 원자료의 성능으로 제시하지 않습니다. DSZ 재배 전 입력 7개, 재배 중 입력 후보 42개, 공개자료 모델 입력 8개는 서로 다른 계약입니다.
 
 ![대회 명세서의 시설·경영조사 연결, 구현 범위와 실제 자료 검증 상태](assets/diagrams/dsz-spec-usage-easy.png)
 
@@ -78,17 +84,18 @@ python -m venv .venv
 PowerShell을 쓰지 않는 환경에서는 설치한 Python으로 다음을 실행합니다.
 
 ```bash
-python scripts/prepare_dsz.py --input-dir data/examples/dsz/input --output-dir runs/demo/prepared
+python scripts/prepare_dsz.py --input-dir data/examples/dsz/input --output-dir runs/demo/prepared --period-confirmation data/examples/dsz/input/period_confirmation.json
 python scripts/train_dsz.py --data-dir runs/demo/prepared --output-dir runs/demo/models
 python scripts/predict_dsz.py --artifact-dir runs/demo/models --plans data/examples/dsz/example_plans.csv --output runs/demo/predictions.csv
 ```
 
 ## 실제 안심구역 파일을 넣을 때
 
-필수 입력은 **DZ_002 시설**과 **DZ_004 경영조사**입니다. 시설ID와 조사일이 포함되는 유일한 작기를 연결하며, 중복·기간 모호성·결측을 기록합니다.
+필수 학습 입력은 **DZ_002 시설**과 **DZ_004 경영조사**입니다. 조사일만으로 총출하량의 집계기간을 확정하지 않습니다. 원본 파일·행·작기별 기간과 문서 근거를 연결한 `period_confirmation.json`이 없으면 후보 감사까지만 수행하고 학습을 차단합니다. 재배 중 경로는 관측표와 요청 시설·작기를 추가로 사용하며 [별도 안내](reports/dsz_inseason_guide.md)를 따릅니다.
 
 ```powershell
 .\run_dsz.ps1 -InputDir D:\approved_data -Plans D:\plans.csv `
+  -PeriodConfirmation D:\period_confirmation.json `
   -ManagementPolicy single_record_per_cycle `
   -Python .\.venv\Scripts\python.exe -UseExistingEnvironment
 ```
