@@ -18,8 +18,10 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--encoding", choices=["utf-8-sig", "cp949"], default="utf-8-sig")
     parser.add_argument("--management-policy", choices=MANAGEMENT_POLICIES, default="single_record_per_cycle")
+    parser.add_argument("--period-confirmation", type=Path, help="Document-backed per-cycle period declaration JSON; absent means audit-only")
     args = parser.parse_args()
-    manifest = prepare(args.input_dir, args.output_dir, encoding=args.encoding, management_policy=args.management_policy)
+    manifest = prepare(args.input_dir, args.output_dir, encoding=args.encoding,
+                       management_policy=args.management_policy, period_confirmation=args.period_confirmation)
     print(json.dumps({key: manifest[key] for key in ["data_kind", "candidate_rows", "target_eligible_rows", "target_assumption"]}, ensure_ascii=False))
 
 

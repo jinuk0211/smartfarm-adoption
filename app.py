@@ -12,6 +12,7 @@ import streamlit as st
 import altair as alt
 
 from src.economics import evaluate_plan
+from src.farm_economics_ui import render_facility_calculator
 from src.dashboard_ui import section, stat, takeaway
 from src.dashboard_extensions import (
     apply_dashboard_style, render_equipment_selector, render_overview,
@@ -454,7 +455,7 @@ def render_smartfarm_api_sources() -> str:
             st.write("원자료 연결·품질 검사를 마쳤습니다. 조회 범위 확인: " + ("완료" if audit.get("request_scope_complete") else "미완료"))
             st.download_button("API 자료 품질 검사표 다운로드", audit_bytes, file_name="smartfarm_api_audit.json", mime="application/json", key="download_api_audit")
     st.write("명세에서 면적(㎡), 출하량(kg), 수입·비용(원)은 확인했습니다. 기록별 집계기간·누적 여부, 작기 자료의 완결성, 비용 항목 간 중복은 확인이 남아 있습니다.")
-    st.caption("API 예측모델은 아직 실행하지 않았고 경제성 계산에도 연결하지 않았습니다. 현재 계산기는 농촌진흥청 소득조사 기준을 사용합니다.")
+    st.caption("위 API 운영비 원자료를 대상 시설의 비용으로 자동 적용하지 않습니다. 기본 계산은 대상 시설의 판매·운영비·견적을 사용자가 연결하고, 소득조사 평균은 별도 참고 모드에서 사용합니다.")
     st.caption(f"수집 실행: {manifest_path.parent.name} · 시작: {manifest.get('started_at_utc', '')}")
     return f"{state_label} · 수량·비용 집계 정의 검증 필요"
 
@@ -592,14 +593,24 @@ def main() -> None:
     with overview:
         render_overview(PROJECT)
     with calculator:
-        render_calculator(data, metrics)
+        route = st.radio(
+            "계산에 사용할 근거",
+            ["내 시설 계획으로 계산", "외부 평균으로 참고 계산"],
+            horizontal=True,
+            key="calculation_route",
+        )
+        if route == "내 시설 계획으로 계산":
+            render_facility_calculator(PROJECT)
+        else:
+            st.info("외부 평균 참고 모드입니다. 소득조사의 단가·비용은 입력한 시설의 실제 장부가 아니며, 아래 결과는 그 평균을 적용한 조건부 계산입니다.")
+            render_calculator(data, metrics)
     with prices:
         render_price_forecast(PROJECT)
     with inseason:
         render_inseason_analysis(PROJECT)
     with validation:
         section("검증 결과", "복잡한 모델이 항상 더 정확하지는 않았습니다", "좋아진 결과와 좋아지지 않은 결과를 함께 확인합니다.")
-        takeaway("경제성 계산은 참고 집계와 입력 가정으로 읽어야 합니다", "이 실험은 신규 농가의 실제 수익률이나 설비 설치 효과를 입증한 결과가 아닙니다.")
+        takeaway("시설 계획의 계산 일치와 실제 수익의 검증은 구분합니다", "기본 계산은 같은 대상 시설·면적·작기에 연결한 사용자 근거를 사용합니다. 이 연결 검사가 실제 미래 수익률이나 설비 설치 효과를 입증하는 것은 아닙니다.")
         columns = st.columns(3, gap="large")
         with columns[0]:
             st.markdown("### 수량 예측")
@@ -613,10 +624,11 @@ def main() -> None:
         with st.expander("실험별 검증 방법 · 전체 결과 · 원자료 내려받기"):
             render_validation(metrics)
     with sources:
-        section("사용한 데이터", "자료마다 쓰임을 분명하게 나눴습니다", "집계 소득자료와 설비 가격은 투자 계산에, 농가 관측은 별도 예측 실험에 사용합니다.")
+        section("사용한 데이터", "출하 예측과 대상 시설의 경제성 근거", "농가 출하·시설 기록은 출하 모델에, 대상 시설에 연결한 사용자 판매·비용·견적은 기본 경제성 계산에 사용합니다. 외부 평균은 별도 참고 모드입니다.")
         st.dataframe(pd.DataFrame([
-            {"어디에 쓰나": "연간 수량·소득·운영비 기준", "사용한 자료": "농촌진흥청 농산물 소득조사", "확인 범위": "2020–2024년 · 공개 집계자료"},
-            {"어디에 쓰나": "초기 투자비", "사용한 자료": "스마트팜코리아 등록 설비 3종", "확인 범위": "공개 가격 · 공사비 등은 별도 입력"},
+            {"어디에 쓰나": "기본 계산의 판매·비용·투자비", "사용한 자료": "대상 시설에 연결한 사용자 계획·기록·견적", "확인 범위": "시설·면적·작기·기간 일치 검사 · 증빙의 진위 검증은 별도"},
+            {"어디에 쓰나": "외부 평균 참고 계산", "사용한 자료": "농촌진흥청 농산물 소득조사", "확인 범위": "2020–2024년 · 공개 집계자료 · 대상 시설 장부 아님"},
+            {"어디에 쓰나": "설비 가격 참고", "사용한 자료": "스마트팜코리아 등록 설비 3종", "확인 범위": "공개 가격 · 대상 시설의 실제 설치 견적 아님"},
             {"어디에 쓰나": "월별 가격 변화 비교", "사용한 자료": "KAMIS 중도매인 판매가격", "확인 범위": "농가수취단가와 구분"},
             {"어디에 쓰나": "날씨 조건의 참고", "사용한 자료": "기상청 기후평년값", "확인 범위": "1991–2020년 · 실제 기상예보 아님"},
             {"어디에 쓰나": "생육·출하 예측 실험", "사용한 자료": "스마트팜코리아·ADP 농가 관측", "확인 범위": "자료별 단위·품질 검사 후 별도 평가"},

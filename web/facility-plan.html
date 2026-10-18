@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#204e3d">
+  <meta name="description" content="같은 딸기 시설과 연간 기간에 출하량 예측, 판매계획, 항목별 비용과 투자 견적을 연결하는 계획 도구입니다.">
+  <title>같은 시설의 근거로 계획하기 · 스마트팜 도입 플래너</title>
+  <link rel="stylesheet" href="./facility-plan.css">
+  <script type="module" src="./facility-plan.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#target">시설 입력으로 바로가기</a>
+  <header><a class="brand" href="./index.html">스마트팜 <strong>도입 플래너</strong></a><nav aria-label="주요 메뉴"><a href="./index.html#planner">외부 평균 참고예시</a><a href="#evidence-note">데이터 연결 근거</a></nav></header>
+  <main>
+    <section class="intro">
+      <p class="eyebrow">딸기 · 시설별 계획</p>
+      <h1>이 시설의 출하량에,<br>이 시설의 판매와 비용을 연결합니다.</h1>
+      <p>먼저 시설·면적·기간을 정하고, 그 대상에 적용할 판매단가와 항목별 비용, 투자 견적을 직접 입력하세요. 출하량은 학습한 모델로 예측하고, 경제성은 입력한 근거로 계산합니다.</p>
+      <div class="actions"><button id="load-example" type="button" disabled>가상 예시로 사용법 보기</button><button id="clear-form" type="button" class="quiet">빈 계획으로 시작하기</button></div>
+      <p id="example-label" class="notice" hidden>가상 시연 값입니다. 실제 농가의 장부나 견적이 아닙니다.</p>
+      <p id="model-load-status" role="status">학습 모델과 검증 정보를 불러오는 중입니다.</p>
+    </section>
+    <form id="facility-form" novalidate>
+      <section class="panel" id="target">
+        <div class="section-title"><span>1</span><div><h2>대상 시설과 기간</h2><p>시설 ID는 본인이 구분할 수 있는 이름이나 코드입니다. 다른 기관의 농가 ID와 자동 연결하지 않습니다.</p></div></div>
+        <fieldset id="target-inputs" disabled>
+          <legend class="sr-only">시설과 모델 입력</legend>
+          <div class="grid">
+            <label>계획 이름<input id="plan-id" required placeholder="예: 2027년 1동 도입계획"></label>
+            <label>대상 시설 이름·ID<input id="facility-id" required placeholder="예: 우리농장 1동"></label>
+            <label>온실 면적 (㎡)<input id="area-m2" type="number" min="1" step="any" required></label>
+            <label>계획 구분<select id="mode" required><option value="">선택하세요</option><option value="new">신규 시설</option><option value="retrofit">같은 시설의 개량 비교</option></select></label>
+            <label>품목<input id="crop" value="딸기" readonly aria-describedby="crop-help"></label>
+            <label>품종<select id="variety" required></select></label>
+            <label>시도<select id="region" required></select></label>
+            <label>시군구<select id="district" required></select></label>
+            <label>시설 유형<select id="facility-type" required></select></label>
+          </div>
+          <p id="crop-help" class="hint">현재 출하량 모델의 학습 범위는 딸기·설향입니다. 정식 연도·월은 아래 작기 시작일에서 가져옵니다.</p>
+          <div class="grid dates">
+            <label>작기 시작일 (정식일)<input id="cycle-start" type="date" required></label>
+            <label>작기 종료일<input id="cycle-end" type="date" required></label>
+            <label>연간 비용 적용 시작일<input id="financial-start" type="date" required></label>
+            <label>연간 비용 적용 종료일<input id="financial-end" type="date" required></label>
+          </div>
+          <p class="hint">재무기간은 365일 또는 366일이며, 위 1작기를 포함해야 합니다. 쉬는 기간의 임차료·유지비도 연간 비용에 포함하세요.</p>
+        </fieldset>
+        <div id="rebind-area" class="notice" hidden><label class="check"><input id="rebind-ack" type="checkbox">대상이 바뀌었습니다. 남아 있는 모든 판매·비용·견적이 새 시설·면적·기간에도 적용되는지 다시 확인했습니다.</label></div>
+        <button id="bind-target" type="button" class="primary" disabled>이 시설에 근거 연결하기</button>
+        <p id="binding-status" role="status">먼저 대상 시설을 입력하세요.</p>
+        <div id="prediction-preview" class="prediction-box" hidden></div>
+        <p id="validation-description" class="hint"></p>
+      </section>
+      <fieldset id="budget-inputs" disabled>
+        <legend class="sr-only">같은 시설의 판매·비용·투자 근거</legend>
+        <section class="panel">
+          <div class="section-title"><span>2</span><div><h2>어디에, 얼마에 판매하나요?</h2><p>예측한 출하량을 판로·등급별로 배분하며 합계는 100%입니다. 무상 출하처럼 대금이 발생하지 않는 출하분만 단가 0원으로 명시하세요.</p></div></div>
+          <p class="hint">단가는 농가 수취단가(원/kg)입니다. 이미 단가에서 뺀 판매수수료·운송비를 비용에 다시 넣지 마세요. 기간별 출하 배분도 직접 정하는 가정입니다.</p>
+          <div id="sales-rows"></div>
+          <button type="button" id="add-sale">판매 경로·등급 추가</button>
+        </section>
+        <section class="panel">
+          <div class="section-title"><span>3</span><div><h2>이 시설의 연간 운영비</h2><p>모든 항목의 금액과 근거가 필요합니다. 실제로 발생하지 않는 비용만 0을 입력하세요.</p></div></div>
+          <p class="hint">전체 시설의 연간 총액 또는 출하량 1kg당 비용을 입력합니다. 감가상각과 가족노동은 현금지출과 별도로 계산합니다.</p>
+          <div id="cost-rows" class="cost-grid"></div>
+        </section>
+        <section class="panel">
+          <div class="section-title"><span>4</span><div><h2>투자비와 교체 계획</h2><p>설비, 설치, 토목·온실 공사, 부가세의 포함·제외 범위를 적으세요.</p></div></div>
+          <div id="investment-rows"></div>
+          <button type="button" id="add-investment">투자 항목 추가</button>
+          <label class="check"><input id="investment-confirmed" type="checkbox">투자비의 포함·제외 범위를 확인했고, 장비 가격만을 전체 시설 투자비로 사용하지 않았습니다.</label>
+          <div class="subsection"><h3>도입안의 연도별 교체 지출</h3><p class="hint">설비 교체비는 감가상각과 별개의 현금지출입니다. 해당 연도의 총액을 입력하세요.</p><div id="replacement-rows"></div><button type="button" id="add-replacement">교체 연도 추가</button><label class="check"><input id="replacement-confirmed" type="checkbox">분석기간의 교체계획을 확인했습니다. 행이 없으면 교체 지출이 없다고 가정합니다.</label></div>
+        </section>
+        <section id="baseline-section" class="panel" hidden>
+          <div class="section-title"><span>5</span><div><h2>같은 시설을 개량하지 않는다면?</h2><p>동일 시설·면적·연간 기간의 기존 유지안을 입력합니다. 도입안과의 현금 차이로 투자 회수를 계산합니다.</p></div></div>
+          <fieldset id="baseline-inputs" disabled><legend class="sr-only">기존 유지안</legend>
+            <div class="grid"><label>기존 유지안의 한 작기 출하량 (kg)<input id="baseline-yield" type="number" min="0" step="any" required></label><label>출하량 근거 종류<select id="baseline-source-kind" required></select></label><label class="full">기존 유지안 출하량·교체계획의 근거<input id="baseline-source-ref" required placeholder="같은 시설의 과거 장부를 이 기간에 적용한 계산 등"></label></div>
+            <h3>기존 유지안 판매</h3><div id="baseline-sales-rows"></div><button type="button" id="add-baseline-sale">기존 판매 행 추가</button>
+            <h3>기존 유지안 연간 운영비</h3><div id="baseline-cost-rows" class="cost-grid"></div>
+            <h3>기존 유지안의 교체 지출</h3><div id="baseline-replacement-rows"></div><button type="button" id="add-baseline-replacement">기존 교체 연도 추가</button><label class="check"><input id="baseline-replacement-confirmed" type="checkbox">기존 유지안의 교체계획을 확인했습니다. 행이 없으면 교체 지출이 없다고 가정합니다.</label>
+          </fieldset>
+        </section>
+        <section class="panel">
+          <h2>계산할 조건 확인</h2>
+          <div class="grid"><label>분석기간 (년)<input id="horizon" type="number" min="1" max="50" step="1" required></label><label>연 할인율 (%)<input id="discount" type="number" min="0" max="100" step="any" required></label></div>
+          <label class="check"><input id="period-ack" type="checkbox">학습 자료의 작기 전체 출하 여부는 미확인입니다. 이 기록 기반 예측을 연 1작기에 적용하는 조건을 확인했습니다.</label>
+          <label class="check"><input id="repeat-plan" type="checkbox">2년 이상 계산할 때, 같은 연간 판매·운영계획이 반복된다고 가정합니다. 교체 지출만 지정한 연도에 적용합니다.</label>
+          <details><summary>내가 정한 변화폭도 비교하기</summary><p class="hint">출하량·가격·현금비용의 변화폭은 신뢰구간이나 발생확률이 아닙니다. 개량 비교의 기존 유지안은 고정됩니다.</p><label class="check"><input id="use-sensitivity" type="checkbox">아래 변화폭으로 불리·유리 시나리오도 계산</label><div class="grid"><label>출하량 변화폭 (±%)<input id="yield-change" type="number" min="0" max="100" step="any"></label><label>가격 변화폭 (±%)<input id="price-change" type="number" min="0" max="100" step="any"></label><label>현금비용 변화폭 (±%)<input id="cost-change" type="number" min="0" max="100" step="any"></label></div></details>
+          <p class="hint">세금·대출 상환·보조금·운전자금 변화·잔존가치는 이 계산에 포함하지 않습니다. 회수기간에는 가족노동 기회비용을 현금지출로 빼지 않습니다.</p>
+          <button type="submit" class="primary">연결한 근거로 계산하기</button>
+        </section>
+      </fieldset>
+    </form>
+    <p id="form-error" class="error" role="alert" hidden></p>
+    <section id="result" class="panel result" tabindex="-1" hidden>
+      <div class="result-heading"><div><p class="eyebrow">같은 시설 · 같은 기간</p><h2>입력한 근거에 따른 계산 결과</h2></div><button id="download-result" type="button" disabled>입력·근거·결과 JSON 저장</button></div>
+      <p id="result-target"></p><p id="result-stale" class="notice" hidden>입력값이 바뀌었습니다. 아래는 이전 계산이며, 다시 계산하기 전에는 다운로드할 수 없습니다.</p>
+      <div id="result-metrics" class="metrics"></div><p id="result-meaning"></p>
+      <div id="scenario-results" class="table-scroll"></div>
+      <details open><summary>매출부터 현금까지의 계산</summary><div id="calculation-detail"></div></details>
+      <details><summary>연도별 현금흐름·교체비 반영</summary><div id="cashflow-detail" class="table-scroll"></div></details>
+      <details><summary>같은 시설에 연결한 근거 원장</summary><p>아래는 사용자가 입력한 출처 설명입니다. 시스템이 원문 서류의 진위를 확인했다는 뜻은 아닙니다.</p><div id="evidence-ledger" class="table-scroll"></div></details>
+    </section>
+    <section id="evidence-note" class="panel evidence-note">
+      <h2>현재 확인된 연결과 이번 계획의 차이</h2>
+      <p>공개 API 출하·비용 자료에서 같은 시설·작기 키가 겹치는 것은 2작기이며, 딸기는 0작기입니다. 이 페이지는 그 빈 비용을 평균으로 채우지 않고, 위에서 지정한 대상 시설의 판매·비용·투자 근거를 받아 계산합니다.</p>
+      <p><a href="https://nongup.gg.go.kr/wp-content/uploads/sites/2/2024/04/r-2023-10.pdf" target="_blank" rel="noopener noreferrer">경기도농업기술원 2023년 보고서</a> PDF 52–54쪽(인쇄 400–402쪽)의 평택 딸기 사례는 시설 1,600㎡와 조수입·경영비·소득이 같은 사례에 연결됩니다. 1,000㎡당 650만원 − 115만원 = 535만원으로 검산됩니다. 현재 출하량 모델과 같은 농가라는 연결은 없습니다.</p>
+      <p>해당 사례는 수량 단위·작기 기간이 불명확해 kg 예측 모델이나 연간 회수기간 검증에 넣지 않았습니다. 시범 사업비 2천만원도 전체 시설 투자비가 아닙니다. 이 참고 사례의 비용을 입력란에 자동 적용하지 않습니다.</p>
+      <p>출하량 모델의 검증 오차와 소득·회수기간의 정확도는 별개입니다. 위의 시설·기간 일치 검사는 입력 연결을 확인하며, 실제 소득 정확도나 설비의 생산성 향상을 입증하지 않습니다.</p>
+    </section>
+  </main>
+  <footer>입력값은 이 브라우저에서 계산하며 서버에 저장하지 않습니다. 새로고침하면 초기화됩니다. <a href="./index.html#planner">외부 평균 참고예시 보기</a></footer>
+</body>
+</html>

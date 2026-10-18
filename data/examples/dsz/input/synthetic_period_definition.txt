@@ -1,0 +1,4 @@
+SYNTHETIC EXECUTION FIXTURE ONLY. No real farm evidence or provider confirmation.
+The generator defines each DZ_004 record as the full shipment and gross revenue total
+for the matching DZ_002 facility cycle, from FRMTM_BGNG_YMD through FRMTM_END_YMD.
+There is exactly one management record per fictional facility cycle.

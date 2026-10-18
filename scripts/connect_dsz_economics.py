@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.economics import evaluate_plan  # noqa: E402
 from src.planning_models import apply_prediction_to_plan, dsz_prediction_for_plan, digest  # noqa: E402
+from src.dsz_period import require_model_confirmation  # noqa: E402
 
 
 def connect_files(predictions_path: Path, plans_path: Path, costs: dict,
@@ -25,8 +26,8 @@ def connect_files(predictions_path: Path, plans_path: Path, costs: dict,
         raise ValueError("DSZ prediction hash differs from provenance")
     if digest(plans_path) != provenance["plans_sha256"]:
         raise ValueError("DSZ plans hash differs from the forecast's original features")
-    predictions = pd.read_csv(predictions_path, dtype={"plan_id": str})
-    plans = pd.read_csv(plans_path, dtype={"plan_id": str})
+    predictions = pd.read_csv(predictions_path, dtype={"plan_id": str}, keep_default_na=False)
+    plans = pd.read_csv(plans_path, dtype={"plan_id": str}, keep_default_na=False)
     if len(predictions) != provenance["rows"]:
         raise ValueError("DSZ prediction count differs from provenance")
     plans = plans.copy()
@@ -38,6 +39,12 @@ def connect_files(predictions_path: Path, plans_path: Path, costs: dict,
     results = []
     indexed = plans.set_index("plan_id")
     for row in predictions.to_dict("records"):
+        require_model_confirmation({**row, "target_period_confirmation": provenance.get("target_period_confirmation"),
+                                    "training_cohort": provenance.get("training_cohort")})
+        if row["target_period_evidence_sha256"] != provenance.get("target_period_evidence_sha256"):
+            raise ValueError("DSZ prediction period evidence differs from provenance")
+        if row["training_cohort_sha256"] != provenance.get("training_cohort_sha256"):
+            raise ValueError("DSZ prediction training cohort differs from provenance")
         plan_id = str(row["plan_id"])
         if plan_id not in indexed.index or plan_id not in costs:
             raise ValueError("Every prediction needs matching features and an explicit cost plan")
@@ -46,6 +53,12 @@ def connect_files(predictions_path: Path, plans_path: Path, costs: dict,
         if payload.get("reference", {}).get("crop") != features["crop"]:
             raise ValueError("Financial crop differs from the model's planned crop")
         prediction = dsz_prediction_for_plan(row, features)
+        # The legacy adapter deliberately cannot certify periods. Preserve only
+        # the document-backed review validated at this CLI boundary.
+        prediction.update(target_period_confirmed=True,
+                          target_period_evidence_sha256=row["target_period_evidence_sha256"],
+                          training_cohort_sha256=row["training_cohort_sha256"],
+                          period_confirmation_level="documented_review_not_independent_provider_verification")
         bridged = apply_prediction_to_plan(payload, prediction, acknowledge_period=assume_one_cycle)
         results.append({"plan_id": plan_id, "target": prediction["target"], "inputs": bridged,
                         "results": evaluate_plan(bridged), "data_kind": prediction["data_kind"]})

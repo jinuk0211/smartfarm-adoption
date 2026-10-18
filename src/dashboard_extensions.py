@@ -35,6 +35,7 @@ def load_example_inputs() -> None:
         "has_replacement": False, "example_loaded": True,
         "use_market_transfer": False, "use_weather_scenario": False,
         "main_tabs": "도입 전 계산",
+        "calculation_route": "외부 평균으로 참고 계산",
     })
     for key in ["calculation_result", "calculation_payload"]:
         st.session_state.pop(key, None)
@@ -89,13 +90,22 @@ def render_overview(project: Path) -> None:
     if illustration.exists():
         encoded = base64.b64encode(illustration.read_bytes()).decode("ascii")
         background = f' style="background-image:linear-gradient(90deg,#f7f5ee 0%,#f7f5ee 35%,transparent 80%),url(data:image/png;base64,{encoded});"'
-    st.markdown(f'<div class="home-hero"{background}><p class="eyebrow">스마트팜 도입을 고민하는 당신에게</p>'
-                '<h1 class="hero-title">얼마를 투자하고,<br><em>얼마를 남길 수 있을까?</em></h1>'
-                '<p class="hero-description">작물과 면적, 필요한 설비를 고르면<br>연간 소득과 투자금 회수 시점을 함께 비교합니다.</p></div>',
+    st.markdown(f'<div class="home-hero"{background}><p class="eyebrow">대상 시설의 계획과 근거를 연결합니다</p>'
+                '<h1 class="hero-title">우리 시설의 출하량,<br><em>우리 판매·비용 계획으로</em></h1>'
+                '<p class="hero-description">딸기 출하 예측에 같은 시설의 판매 조건, 운영비와 설비 견적을 연결해<br>소득·현금흐름·투자금 회수 기간을 계산합니다.</p></div>',
                 unsafe_allow_html=True)
-    st.button("딸기 계획 예시 불러오기", on_click=load_example_inputs, type="primary", key="load_example")
+    st.button("내 시설 계획 입력하기", on_click=lambda: st.session_state.update(
+        {"main_tabs": "도입 전 계산", "calculation_route": "내 시설 계획으로 계산"}),
+        type="primary", key="open_facility_plan")
+    st.write("출하 예측은 기존 농가 기록에서 배우고, 판매·비용·투자비는 대상 시설에 적용할 근거를 따로 입력합니다. 입력 계획을 실제 실적이나 설비 도입 효과로 바꾸어 표시하지 않습니다.")
+    st.markdown('<div class="journey"><p><b>01 대상 시설</b>면적·작기와 출하 예측</p>'
+                '<p><b>02 같은 계획의 근거</b>판매·운영비·설비 견적</p><p><b>03 계산 결과</b>소득·현금흐름·회수 기간</p></div>', unsafe_allow_html=True)
     demo_path = project / "artifacts" / "planning_demo.json"
-    if demo_path.exists():
+    with st.expander("외부 평균을 적용한 참고 예시 보기"):
+        st.button("외부 평균 딸기 예시 불러오기", on_click=load_example_inputs, key="load_example")
+        st.caption("아래 예시는 농촌진흥청 평균과 공개 장비가격, 가상 공사비를 적용한 계산입니다. 대상 시설의 실제 소득·견적 기록은 아닙니다.")
+        if not demo_path.exists():
+            return
         demo = json.loads(demo_path.read_text(encoding="utf-8"))
         from src.economics import evaluate_plan
         result = evaluate_plan(demo["inputs"])
@@ -110,11 +120,9 @@ def render_overview(project: Path) -> None:
         with columns[2]:
             stat("투자금을 회수하는 시점", f"{base['payback_year']}년 말", "자가노동 기회비용 차감 전 현금흐름 기준")
         st.caption("예시의 공사비·온실비·추가 부가세는 가정입니다. 실제 농가의 수익이나 장비 도입 효과를 보장하는 결과가 아닙니다.")
-    st.markdown('<div class="journey"><p><b>01 재배 계획</b>무엇을, 얼마나 키울지</p>'
-                '<p><b>02 투자 계획</b>어떤 설비에 얼마를 쓸지</p><p><b>03 조건 비교</b>가격이 떨어져도 괜찮을지</p></div>', unsafe_allow_html=True)
     with st.expander("이 계산의 근거와 기획서"):
         st.caption("첫 화면의 온실은 AI로 제작한 컨셉 일러스트입니다.")
-        st.write("수량·운영비는 농촌진흥청 소득조사, 설비비는 공개 등록가격을 참고합니다. 공사비 등은 사용자가 직접 입력합니다. 장비 선택만으로 생산량이 늘어난다고 가정하지 않습니다.")
+        st.write("기본 계산은 대상 시설에 연결한 출하 모델과 사용자의 판매·비용·설비 계획을 사용합니다. 농촌진흥청 평균과 설비 등록가격은 외부 평균 참고 모드에서 별도로 확인합니다. 장비 선택만으로 생산량이 늘어난다고 가정하지 않습니다.")
         st.write("대회 미개방 자료는 명세서와 합성 예제로 실행을 준비했습니다. 실제 자료를 이용한 성능 검증은 안심구역에서 진행해야 합니다.")
         deck = project / "presentation" / "smartfarm_proposal.pptx"
         if deck.exists():

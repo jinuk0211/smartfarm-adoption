@@ -10,7 +10,7 @@
 
 면적은 ㎡이며 양수여야 한다. 실제 종료일, 관측 환경·생육, 경영 수치, 시설ID, 작기ID는 입력하지 않는다. 시설ID는 검증 분리에만 사용한다. 출하량 kg와 총수입 원은 각각 유효한 행으로 독립 학습하며, 한쪽 결측 때문에 다른 타깃을 지우지 않는다. 명시적으로 관측된 0은 보존하고 결측을 0으로 대체하지 않는다.
 
-기본 `single_record_per_cycle`은 정확히 하나의 경영 기록이 작기에 연결된 후보라는 **명시적 가정**이다. 준비 단계에서 다른 집계 정책을 선택하면 `target_assumption`이 모든 모델·OOF·예측으로 전파된다. 어떤 정책도 공급자가 확인한 작기 완결성이나 연간 환산을 자동 보증하지 않는다. 총수입은 순이익이 아니다.
+기본 `single_record_per_cycle`은 정확히 하나의 경영 기록이 작기에 연결된 후보를 만든다. **단일행이라는 이유만으로 전체 작기 총량으로 학습하지 않는다.** 준비 단계에 `--period-confirmation`으로 문서·원본 해시·집계 방식·행별 기간 확인 기록을 제공해야 한다. 확인되지 않은 후보는 감사 전용이며 학습·예측·경제성 연결 경계에서 차단한다. 선택 정책과 확인 근거는 모델·예측 출처 기록으로 전파된다. 이는 문서에 근거한 검토 기록이며 기관의 독립 검증이나 연간 환산을 자동 보증하지 않는다. 총수입은 순이익이 아니다.
 
 ## CPU 비교와 예측
 
@@ -19,7 +19,6 @@
 OOF MAE가 가장 작은 CPU 방법을 전체 유효행에 다시 적합해 로컬 joblib 파일에 저장한다. 선택에 사용한 OOF는 독립된 최종 검증셋이 아니며 미래 연도·장비 도입의 인과 효과·투자회수기간을 검증하지 않는다. 예측기는 우리가 생성한 신뢰할 수 있는 로컬 파일만 대상으로 하고, 불러오기 전에 선언된 SHA를 확인한다. 외부인이 제공한 pickle/joblib을 받아 실행하는 기능이 아니다.
 
 ```powershell
-python scripts/prepare_dsz.py --input-dir data/examples/dsz/input --output-dir data/examples/dsz/processed
 python scripts/train_dsz.py --data-dir data/examples/dsz/processed --output-dir artifacts/dsz_demo
 python scripts/predict_dsz.py --artifact-dir artifacts/dsz_demo --plans data/examples/dsz/example_plans.csv --output artifacts/dsz_demo/example_predictions.csv
 ```

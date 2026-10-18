@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#204e3d">
-  <meta name="description" content="딸기 스마트팜의 수확량, 비용, 설비 투자 조건을 바꾸며 도입 전 계획을 비교해보세요. 공개 조사자료를 바탕으로 한 스마트팜 도입 플래너입니다.">
-  <title>스마트팜 도입 플래너 — 우리 농장, 시작해도 괜찮을까?</title>
+  <meta name="description" content="딸기 시설의 출하량 예측에 같은 시설·기간의 판매계획, 항목별 운영비와 투자 견적을 연결합니다. 별도로 공개 평균을 적용한 참고예시도 확인할 수 있습니다.">
+  <title>스마트팜 도입 플래너 — 같은 시설의 근거로 계획하기</title>
   <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.mjs"></script>
 </head>
@@ -13,25 +13,25 @@
   <a class="skip-link" href="#planner">계산기로 바로가기</a>
   <header class="site-header">
     <a class="brand" href="#top" aria-label="스마트팜 도입 플래너 처음으로"><span class="brand-mark" aria-hidden="true">잎</span><span>스마트팜 <strong>도입 플래너</strong></span></a>
-    <nav aria-label="주요 메뉴"><a href="#planner">도입 전 계산</a><a href="#research">가격·생육 연구</a><a href="#sources">사용 데이터</a></nav>
-    <a class="header-download" href="/presentation/smartfarm_proposal.pptx" download>기획서 받기 <span aria-hidden="true">↗</span></a>
+    <nav aria-label="주요 메뉴"><a href="./facility-plan.html">내 시설 계획</a><a href="#planner">외부 평균 참고예시</a><a href="#research">가격·생육 연구</a><a href="#sources">사용 데이터</a></nav>
+    <a class="header-download" href="./facility-plan.html">시설별 계획 시작 <span aria-hidden="true">↗</span></a>
   </header>
   <main id="top">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow"><span aria-hidden="true">●</span> 내 농장을 위한 첫 계산</p>
-        <h1 id="hero-title">우리 농장,<br>시작해도 괜찮을까?</h1>
-        <p class="hero-description">얼마나 수확하고, 얼마가 남을까요?<br>설비부터 한 해 소득까지, 조건을 바꾸며 비교해보세요.</p>
-        <a class="button primary" href="#planner">딸기 농장 계획해보기 <span aria-hidden="true">→</span></a>
-        <p class="hero-footnote">학습한 농가 모델과 공개 조사자료로 계획을 비교합니다.</p>
+        <p class="eyebrow"><span aria-hidden="true">●</span> 같은 시설의 근거로 계획하기</p>
+        <h1 id="hero-title">우리 농장 계획,<br>근거를 연결해볼까요?</h1>
+        <p class="hero-description">출하량 예측에 같은 시설의 판매계획,<br>항목별 비용과 투자 견적을 연결해 비교합니다.</p>
+        <a class="button primary" href="./facility-plan.html">내 시설의 근거로 계획하기 <span aria-hidden="true">→</span></a>
+        <p class="hero-footnote">빈 입력에서 시작합니다. <a href="#planner">외부 평균 참고예시도 보기</a></p>
       </div>
     </section>
-    <div class="journey-strip" aria-label="계산 순서"><span><b>01</b> 농장 조건 입력</span><span aria-hidden="true">→</span><span><b>02</b> 설비·비용 확인</span><span aria-hidden="true">→</span><span><b>03</b> 소득과 회수기간 비교</span></div>
+    <div class="journey-strip" aria-label="계산 순서"><span><b>01</b> 시설·기간 지정</span><span aria-hidden="true">→</span><span><b>02</b> 판매·비용 근거 연결</span><span aria-hidden="true">→</span><span><b>03</b> 입력 조건의 결과 비교</span></div>
 
     <section class="section planner-section" id="planner" aria-labelledby="planner-title">
-      <div class="section-heading"><div><p class="eyebrow">도입 전 계산</p><h2 id="planner-title">내 농장의 숫자를 넣어보세요.</h2><p>딸기 수경재배 · 전국 조사자료 예시에서 시작합니다.</p></div><button type="button" class="button quiet" id="reset-example" disabled>딸기 예시로 되돌리기 <span aria-hidden="true">↻</span></button></div>
+      <div class="section-heading"><div><p class="eyebrow">보조 계산 · 외부 평균 참고예시</p><h2 id="planner-title">전국 조사 평균을 적용하면?</h2><p>딸기 수경재배 전국 조사값과 장비 가격 가정을 적용한 예시입니다. 같은 농가의 생산·비용·투자 기록을 연결한 결과가 아닙니다. <a href="./facility-plan.html">개별 시설의 근거를 입력하려면 시설 계획으로 이동하세요.</a></p></div><button type="button" class="button quiet" id="reset-example" disabled>딸기 참고예시로 되돌리기 <span aria-hidden="true">↻</span></button></div>
       <div id="load-status" class="notice" role="status">공개 참고자료를 불러오고 있어요.</div>
-      <noscript><p class="notice">계산기를 사용하려면 브라우저에서 JavaScript를 켜주세요. <a href="/presentation/smartfarm_proposal.pptx">기획서는 바로 내려받을 수 있어요.</a></p></noscript>
+      <noscript><p class="notice">계산기를 사용하려면 브라우저에서 JavaScript를 켜주세요. <a href="./facility-plan.html#evidence-note">현재 데이터 연결 근거는 여기서 읽을 수 있어요.</a></p></noscript>
       <div class="planner-layout">
         <form id="planning-form" class="planning-form">
           <fieldset id="planning-inputs" disabled>
@@ -99,7 +99,7 @@
 
         <div class="results-panel" id="results" aria-labelledby="result-title" tabindex="-1">
           <div class="result-topline"><span class="pill">기준 시나리오</span><span id="result-basis">딸기 · 1,000㎡ · 연 1작기</span></div>
-          <h3 id="result-title">한 해를 보내고,<br>얼마가 남을까요?</h3>
+          <h3 id="result-title">외부 평균과 가정을<br>적용한 참고 계산</h3>
           <div class="income-spotlight"><span>가족노동비까지 뺀 연간 소득</span><strong id="result-income">—</strong><p>매출 − 운영비 − 가족노동비</p></div>
           <div class="result-metrics"><div><span>초기 투자비</span><strong id="result-capex">—</strong></div><div><span>투자금 회수</span><strong id="result-payback">—</strong><small>연말 현금흐름 기준</small></div></div>
           <dl class="income-breakdown"><div><dt>예상 연간 수확량</dt><dd id="result-yield">—</dd></div><div><dt>매출</dt><dd id="result-revenue">—</dd></div><div><dt>운영비 <small>감가상각 포함</small></dt><dd id="result-operating">—</dd></div><div><dt>가족노동비</dt><dd id="result-labor">—</dd></div></dl>
@@ -129,7 +129,7 @@
     </section>
 
     <section class="section sources-section" id="sources" aria-labelledby="sources-title">
-      <div class="section-heading"><div><p class="eyebrow">어떤 자료를 썼나요</p><h2 id="sources-title">자료의 역할을 나눠서 계산합니다.</h2></div><a class="button quiet" href="/presentation/smartfarm_proposal.pptx" download>전체 기획서 내려받기 <span aria-hidden="true">↓</span></a></div>
+      <div class="section-heading"><div><p class="eyebrow">어떤 자료를 썼나요</p><h2 id="sources-title">자료의 역할을 나눠서 계산합니다.</h2></div><a class="button quiet" href="./facility-plan.html#evidence-note">현재 연결 근거 확인 <span aria-hidden="true">↗</span></a></div>
       <div class="source-list"><article><span>01</span><div><h3>농촌진흥청 농산물소득조사</h3><p>공개된 조사 집계값으로 수확량·농가 단가·운영비·가족노동비의 참고 조건을 만듭니다. 기본 예시의 가격·비용은 2024년 전국 딸기 수경재배 자료입니다.</p></div><a href="https://www.nongsaro.go.kr" target="_blank" rel="noopener noreferrer">농사로 ↗</a></article><article><span>02</span><div><h3>스마트팜코리아 기자재</h3><p>환경제어·양액 공급 장비 3종의 업체 등록 묶음 가격과 옵션을 초기 투자비에 사용합니다. 실제 계약 견적과 생산성 효과는 별도 확인 대상입니다.</p></div><a href="https://www.smartfarmkorea.net/company/equipmentInfo.do" target="_blank" rel="noopener noreferrer">기자재 목록 ↗</a></article><article><span>03</span><div><h3>KAMIS · 스마트팜 공개 생육·환경 자료</h3><p>가격 연구와 7일 뒤 초장 연구의 검증 결과를 제공합니다. 이 화면에서 모델을 재학습하거나 실시간 가격을 조회하지 않습니다.</p></div><a href="https://www.kamis.or.kr" target="_blank" rel="noopener noreferrer">KAMIS ↗</a></article><article><span>04</span><div><h3>대회 미개방 데이터 · 현장 검증 예정</h3><p>시설·환경·생육·기상·경영조사 명세서를 바탕으로 결합 절차를 준비했습니다. 대회 미개방 원자료의 실제 성능 검증은 안심구역에서 진행해야 합니다.</p></div><a href="https://dsz.kdata.or.kr" target="_blank" rel="noopener noreferrer">데이터안심구역 ↗</a></article></div>
       <div class="method-note"><h3>계산을 읽는 작은 약속</h3><p>수확량과 운영비·감가상각·가족노동비는 면적과 작기 수에 비례한다고 가정합니다. 연 1작기 조사값을 단순 확대하는 가정이며, 실제 시설 규모의 경제, 장비 효과, 지역 차이를 학습한 모델은 아닙니다. 입력 조건과 공개 집계자료를 활용해 비교하는 계획 도구입니다.</p><p>입력한 값은 이 브라우저에서만 계산됩니다. 별도 데이터베이스에 저장하거나 서버로 전송하지 않습니다. 새로고침 전 필요한 계획은 파일로 저장해주세요.</p></div>
     </section>

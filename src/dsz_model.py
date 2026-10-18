@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import GroupKFold
 
+from src.dsz_period import require_confirmed_rows, require_model_confirmation
+
 NUMERIC = ["area_m2", "planned_start_year", "planned_start_month"]
 CATEGORICAL = ["crop", "region", "greenhouse_type", "greenhouse_size"]
 FEATURES = CATEGORICAL + NUMERIC
@@ -53,6 +55,9 @@ def prepare_target(candidates: pd.DataFrame, target: str) -> pd.DataFrame:
     if not candidates[eligible].isin([True, False]).all():
         raise ValueError(f"Expected explicit boolean eligibility: {eligible}")
     rows = candidates.loc[candidates[eligible].eq(True)].copy()
+    require_confirmed_rows(rows)
+    if not candidates.get("target_period_confirmed", pd.Series(dtype=bool)).eq(True).any():
+        raise ValueError("Unconfirmed target period; no confirmed training cohort")
     if rows["row_id"].duplicated().any() or rows.duplicated(["facility_id", "cycle_id"]).any():
         raise ValueError("Duplicate candidate identity")
     identity = rows[["row_id", "facility_id", "cycle_id", "data_kind", "target_assumption"]]
@@ -100,7 +105,8 @@ class CropMedian:
         return values * x["area_m2"].to_numpy(float) if self.area_scaled else values
 
 
-def make_model(name: str):
+def make_model(name: str, *, numeric_features: list[str] | None = None):
+    numeric = NUMERIC if numeric_features is None else numeric_features
     if name in METHODS[:2]:
         return CropMedian(area_scaled=name == "area_scaled_crop_median")
     if name == "catboost":
@@ -116,7 +122,7 @@ def make_model(name: str):
         return Pipeline([
             ("encode", ColumnTransformer([
                 ("category", OneHotEncoder(handle_unknown="ignore"), CATEGORICAL),
-                ("numeric", "passthrough", NUMERIC)])),
+                ("numeric", "passthrough", numeric)])),
             ("model", XGBRegressor(n_estimators=180, max_depth=3, learning_rate=0.05,
                                    objective="reg:absoluteerror", reg_lambda=5,
                                    subsample=0.9, random_state=42, n_jobs=2))])
@@ -132,7 +138,7 @@ def scores(actual, predicted) -> dict:
             "rmse": float(np.sqrt(np.square(error).mean()))}
 
 
-def fit_cpu(name, x, y):
+def fit_cpu(name, x, y, *, numeric_features: list[str] | None = None):
     """Audit degenerate ML folds instead of failing on valid zero/constant labels."""
     reason = None
     if name in {"catboost", "xgboost"}:
@@ -140,11 +146,14 @@ def fit_cpu(name, x, y):
             reason = "constant_training_target"
         elif x.nunique(dropna=False).le(1).all():
             reason = "constant_training_features"
-    model = CropMedian() if reason else make_model(name)
+    model = CropMedian() if reason else (
+        make_model(name) if numeric_features is None else make_model(name, numeric_features=numeric_features))
     return model.fit(x, y), reason
 
 
 def fit_target(rows: pd.DataFrame, target: str, provenance: dict):
+    require_confirmed_rows(rows)
+    require_model_confirmation(provenance)
     label, _, unit = TARGETS[target]
     folds = grouped_folds(rows)
     x = features(rows)
@@ -190,6 +199,7 @@ def fit_target(rows: pd.DataFrame, target: str, provenance: dict):
 
 def predict_plans(bundle: dict, plans: pd.DataFrame) -> pd.DataFrame:
     """Use only a locally generated, trusted bundle; preserve training-data kind."""
+    require_model_confirmation(bundle)
     if set(plans.columns) - set(FEATURES + ["plan_id"]):
         raise ValueError("Plans may contain only the seven planned features and optional plan_id")
     if bundle["features"] != FEATURES:
@@ -202,9 +212,11 @@ def predict_plans(bundle: dict, plans: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("Nonfinite plan predictions")
     result = pd.DataFrame({"plan_id": plans.get("plan_id", pd.Series(range(len(plans)), index=plans.index)),
                            "target": bundle["target"], "prediction": values, "unit": bundle["unit"]})
-    for name in ["data_kind", "target_assumption", "source_manifest_sha256", "selected_cpu_model"]:
+    for name in ["data_kind", "target_assumption", "source_manifest_sha256", "selected_cpu_model",
+                 "target_period_evidence_sha256", "training_cohort_sha256", "candidate_sha256"]:
         result[name] = bundle[name]
     result["target_period_confirmed"] = bundle["target_period_confirmed"]
     result["interpretation"] = ("SYNTHETIC RUNTIME DEMO: not farm performance" if
-        bundle["data_kind"] == "synthetic_schema_fixture" else "Recorded candidate prediction; not certified cycle total or annual economics")
+        bundle["data_kind"] == "synthetic_schema_fixture" else
+        "Document-backed cycle-period review; not independent provider verification or annual economics validation")
     return result
