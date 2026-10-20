@@ -1,12 +1,10 @@
 # 농정원 미개방 데이터 — 현장 실행 안내
 
-> 이 안내의 설치 절차는 별도로 만든 **wheelhouse 포함 오프라인 ZIP**을 기준으로 합니다. GitHub 소스에는 wheelhouse가 없습니다. GitHub 사용자는 먼저 `requirements-dsz-cpu.txt`를 설치하고 `run_dsz.ps1 -Demo -Python .\.venv\Scripts\python.exe -UseExistingEnvironment`로 실행하세요. 자세한 시작 명령은 [README](../README.md)를 따릅니다.
-
 사용자가 대구 데이터안심구역을 방문했으며 원자료는 현장에서만 볼 수 있다고 확인했다. 이에 **명세서에 맞춰 실행 코드를 완성하고 현장에서 실제 파일을 넣어 실행하는 방식**으로 준비했다. 동봉한 농가 CSV는 모두 인위적으로 만든 예제다. 실제 미개방 원자료·계정·API 키는 들어 있지 않다.
 
 ## 이 패키지가 하는 일
 
-시설·경영조사 파일 검사 → 시설ID와 작기 기간으로 연결 → 출하량과 매출을 각각 시설별 교차검증 → CPU 모델 선택·저장 → 새 계획 조건의 예측 CSV 생성.
+시설·경영조사 파일 검사 → 시설ID와 조사일로 연결 후보 생성 → **집계기간·방식을 근거 문서와 원본 행에 대조** → 확인된 출하량과 매출을 각각 시설별 교차검증 → CPU 모델 선택·저장 → 새 계획 조건의 예측 CSV 생성. 기간 근거가 없으면 후보 감사까지 수행하며 학습하지 않는다.
 
 - 출하량: 정의서의 `ALL_SHPMNT_KGUNT_QTY`, **kg**.
 - 매출: 정의서의 `ALL_INCM_AMT`, **원**. 비용을 뺀 순이익이 아니다.
@@ -14,7 +12,7 @@
 - 비교: 품목 중앙값, 면적당 품목 중앙값, CatBoost, XGBoost.
 - 같은 시설은 학습·검증에 겹치지 않는다. 후보 선택에 사용한 교차검증 점수이므로 독립적인 최종 검증이나 미래연도 정확도를 뜻하지 않는다.
 
-환경·생육·기상·특보·태풍 파일은 동봉한 명세로 컬럼·타입·키를 검사할 수 있다. 재배 후에 생기는 값은 도입 전 예측 입력으로 넣지 않는다. 종묘 주문·축산물·사진을 시설ID로 억지로 연결하지 않는다.
+위 설명은 재배 전 7개 입력 경로다. **재배 중에는 `run_dsz.ps1 -InSeason`으로 환경·생육·기상과 발표된 특보 기록을 같은 시설·작기에 연결할 수 있다.** [재배 중 입력·실행·검증 안내](dsz_inseason_guide.md)를 따른다. 태풍은 발표시점 확인이 없어 검사만 한다. 재배 후에 생기는 값은 도입 전 예측 입력으로 넣지 않으며, 종묘 주문·축산물·사진을 시설ID로 억지로 연결하지 않는다.
 
 ## 1. 예제로 먼저 실행
 
@@ -47,25 +45,26 @@ ZIP은 `C:\dsz`처럼 **짧고 쓰기 가능한 경로**에 풀고, `run_dsz.ps1
 | 시설 DZ_002 | `FRMTM_SNO`, `FCLT_ID`, `FRMTM_BGNG_YMD`, `FRMTM_END_YMD` | `ITEM_NM`, `AREA_NM`, `SACT_INTLCK_SPR_NM`, `HTHS_SCL_CN`, `HTHS_SFC` |
 | 경영 DZ_004 | `EXMN_SNO`, `FCLT_ID`, `EXMN_YMD` | `ALL_SHPMNT_KGUNT_QTY`, `ALL_INCM_AMT` |
 
-시설ID가 같고 조사일이 작기 시작·종료일 사이에 포함되는 **정확히 한 작기**만 연결한다. 기간이 겹치거나 어느 작기에도 연결되지 않는 행은 제외 사유를 남긴다. 적재일시는 조사일 대신 사용하지 않는다. 숫자형 식별자도 문자열로 보존한다.
+근거가 없을 때는 시설ID가 같고 조사일이 작기 시작·종료일 사이에 포함되는 **정확히 한 작기**의 감사 후보만 만든다. 학습에는 아래 확인 JSON의 **원본 조사행→시설·작기 매핑과 집계기간**을 사용한다. 작기 종료 뒤 조사한 정산도 매핑과 기간이 확인되면 처리할 수 있다. 시설ID 불일치·중복 매핑·잘못된 기간에는 제외 사유를 남긴다. 적재일시는 조사일 대신 사용하지 않는다. 숫자형 식별자도 문자열로 보존한다.
 
 ### 경영조사 집계 방식은 실제 자료 의미에 맞춰 선택
 
-정의서는 kg·원 단위는 명시하지만 각 조사행이 누계인지 증분인지는 명시하지 않는다. 다음 옵션은 코드가 확인한 사실이 아니라 **실행자가 선택해 기록하는 해석**이다.
+정의서는 kg·원 단위는 명시하지만 각 조사행이 누계인지 증분인지, 어느 기간을 집계했는지는 명시하지 않는다. **`-ManagementPolicy` 선택만으로 학습할 수 없다.** 실제 원자료의 정의를 확인한 문서와 검토 기록을 `-PeriodConfirmation` JSON으로 함께 제공한다. 원문 명세서에 없는 집계 정의를 있다고 작성하면 안 된다.
 
 | `-ManagementPolicy` | 사용할 상황 | 처리 |
 |---|---|---|
-| `single_record_per_cycle` (기본) | 작기마다 한 건의 총량 기록으로 해석할 때 | 조사행이 정확히 한 개인 작기만 사용 |
-| `incremental_sum` | 각 조사행이 중복되지 않는 기간의 증분일 때 | 작기 내 합계. 결측이 섞인 타깃은 부분합으로 대체하지 않음 |
-| `latest_cumulative` | 각 조사행이 해당 시점까지의 누계일 때 | 마지막 조사일의 고유한 기록 사용. 최종일 중복은 제외 |
+| `single_record_per_cycle` (기본) | 한 기록이 전체 작기의 총량이라는 정의가 확인됨 | 그 행의 집계 시작·끝이 작기 전체와 같아야 함 |
+| `incremental_sum` | 각 조사행이 중복되지 않는 기간의 증분이라는 정의가 확인됨 | 명시된 기간이 겹침·공백 없이 작기 전체를 덮어야 함. 결측을 부분합으로 대체하지 않음 |
+| `latest_cumulative` | 각 행이 작기 시작부터의 누계라는 정의가 확인됨 | 가장 늦은 조사행이 작기 말까지의 최종 누계임을 확인. 중복 최종행은 제외 |
 
-마지막 누계도 작기 전체가 완결되었다는 보장은 없다. 실행한 해석과 제외 내역을 보고서에 함께 사용한다. 값 0은 관측값으로 남기고 결측을 0으로 채우지 않으며, 출하량·매출 적격 여부는 따로 판단한다.
+확인 JSON에는 원본 시설·경영 파일명과 SHA256, 실제 정의 근거 파일과 SHA256·페이지/항목·검토자·검토일·집계 정의, 시설/작기별 집계 시작·끝과 원본 조사행 번호가 필요하다. 상세 필드는 `dsz_schema_contract.md`를 따른다. 코드는 파일 일치와 기간 구조를 검사하며, 문서 내용의 의미까지 자동으로 심사하거나 기관 확인을 대신하지 않는다. 값 0은 관측값으로 남기고 결측을 0으로 채우지 않으며, 출하량·매출의 수치 유효성과 학습 적격성을 구분한다.
 
 새 농가 계획은 동봉 `data\examples\dsz\example_plans.csv`의 헤더를 복사해 실제 계획값으로 작성한다. 품목·지역·시설 표기는 실제 학습 데이터 표기와 맞춘다. 학습에 전혀 없던 품목은 예측하지 않는다.
 
 ```powershell
 .\run_dsz.ps1 -InputDir 'D:\approved_work\farm_data' `
   -Plans 'D:\approved_work\plans.csv' `
+  -PeriodConfirmation 'D:\approved_work\period_confirmation.json' `
   -ManagementPolicy single_record_per_cycle
 
 # CP949 CSV이면 -Encoding cp949 추가
@@ -74,10 +73,14 @@ ZIP은 `C:\dsz`처럼 **짧고 쓰기 가능한 경로**에 풀고, `run_dsz.ps1
 명령별 실행 또는 Windows 이외 환경의 설치된 Python 사용:
 
 ```text
-python scripts/prepare_dsz.py --input-dir /approved/farm_data --output-dir runs/onsite/prepared --management-policy single_record_per_cycle
+python scripts/prepare_dsz.py --input-dir /approved/farm_data --output-dir runs/onsite/prepared --management-policy single_record_per_cycle --period-confirmation /approved/period_confirmation.json
 python scripts/train_dsz.py --data-dir runs/onsite/prepared --output-dir runs/onsite/models
 python scripts/predict_dsz.py --artifact-dir runs/onsite/models --plans /approved/plans.csv --output runs/onsite/predictions.csv
 ```
+
+집계기간을 확인하지 못했다면 `prepare_dsz.py`만 `--period-confirmation` 없이 실행한다. 후보와 제외 사유는 남지만 학습 적격은 false다. 그 결과를 `train_dsz.py`에 넘기거나 예측의 연 1작기 적용에 동의해도 기간 미확정을 우회할 수 없다. 확인 자료는 현장 규정에 따라 그 안에서 보관한다.
+
+일부 작기만 확인할 수 있었다면 미확정 후보는 감사용으로 남기고 확인된 적격 작기만 사용한다. 모델 출처 기록의 `training_cohort`에서 사용·제외 수와 행 목록을 확인한다. 한 작기의 확인 근거를 같은 시설의 다른 작기에 자동 적용하지 않는다.
 
 ## 3. 결과에서 먼저 볼 것
 

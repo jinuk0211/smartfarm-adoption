@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import re
@@ -12,6 +13,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.dsz_period import candidate_proof, evidence_digest, evidence_json, load_confirmation
+
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "config/dsz_schema.json"
 FEATURES = ["crop", "region", "greenhouse_type", "greenhouse_size", "area_m2",
@@ -21,8 +24,9 @@ TARGETS = {"reported_shipment_kg": "ALL_SHPMNT_KGUNT_QTY",
 TARGET_ASSUMPTION = "single_record_per_cycle"
 MANAGEMENT_POLICIES = [TARGET_ASSUMPTION, "incremental_sum", "latest_cumulative"]
 CANDIDATE_COLUMNS = ["row_id", "facility_id", "cycle_id"] + FEATURES + list(TARGETS) + [
-    "shipment_eligible", "revenue_eligible", "data_kind", "target_assumption",
-    "target_period_confirmed", "facility_source_file", "facility_source_row",
+    "shipment_eligible", "revenue_eligible", "shipment_numeric_valid", "revenue_numeric_valid",
+    "data_kind", "target_assumption", "target_period_confirmed", "target_period_evidence_json",
+    "target_period_evidence_sha256", "facility_source_file", "facility_source_row",
     "management_source_file", "management_source_row", "facility_raw_json",
     "management_raw_json"]
 ISSUE_COLUMNS = ["dataset", "source_file", "source_row", "column", "reason"]
@@ -88,10 +92,42 @@ def type_error(value: str, column: dict) -> str | None:
     return None
 
 
+def _csv_format(path: Path, table: dict, encoding: str) -> tuple[str, int, str]:
+    """Use declared export format, or select an alias separator by exact headers."""
+    official = path.name.casefold() == table.get("export_filename", "").casefold()
+    if official:
+        encoding = table.get("export_encoding", "utf-8")
+        if encoding.lower().replace("-", "") == "utf8":
+            encoding = "utf-8-sig"
+        formats = [(table["export_delimiter"],
+                    csv.QUOTE_MINIMAL if table["export_quoting"] else csv.QUOTE_NONE)]
+    else:
+        # Existing comma fixtures are quoted CSV; pipe exports are unquoted.
+        formats = [(",", csv.QUOTE_MINIMAL), ("|", csv.QUOTE_NONE)]
+    expected = {column["name"] for column in table["columns"]}
+    matches = []
+    for delimiter, quoting in formats:
+        with path.open(encoding=encoding, newline="") as stream:
+            try:
+                header = next(csv.reader(stream, delimiter=delimiter, quoting=quoting), [])
+            except csv.Error:
+                continue
+        if (len(header) == len(set(header)) and expected.issubset(header)
+                and not {"_source_file", "_source_row"}.intersection(header)):
+            matches.append((delimiter, quoting))
+    if len(matches) != 1:
+        raise ValueError(f"{path.name}: missing exact named columns, duplicate/reserved headers, "
+                         "or ambiguous CSV delimiter; use the declared export headers and format")
+    delimiter, quoting = matches[0]
+    return delimiter, quoting, encoding
+
+
 def load_tables(input_dir: Path, schema: dict, encoding: str = "utf-8-sig") -> tuple[dict, list]:
     """Select exact supplied table names or DZ_00N aliases, without column guessing."""
     aliases = {alias.upper(): table_id for table_id, table in schema["tables"].items()
-               for alias in [table_id, table["filename"]]}
+               for alias in [table_id, table["filename"],
+                             *table.get("filename_aliases", []),
+                             *([Path(table["export_filename"]).stem] if table.get("export_filename") else [])]}
     paths = {}
     for path in sorted(input_dir.iterdir()):
         if path.is_file() and path.suffix.lower() in {".csv", ".xlsx"}:
@@ -105,8 +141,14 @@ def load_tables(input_dir: Path, schema: dict, encoding: str = "utf-8-sig") -> t
         raise ValueError(f"Missing required dataset files: {missing}")
     tables, sources = {}, []
     for table_id, path in paths.items():
+        csv_format = {}
         if path.suffix.lower() == ".csv":
-            frame = pd.read_csv(path, dtype=str, keep_default_na=False, encoding=encoding)
+            delimiter, quoting, file_encoding = _csv_format(path, schema["tables"][table_id], encoding)
+            frame = pd.read_csv(path, dtype=str, keep_default_na=False, encoding=file_encoding,
+                                sep=delimiter, quoting=quoting)
+            if not isinstance(frame.index, pd.RangeIndex):
+                raise ValueError(f"{path.name}: CSV row contains more fields than the header")
+            csv_format = {"delimiter": delimiter, "quoting": quoting != csv.QUOTE_NONE}
         else:
             with pd.ExcelFile(path) as workbook:
                 if len(workbook.sheet_names) != 1:
@@ -120,7 +162,8 @@ def load_tables(input_dir: Path, schema: dict, encoding: str = "utf-8-sig") -> t
         frame["_source_row"] = range(2, len(frame) + 2)
         tables[table_id] = frame
         sources.append({"dataset": table_id, "file": path.name, "sha256": sha256(path),
-                        "rows": len(frame), "encoding": encoding if path.suffix.lower() == ".csv" else "xlsx",
+                        "rows": len(frame), "encoding": file_encoding if path.suffix.lower() == ".csv" else "xlsx",
+                        **csv_format,
                         "extra_columns": sorted(set(frame.columns) - set(expected) - {"_source_file", "_source_row"})})
     return tables, sources
 
@@ -173,11 +216,14 @@ def detect_data_kind(tables: dict, input_dir: Path) -> str:
     return "synthetic_schema_fixture" if marked or (not nonempty.empty and synthetic.all()) else "onsite_private_unverified"
 
 
-def build_candidates(tables: dict, data_kind: str, policy: str = TARGET_ASSUMPTION) -> tuple[pd.DataFrame, pd.DataFrame]:
+def build_candidates(tables: dict, data_kind: str, policy: str = TARGET_ASSUMPTION,
+                     confirmation: dict | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
     if policy not in MANAGEMENT_POLICIES:
         raise ValueError(f"Unknown management policy: {policy}")
     facilities, management = tables["DZ_002"], tables["DZ_004"]
     exclusions, cycles = [], []
+    declared_rows = {record["source_row"]: cycle for cycle in (confirmation or {}).get("cycles", [])
+                     for record in cycle["records"]}
 
     def exclude(dataset, row, reason):
         exclusions.append({"dataset": dataset, "source_file": row["_source_file"],
@@ -212,14 +258,25 @@ def build_candidates(tables: dict, data_kind: str, policy: str = TARGET_ASSUMPTI
                 if cycle["raw"]["FCLT_ID"] == row["FCLT_ID"]:
                     cycle["invalid_survey"] = True
             continue
-        all_matches = []
-        for _, facility in facilities.loc[facilities["FCLT_ID"].eq(row["FCLT_ID"])].iterrows():
-            start = parse_date(facility["FRMTM_BGNG_YMD"], compact=True)
-            end = parse_date(facility["FRMTM_END_YMD"], compact=True)
-            if start and end and start <= survey_date <= end:
-                all_matches.append(facility["_source_row"])
-        matches = [cycle for cycle in cycles if cycle["raw"]["FCLT_ID"] == row["FCLT_ID"]
-                   and cycle["start"] <= survey_date <= cycle["end"]]
+        declared = declared_rows.get(int(row["_source_row"]))
+        if declared:
+            if declared["facility_id"] != row["FCLT_ID"]:
+                raise ValueError("Declared management source row belongs to a different facility")
+            # Survey date is a recording date, not necessarily the period end.
+            # Only documented row-to-cycle identity can place a later survey.
+            all_matches = facilities.loc[facilities["FCLT_ID"].eq(row["FCLT_ID"])
+                                         & facilities["FRMTM_SNO"].eq(declared["cycle_id"]), "_source_row"].tolist()
+            matches = [cycle for cycle in cycles if cycle["raw"]["FCLT_ID"] == row["FCLT_ID"]
+                       and cycle["raw"]["FRMTM_SNO"] == declared["cycle_id"]]
+        else:
+            all_matches = []
+            for _, facility in facilities.loc[facilities["FCLT_ID"].eq(row["FCLT_ID"])].iterrows():
+                start = parse_date(facility["FRMTM_BGNG_YMD"], compact=True)
+                end = parse_date(facility["FRMTM_END_YMD"], compact=True)
+                if start and end and start <= survey_date <= end:
+                    all_matches.append(facility["_source_row"])
+            matches = [cycle for cycle in cycles if cycle["raw"]["FCLT_ID"] == row["FCLT_ID"]
+                       and cycle["start"] <= survey_date <= cycle["end"]]
         if len(all_matches) != 1 or len(matches) != 1:
             exclude("DZ_004", row, "ambiguous_cycle_match" if len(all_matches) > 1 else "unmatched_eligible_cycle")
             for cycle in matches:
@@ -233,6 +290,7 @@ def build_candidates(tables: dict, data_kind: str, policy: str = TARGET_ASSUMPTI
     candidates = []
     for cycle in cycles:
         row, surveys = cycle["raw"], cycle["surveys"]
+        all_surveys = surveys
         reason = ""
         if cycle["invalid_survey"]:
             reason = "cycle_contains_invalid_survey"
@@ -251,6 +309,7 @@ def build_candidates(tables: dict, data_kind: str, policy: str = TARGET_ASSUMPTI
             for survey in surveys:
                 exclude("DZ_004", survey, reason)
             continue
+        proof = candidate_proof(confirmation, row, all_surveys, policy, data_kind)
         survey = surveys[0]
         source_rows = [int(survey["_source_row"]) for survey in surveys]
         candidate = {"row_id": f"DZ002:{row['_source_row']}:DZ004:" + ",".join(map(str, source_rows)),
@@ -260,7 +319,9 @@ def build_candidates(tables: dict, data_kind: str, policy: str = TARGET_ASSUMPTI
                      "area_m2": float(Decimal(row["HTHS_SFC"])),
                      "planned_start_year": cycle["start"].year, "planned_start_month": cycle["start"].month,
                      "data_kind": data_kind, "target_assumption": policy,
-                     "target_period_confirmed": False,
+                     "target_period_confirmed": proof is not None,
+                     "target_period_evidence_json": evidence_json(proof) if proof else "",
+                     "target_period_evidence_sha256": evidence_digest(proof) if proof else "",
                      "facility_source_file": row["_source_file"], "facility_source_row": row["_source_row"],
                      "management_source_file": survey["_source_file"], "management_source_row": ",".join(map(str, source_rows)),
                      "facility_raw_json": row["_raw_json"], "management_raw_json": json.dumps(
@@ -271,20 +332,25 @@ def build_candidates(tables: dict, data_kind: str, policy: str = TARGET_ASSUMPTI
                         and Decimal(survey[source]) >= 0 for survey in surveys)
             value = float(sum(Decimal(survey[source]) for survey in surveys)) if valid else None
             candidate[target] = value
-            candidate[f"{prefix}_eligible"] = value is not None and value >= 0
-            if not candidate[f"{prefix}_eligible"]:
+            candidate[f"{prefix}_numeric_valid"] = value is not None and value >= 0
+            candidate[f"{prefix}_eligible"] = candidate[f"{prefix}_numeric_valid"] and proof is not None
+            if not candidate[f"{prefix}_numeric_valid"]:
                 exclude("DZ_004", survey, f"{target}_missing_invalid_or_negative")
+        if proof is None:
+            exclude("DZ_002", row, "target_period_unconfirmed_audit_only")
         candidates.append(candidate)
     return pd.DataFrame(candidates, columns=CANDIDATE_COLUMNS), pd.DataFrame(exclusions, columns=ISSUE_COLUMNS)
 
 
 def prepare(input_dir: Path, output_dir: Path, *, encoding: str = "utf-8-sig",
-            schema_path: Path = SCHEMA_PATH, management_policy: str = TARGET_ASSUMPTION) -> dict:
+            schema_path: Path = SCHEMA_PATH, management_policy: str = TARGET_ASSUMPTION,
+            period_confirmation: Path | None = None) -> dict:
     if management_policy not in MANAGEMENT_POLICIES:
         raise ValueError(f"Unknown management policy: {management_policy}")
     schema = load_schema(schema_path)
     tables, sources = load_tables(input_dir, schema, encoding)
     data_kind = detect_data_kind(tables, input_dir)
+    confirmation = load_confirmation(period_confirmation, sources, policy=management_policy, data_kind=data_kind)
     validation, inventory = [], {key: {"present": False, "rows": 0} for key in schema["tables"]}
     for table_id in tables:
         tables[table_id], issues = validate_table(table_id, tables[table_id], schema["tables"][table_id])
@@ -293,7 +359,7 @@ def prepare(input_dir: Path, output_dir: Path, *, encoding: str = "utf-8-sig",
             tables[table_id]["_invalid_columns"].map(lambda columns: not columns).sum()),
             "model_usage": "pre_adoption_metadata" if table_id == "DZ_002" else
             "assumed_reported_targets" if table_id == "DZ_004" else "inventory_only_never_model_features"}
-    candidates, exclusions = build_candidates(tables, data_kind, management_policy)
+    candidates, exclusions = build_candidates(tables, data_kind, management_policy, confirmation)
     output_dir.mkdir(parents=True, exist_ok=True)
     paths = {"candidates": output_dir / "dsz_model_candidates.csv",
              "exclusions": output_dir / "dsz_exclusions.csv", "validation": output_dir / "dsz_validation.csv"}
@@ -303,7 +369,11 @@ def prepare(input_dir: Path, output_dir: Path, *, encoding: str = "utf-8-sig",
     manifest = {"schema_version": 1, "created_at_utc": datetime.now(timezone.utc).isoformat(),
                 "data_kind": data_kind, "input_dir": str(input_dir.resolve()),
                 "schema_sha256": sha256(schema_path), "source_dictionary_sha256": schema["dictionary_sha256"],
-                "target_assumption": management_policy, "target_period_confirmed": False,
+                "target_assumption": management_policy,
+                "target_period_confirmed": bool(len(candidates) and candidates.target_period_confirmed.all()),
+                "target_period_evidence_sha256": evidence_digest(confirmation) if confirmation else None,
+                "target_period_confirmation": confirmation,
+                "period_confirmation_level": "documented_reviewer_declaration_not_independent_provider_verification",
                 "target_interpretation": {
                     "single_record_per_cycle": "Exactly one survey in a uniquely matched facility cycle, assumed cycle-total candidate; period not proven by dictionary.",
                     "incremental_sum": "Operator assumes distinct survey records are nonoverlapping increments; sum complete nonnegative targets, with no partial sums.",
@@ -318,7 +388,8 @@ def prepare(input_dir: Path, output_dir: Path, *, encoding: str = "utf-8-sig",
                 "exclusion_reason_counts": exclusions["reason"].value_counts().to_dict(),
                 "artifacts": {key: {"file": path.name, "sha256": sha256(path)} for key, path in paths.items()},
                 "limitations": ["No post-planting environment/growth/weather records are model inputs.",
-                                "Management aggregation is an explicit operator assumption, never verified from the schema.",
+                                "Unconfirmed management periods are audit-only; numeric validity does not authorize training.",
+                                "Period evidence records a document-backed review, not independent provider verification.",
                                 "Start year/month represent the planned start available at prediction time.",
                                 "Synthetic fixtures demonstrate execution only, never real predictive accuracy.",
                                 "Private input data and predictions must stay within the approved safe-zone workflow."]}

@@ -1,0 +1,8 @@
+{
+  "data_kind": "synthetic_schema_fixture",
+  "purpose": "Execution only, not predictive evidence.",
+  "generator": "data/examples/dsz_inseason/generate_fixture.py",
+  "training_strawberry_cycles": 16,
+  "query_is_unseen_synthetic_facility": true,
+  "observations_are_not_fitted_to_shipment": true
+}

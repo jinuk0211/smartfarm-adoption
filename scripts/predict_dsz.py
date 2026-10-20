@@ -14,6 +14,7 @@ import joblib  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from src.dsz_model import CATEGORICAL, NUMERIC, predict_plans, sha256  # noqa: E402
+from src.dsz_period import require_model_confirmation  # noqa: E402
 
 
 def predict_from_artifacts(artifact_dir: Path, plans: pd.DataFrame) -> pd.DataFrame:
@@ -21,7 +22,8 @@ def predict_from_artifacts(artifact_dir: Path, plans: pd.DataFrame) -> pd.DataFr
     manifest = json.loads((artifact_dir / "dsz_model_metrics.json").read_text(encoding="utf-8"))
     if manifest["status"] != "completed":
         raise ValueError("Training run is not completed")
-    for name in ["src/dsz_model.py", "scripts/predict_dsz.py"]:
+    require_model_confirmation(manifest)
+    for name in ["src/dsz_model.py", "src/dsz_period.py", "scripts/predict_dsz.py"]:
         if manifest.get("source_sha256", {}).get(name) != sha256(ROOT / name):
             raise ValueError(f"Current prediction source differs from training run: {name}")
     predictions = []
@@ -32,7 +34,9 @@ def predict_from_artifacts(artifact_dir: Path, plans: pd.DataFrame) -> pd.DataFr
         if path.resolve().parent != artifact_dir.resolve() or sha256(path) != record["artifact_sha256"]:
             raise ValueError("Generated model artifact path/SHA differs from manifest")
         bundle = joblib.load(path)
-        for key in ["data_kind", "target_assumption", "target_period_confirmed", "source_manifest_sha256"]:
+        for key in ["data_kind", "target_assumption", "target_period_confirmed", "source_manifest_sha256",
+                    "target_period_evidence_sha256", "target_period_confirmation", "training_cohort",
+                    "training_cohort_sha256", "candidate_sha256"]:
             if bundle[key] != manifest[key]:
                 raise ValueError("Model/provenance mismatch")
         if bundle["target"] != target:
@@ -55,9 +59,14 @@ if __name__ == "__main__":
     result = predict_from_artifacts(args.artifact_dir, plans)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     result.to_csv(args.output, index=False, encoding="utf-8-sig")
+    training_manifest = json.loads((args.artifact_dir / "dsz_model_metrics.json").read_text(encoding="utf-8"))
     metadata = {"data_kind": result["data_kind"].unique().tolist(),
                 "target_assumption": result["target_assumption"].unique().tolist(),
                 "target_period_confirmed": result["target_period_confirmed"].unique().tolist(),
+                "target_period_evidence_sha256": training_manifest["target_period_evidence_sha256"],
+                "target_period_confirmation": training_manifest["target_period_confirmation"],
+                "training_cohort": training_manifest["training_cohort"],
+                "training_cohort_sha256": training_manifest["training_cohort_sha256"],
                 "training_manifest_sha256": sha256(args.artifact_dir / "dsz_model_metrics.json"),
                 "plans_sha256": sha256(args.plans), "prediction_sha256": sha256(args.output),
                 "rows": len(result), "interpretation": result["interpretation"].unique().tolist()}

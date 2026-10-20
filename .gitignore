@@ -27,3 +27,4 @@ data/raw/*
 data/raw/dsz/*
 !data/raw/dsz/epis_columns_user_supplied.txt
 !data/raw/dsz/epis_data_dictionary.zip
+dsz_jupyter_*/

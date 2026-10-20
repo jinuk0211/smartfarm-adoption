@@ -1,8 +1,17 @@
 param(
     [switch]$Demo,
+    [switch]$InSeason,
     [string]$InputDir,
     [string]$Plans,
+    [string]$Requests,
+    [string]$QueryInputDir,
+    [ValidateRange(1, 730)]
+    [int]$CutoffDays = 30,
+    [ValidateRange(1, 365)]
+    [int]$WindowDays = 28,
+    [string]$Crop = '딸기',
     [string]$OutputDir,
+    [string]$PeriodConfirmation,
     [ValidateSet('single_record_per_cycle', 'incremental_sum', 'latest_cumulative')]
     [string]$ManagementPolicy = 'single_record_per_cycle',
     [ValidateSet('utf-8-sig', 'cp949')]
@@ -13,14 +22,32 @@ param(
 
 $ErrorActionPreference = 'Stop'
 if ($Demo) {
-    if ($InputDir -or $Plans) { throw '-Demo cannot be combined with -InputDir or -Plans.' }
-    $InputDir = Join-Path $PSScriptRoot 'data\examples\dsz\input'
-    $Plans = Join-Path $PSScriptRoot 'data\examples\dsz\example_plans.csv'
-} elseif (-not $InputDir -or -not $Plans) {
-    throw 'Use -Demo, or provide both -InputDir and -Plans for onsite data.'
+    if ($InputDir -or $Plans -or $Requests -or $QueryInputDir -or $PeriodConfirmation) { throw '-Demo cannot be combined with custom input paths.' }
+    if ($InSeason) {
+        $InputDir = Join-Path $PSScriptRoot 'data\examples\dsz_inseason\input'
+        $QueryInputDir = Join-Path $PSScriptRoot 'data\examples\dsz_inseason\query'
+        $Requests = Join-Path $PSScriptRoot 'data\examples\dsz_inseason\requests.csv'
+    } else {
+        $InputDir = Join-Path $PSScriptRoot 'data\examples\dsz\input'
+        $Plans = Join-Path $PSScriptRoot 'data\examples\dsz\example_plans.csv'
+    }
+    $PeriodConfirmation = Join-Path $InputDir 'period_confirmation.json'
+} elseif (-not $InputDir -or ($InSeason -and -not $Requests) -or (-not $InSeason -and -not $Plans)) {
+    throw 'Provide -InputDir and -Plans; for -InSeason provide -InputDir and -Requests instead.'
+}
+if (($InSeason -and $Plans) -or (-not $InSeason -and ($Requests -or $QueryInputDir))) { throw 'Preplant plans and in-season requests use separate input contracts.' }
+if (-not $PeriodConfirmation) {
+    throw 'Training requires -PeriodConfirmation with documented source periods. Run scripts/prepare_dsz.py alone for an audit without confirmation.'
 }
 $InputDir = (Resolve-Path -LiteralPath $InputDir).Path
-$Plans = (Resolve-Path -LiteralPath $Plans).Path
+if ($InSeason) {
+    $Requests = (Resolve-Path -LiteralPath $Requests).Path
+    if (-not $QueryInputDir) { $QueryInputDir = $InputDir }
+    $QueryInputDir = (Resolve-Path -LiteralPath $QueryInputDir).Path
+} else {
+    $Plans = (Resolve-Path -LiteralPath $Plans).Path
+}
+$PeriodConfirmation = (Resolve-Path -LiteralPath $PeriodConfirmation).Path
 if (-not $OutputDir) {
     $OutputDir = Join-Path $PSScriptRoot ('runs\' + (Get-Date -Format 'yyyyMMdd_HHmmss_fff'))
 }
@@ -45,11 +72,17 @@ if (-not $UseExistingEnvironment) {
 
 $Prepared = Join-Path $OutputDir 'prepared'
 $Models = Join-Path $OutputDir 'models'
-& $Python (Join-Path $PSScriptRoot 'scripts\prepare_dsz.py') --input-dir $InputDir --output-dir $Prepared --management-policy $ManagementPolicy --encoding $Encoding
+& $Python (Join-Path $PSScriptRoot 'scripts\prepare_dsz.py') --input-dir $InputDir --output-dir $Prepared --management-policy $ManagementPolicy --period-confirmation $PeriodConfirmation --encoding $Encoding
 if ($LASTEXITCODE -ne 0) { throw 'Preparation failed. Review the validation report before training.' }
-& $Python (Join-Path $PSScriptRoot 'scripts\train_dsz.py') --data-dir $Prepared --output-dir $Models
-if ($LASTEXITCODE -ne 0) { throw 'Model comparison/training failed.' }
-& $Python (Join-Path $PSScriptRoot 'scripts\predict_dsz.py') --artifact-dir $Models --plans $Plans --output (Join-Path $OutputDir 'predictions.csv')
+if ($InSeason) {
+    & $Python (Join-Path $PSScriptRoot 'scripts\run_dsz_inseason.py') train --data-dir $Prepared --input-dir $InputDir --output-dir $Models --cutoff-days $CutoffDays --window-days $WindowDays --crop $Crop --encoding $Encoding
+    if ($LASTEXITCODE -ne 0) { throw 'In-season model comparison/training failed.' }
+    & $Python (Join-Path $PSScriptRoot 'scripts\run_dsz_inseason.py') predict --artifact-dir $Models --input-dir $QueryInputDir --requests $Requests --output (Join-Path $OutputDir 'predictions.csv') --encoding $Encoding
+} else {
+    & $Python (Join-Path $PSScriptRoot 'scripts\train_dsz.py') --data-dir $Prepared --output-dir $Models
+    if ($LASTEXITCODE -ne 0) { throw 'Model comparison/training failed.' }
+    & $Python (Join-Path $PSScriptRoot 'scripts\predict_dsz.py') --artifact-dir $Models --plans $Plans --output (Join-Path $OutputDir 'predictions.csv')
+}
 if ($LASTEXITCODE -ne 0) { throw 'Plan prediction failed.' }
 Write-Output "Completed: $OutputDir"
 if ($Demo) { Write-Output 'SYNTHETIC DEMO ONLY: these scores and predictions are not actual farm performance.' }
