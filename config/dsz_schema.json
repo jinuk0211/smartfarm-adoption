@@ -8,6 +8,10 @@
     "DZ_001": {
       "label": "스마트팜 우수농가 정보(환경)",
       "filename": "M_DZ_SFARMENVIRONMENT",
+      "export_filename": "스마트팜 우수농가 정보(환경)(M_DZ_SFARMENVIRONMENT).csv",
+      "export_delimiter": "|",
+      "export_quoting": false,
+      "export_encoding": "utf-8",
       "required": false,
       "columns": [
         {
@@ -159,6 +163,10 @@
     "DZ_002": {
       "label": "스마트팜 우수농가 정보(시설)",
       "filename": "M_DZ_SFARMFACILITY",
+      "export_filename": "스마트팜 우수농가 정보(시설)(M_DZ_SFARMFACILITY).csv",
+      "export_delimiter": "|",
+      "export_quoting": false,
+      "export_encoding": "utf-8",
       "required": true,
       "columns": [
         {
@@ -274,6 +282,10 @@
     "DZ_003": {
       "label": "스마트팜 우수농가 정보(생육)",
       "filename": "M_DZ_SFARMGROWTH",
+      "export_filename": "스마트팜 우수농가 정보(생육)(M_DZ_SFARMGROWTH).csv",
+      "export_delimiter": "|",
+      "export_quoting": false,
+      "export_encoding": "utf-8",
       "required": false,
       "columns": [
         {
@@ -425,6 +437,13 @@
     "DZ_004": {
       "label": "스마트팜 우수농가 정보(경영조사)",
       "filename": "M_DZ_SFARMMANAGEMENT",
+      "export_filename": "스마트팜 우수농가 정보(경영조사)(M_DZ_SFARMMANAGEINQUIRY).csv",
+      "export_delimiter": "|",
+      "export_quoting": false,
+      "export_encoding": "utf-8",
+      "filename_aliases": [
+        "M_DZ_SFARMMANAGEINQUIRY"
+      ],
       "required": true,
       "columns": [
         {
@@ -495,6 +514,10 @@
     "DZ_005": {
       "label": "스마트팜 우수농가 정보(기상)",
       "filename": "M_DZ_WEATHER",
+      "export_filename": "스마트팜 우수농가 정보(기상)(M_DZ_WEATHER).csv",
+      "export_delimiter": "|",
+      "export_quoting": false,
+      "export_encoding": "utf-8",
       "required": false,
       "columns": [
         {
@@ -592,6 +615,10 @@
     "DZ_006": {
       "label": "스마트팜 우수농가 정보(기상특보)",
       "filename": "M_DZ_WEATHERNEWSBREAK",
+      "export_filename": "스마트팜 우수농가 정보(기상특보)(M_DZ_WEATHERNEWSBREAK).csv",
+      "export_delimiter": ",",
+      "export_quoting": false,
+      "export_encoding": "utf-8",
       "required": false,
       "columns": [
         {
@@ -671,6 +698,10 @@
     "DZ_007": {
       "label": "스마트팜 우수농가 정보(태풍)",
       "filename": "M_DZ_TYPHOON",
+      "export_filename": "스마트팜 우수농가 정보(태풍)(M_DZ_TYPHOON).csv",
+      "export_delimiter": "|",
+      "export_quoting": false,
+      "export_encoding": "utf-8",
       "required": false,
       "columns": [
         {

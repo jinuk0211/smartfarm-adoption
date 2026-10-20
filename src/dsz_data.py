@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import re
@@ -91,10 +92,42 @@ def type_error(value: str, column: dict) -> str | None:
     return None
 
 
+def _csv_format(path: Path, table: dict, encoding: str) -> tuple[str, int, str]:
+    """Use declared export format, or select an alias separator by exact headers."""
+    official = path.name.casefold() == table.get("export_filename", "").casefold()
+    if official:
+        encoding = table.get("export_encoding", "utf-8")
+        if encoding.lower().replace("-", "") == "utf8":
+            encoding = "utf-8-sig"
+        formats = [(table["export_delimiter"],
+                    csv.QUOTE_MINIMAL if table["export_quoting"] else csv.QUOTE_NONE)]
+    else:
+        # Existing comma fixtures are quoted CSV; pipe exports are unquoted.
+        formats = [(",", csv.QUOTE_MINIMAL), ("|", csv.QUOTE_NONE)]
+    expected = {column["name"] for column in table["columns"]}
+    matches = []
+    for delimiter, quoting in formats:
+        with path.open(encoding=encoding, newline="") as stream:
+            try:
+                header = next(csv.reader(stream, delimiter=delimiter, quoting=quoting), [])
+            except csv.Error:
+                continue
+        if (len(header) == len(set(header)) and expected.issubset(header)
+                and not {"_source_file", "_source_row"}.intersection(header)):
+            matches.append((delimiter, quoting))
+    if len(matches) != 1:
+        raise ValueError(f"{path.name}: missing exact named columns, duplicate/reserved headers, "
+                         "or ambiguous CSV delimiter; use the declared export headers and format")
+    delimiter, quoting = matches[0]
+    return delimiter, quoting, encoding
+
+
 def load_tables(input_dir: Path, schema: dict, encoding: str = "utf-8-sig") -> tuple[dict, list]:
     """Select exact supplied table names or DZ_00N aliases, without column guessing."""
     aliases = {alias.upper(): table_id for table_id, table in schema["tables"].items()
-               for alias in [table_id, table["filename"]]}
+               for alias in [table_id, table["filename"],
+                             *table.get("filename_aliases", []),
+                             *([Path(table["export_filename"]).stem] if table.get("export_filename") else [])]}
     paths = {}
     for path in sorted(input_dir.iterdir()):
         if path.is_file() and path.suffix.lower() in {".csv", ".xlsx"}:
@@ -108,8 +141,14 @@ def load_tables(input_dir: Path, schema: dict, encoding: str = "utf-8-sig") -> t
         raise ValueError(f"Missing required dataset files: {missing}")
     tables, sources = {}, []
     for table_id, path in paths.items():
+        csv_format = {}
         if path.suffix.lower() == ".csv":
-            frame = pd.read_csv(path, dtype=str, keep_default_na=False, encoding=encoding)
+            delimiter, quoting, file_encoding = _csv_format(path, schema["tables"][table_id], encoding)
+            frame = pd.read_csv(path, dtype=str, keep_default_na=False, encoding=file_encoding,
+                                sep=delimiter, quoting=quoting)
+            if not isinstance(frame.index, pd.RangeIndex):
+                raise ValueError(f"{path.name}: CSV row contains more fields than the header")
+            csv_format = {"delimiter": delimiter, "quoting": quoting != csv.QUOTE_NONE}
         else:
             with pd.ExcelFile(path) as workbook:
                 if len(workbook.sheet_names) != 1:
@@ -123,7 +162,8 @@ def load_tables(input_dir: Path, schema: dict, encoding: str = "utf-8-sig") -> t
         frame["_source_row"] = range(2, len(frame) + 2)
         tables[table_id] = frame
         sources.append({"dataset": table_id, "file": path.name, "sha256": sha256(path),
-                        "rows": len(frame), "encoding": encoding if path.suffix.lower() == ".csv" else "xlsx",
+                        "rows": len(frame), "encoding": file_encoding if path.suffix.lower() == ".csv" else "xlsx",
+                        **csv_format,
                         "extra_columns": sorted(set(frame.columns) - set(expected) - {"_source_file", "_source_row"})})
     return tables, sources
 

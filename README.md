@@ -1,5 +1,21 @@
 # 스마트팜 재배 계획·재배 중 출하량 분석
 
+## GitHub에서 받아 바로 실행: 딸기 재배 중 출하량
+
+**Python 3.12**, GitHub·패키지 저장소 접속과 패키지 설치가 가능한 환경에서 실행합니다.
+
+```bash
+git clone --depth 1 --branch codex/dsz-inseason-shipment https://github.com/jinuk0211/smartfarm-adoption.git
+cd smartfarm-adoption
+python -m pip install -r requirements-dsz-cpu.txt
+python smartfarm_shipment.py
+```
+
+처음에는 **합성 예제**로 검사·학습·출하량 예측을 실행합니다.
+실제 자료는 [단일 실행 파일](smartfarm_shipment.py) 상단에서 MODE를 real로 바꾸고 자료 폴더·시설ID·작기ID·집계기간 근거를 지정합니다.
+[설정과 결과 안내](reports/dsz_single_file_guide.md) · [명세서의 실제 CSV 파일명·구분자](reports/dsz_csv_format.md)
+
+
 **작물·지역·온실·면적·재배 시작 시점을 입력해 출하량과 매출을 추정하고, 설치비·운영비 가정에 따른 경제성을 비교하는 연구용 프로젝트입니다.**
 
 **[공개 웹사이트 열기](https://smartfarm-adoption.vercel.app)** — 별도 DB 없이 브라우저에서 학습한 농가 모델을 실행하고 계산합니다. 딸기 출하량과 5품목 총매출 예측을 선택한 소득조사 비용·설비비와 연결했습니다. [웹 실행·배포 안내](web/README.md)
